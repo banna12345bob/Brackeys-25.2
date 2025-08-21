@@ -1,0 +1,32 @@
+/__pycache__
+/sandstone/__pycache__
+/sandbox/__pycache__
+/demo1/__pycache__
+output/builds
+/compile/
+
+# Windows specific
+**.vcxproj
+**.sln
+**.vcxproj
+**.user
+**.filters
+/.vs/
+
+
+# macOS specific
+.DS_Store
+*.pbxproj
+*.plist
+*.xcworkspacedata
+*.xcuserstate
+*.log
+*.pyc
+
+**/bin
+**/bin-int
+**.aps
+
+imgui.ini
+*.zip
+EngineProfile-*.json
