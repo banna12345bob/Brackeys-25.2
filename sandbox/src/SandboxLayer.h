@@ -13,6 +13,7 @@ public:
 	void OnUpdate(Engine::Timestep ts) override;
 	void OnRender() override;
 	virtual void OnImGuiRender() override;
+	virtual void OnEvent(Engine::Event& event) override;
 private:
 	Engine::OrthographicCameraController m_CameraController;
 

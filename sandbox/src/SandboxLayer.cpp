@@ -118,3 +118,7 @@ void SandboxLayer::OnImGuiRender()
 	if (m_ShowImGuiDemoWindow)
 		ImGui::ShowDemoWindow(&m_ShowImGuiDemoWindow);
 }
+
+void SandboxLayer::OnEvent(Engine::Event& event)
+{
+}
