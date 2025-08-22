@@ -1,0 +1,74 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Build Projects
+
+on:
+  push:
+    branches: [ "main" ]
+  # pull_request:
+  #   branches: [ "main" ]
+
+permissions: write-all
+
+jobs:
+  pull-repo:
+    runs-on: [Windows, self-hosted]
+    steps:
+    - name: Pull repo
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        
+    # Would be super useful if this could happen automatically 
+    # - name: Install vswhere and MSBuild via winget
+    #   shell: cmd
+    #   run: |
+    #     winget install Microsoft.VisualStudio.Locator
+    #     winget install --id=Microsoft.VisualStudio.2022.BuildTools  -e
+    
+    - name: Generate Solution Files
+      run: .${{env.GITHUB_WORKSPACE}}\vendor\bin\premake\premake5_windows.exe vs2022
+
+  build:
+    runs-on: [Windows, self-hosted]
+    strategy:
+      matrix:
+        buildConfig: [Debug_x86_64, Release_x86_64, Dist_x86_64]
+    needs: [
+      pull-repo
+    ]
+    steps:
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+    - name: Build Solution
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      # Add additional options to the MSBuild command line here (like platform or verbosity level).
+      # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      run: msbuild /m /p:Configuration=${{matrix.buildConfig}} .
+
+    - name: Zip build
+      run: Compress-Archive -Path compile/bin/${{matrix.buildConfig}}-windows-x86_64 -Destination ${{matrix.buildConfig}}-windows-x86_64.zip
+
+  create-release:
+    runs-on: [Windows, self-hosted]
+    needs: [
+      build
+    ]
+    if: ${{ always() && !cancelled() && needs.build.result == 'success' }}
+    steps:
+    # - name: Download all workflow run artifacts
+    #   uses: actions/download-artifact@v4
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: s${{github.run_number}}
+        name: Snapshot build s${{github.run_number}}
+        files: |
+          *.zip
+        prerelease: true
+
