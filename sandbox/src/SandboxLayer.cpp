@@ -32,7 +32,7 @@ void SandboxLayer::OnDetach()
 void SandboxLayer::OnUpdate(Engine::Timestep ts)
 {
 	m_CurrentFrame += 0.0005 * ts;
-	m_CameraController.OnUpdate();
+	m_CameraController.OnUpdate(ts);
 }
 
 void SandboxLayer::OnRender()
@@ -121,4 +121,5 @@ void SandboxLayer::OnImGuiRender()
 
 void SandboxLayer::OnEvent(Engine::Event& event)
 {
+	m_CameraController.OnEvent(event);
 }
