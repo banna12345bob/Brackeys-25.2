@@ -16,12 +16,8 @@ public:
 	virtual void OnEvent(Engine::Event& event) override;
 private:
 	bool SprintKey(Engine::KeyPressedEvent& e);
-
-	glm::vec3 UnprojectPoint(glm::vec3 pos);
 private:
 	Engine::OrthographicCameraController m_CameraController;
-
-	Engine::Ref<Engine::Texture2D> m_Animation[3];
 
 	Engine::Scene* m_Scene;
 

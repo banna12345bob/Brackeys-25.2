@@ -16,17 +16,16 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-
-	m_Animation[0] = Engine::Texture2D::Create("assets/textures/tile.png");
-	m_Animation[1] = Engine::Texture2D::Create("assets/textures/tile2.png");
-	m_Animation[2] = Engine::Texture2D::Create("assets/textures/tile3.png");
-
-	Engine::Entity* ArrowAnimation = new Engine::Entity("Arrow");
-	ArrowAnimation->GetTransform()->position = { 0.f, 0.f, -0.5f };
-	//ArrowAnimation->hide = true;
-	m_Scene->AddEntity(ArrowAnimation);
 	
+	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
+
+	Engine::Entity* Arrow = new Engine::Entity("Arrow");
+	Arrow->GetTransform()->position = { 0.f, 0.f, -0.5f };
+	Arrow->GetSpriteRenderer()->texture = arrowTexture;
+	m_Scene->AddEntity(Arrow);
+
 	Engine::Entity* PlayerEntity = new Engine::Entity("Player");
+	PlayerEntity->GetSpriteRenderer()->texture = arrowTexture;
 	m_Scene->AddEntity(PlayerEntity);
 
 	m_CameraController.SetZoomLevel(5.f);
@@ -42,9 +41,11 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 
 	if (Engine::Input::IsKeyPressed(EG_KEY_D) && glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) <= m_PlayerMaxAcceleration) {
 		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x += m_PlayerAcceleration * ts;
+		m_Scene->GetEntity("Player")->GetTransform()->rotation = 270.f;
 	}
 	else if (Engine::Input::IsKeyPressed(EG_KEY_A) && glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) <= m_PlayerMaxAcceleration) {
 		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x -= m_PlayerAcceleration * ts;
+		m_Scene->GetEntity("Player")->GetTransform()->rotation = 90.f;
 	}
 	else {
 		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x += -m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x * m_PlayerDeceleration * ts.GetSeconds();
@@ -54,17 +55,17 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 
 	if (Engine::Input::IsKeyPressed(EG_KEY_S) && glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) <= m_PlayerMaxAcceleration) {
 		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y -= m_PlayerAcceleration * ts;
+		m_Scene->GetEntity("Player")->GetTransform()->rotation = 180.f;
 	}
 	else if (Engine::Input::IsKeyPressed(EG_KEY_W) && glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) <= m_PlayerMaxAcceleration) {
 		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y += m_PlayerAcceleration * ts;
+		m_Scene->GetEntity("Player")->GetTransform()->rotation = 0.f;
 	}
 	else {
 		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y += -m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y * m_PlayerDeceleration * ts.GetSeconds();
 		if (glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) < 1.f)
 				m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y = 0;
 	}
-
-	m_Scene->GetEntity("Arrow")->GetSpriteRenderer()->texture = m_Animation[(int)m_CurrentFrame % 3];
 
 	m_Scene->UpdateScene(ts);
 
