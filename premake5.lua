@@ -1,5 +1,5 @@
 workspace "Brackeys 25.2"
-	startproject "sandbox"
+	startproject "game"
 
 	configurations
 	{
@@ -30,4 +30,5 @@ group "Dependencies"
 
 group ""
 	include "engine"
+	include "game"
 	include "sandbox"

@@ -15,7 +15,7 @@ void SandboxLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
 
-	m_sandBoxTexture = Engine::Texture2D::Create("assets/textures/Oak_Log.png");
+	//m_sandBoxTexture = Engine::Texture2D::Create("assets/textures/Oak_Log.png");
 	m_Tilesheet = Engine::Texture2D::Create("assets/textures/kenny/kenny_tiny_town.png");
 
 	m_TreeTexture = Engine::SubTexture2D::CreateFromCoords(m_Tilesheet, { 4, 9 }, { 16, 16 }, { 1, 2 });
