@@ -2,6 +2,7 @@
 
 #include <engine.h>
 #include "entities/Player.h"
+#include "entities/Enemy.h"
 
 class GameLayer : public Engine::Layer
 {

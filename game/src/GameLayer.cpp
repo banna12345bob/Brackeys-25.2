@@ -30,6 +30,10 @@ void GameLayer::OnAttach()
 	m_player->GetSpriteRenderer()->texture = arrowTexture;
 	m_Scene->AddEntity(m_player);
 
+	Enemy* enemy = new Enemy(m_player);
+	enemy->GetSpriteRenderer()->texture = arrowTexture;
+	m_Scene->AddEntity(enemy);
+
 	m_CameraController.SetZoomLevel(128);
 }
 
