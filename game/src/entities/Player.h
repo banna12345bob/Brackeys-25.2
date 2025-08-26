@@ -12,6 +12,7 @@ public:
 private:
 	int m_health;
 	float m_acceleration;
+	float m_deceleration;
 	float m_maxSpeed;
 
 	

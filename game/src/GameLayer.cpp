@@ -18,11 +18,13 @@ void GameLayer::OnAttach()
 	m_Scene = new Engine::Scene();
 	
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
+	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
-	Engine::Entity* Arrow = new Engine::Entity("Arrow");
-	Arrow->GetTransform()->position = { 0.f, 0.f, -0.5f };
-	Arrow->GetSpriteRenderer()->texture = arrowTexture;
-	m_Scene->AddEntity(Arrow);
+	Engine::Entity* Checkboard = new Engine::Entity("Checkboard");
+	Checkboard->GetTransform()->position = { 0.f, 0.f, -0.5f };
+	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
+	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
+	m_Scene->AddEntity(Checkboard);
 
 	m_player = new Player();
 	m_player->GetSpriteRenderer()->texture = arrowTexture;
@@ -44,7 +46,7 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 
 	m_Scene->UpdateScene(ts);
 
-	m_CameraController.setPosition(-m_Scene->GetEntity("Player")->GetTransform()->position);
+	//m_CameraController.setPosition(-m_Scene->GetEntity("Player")->GetTransform()->position);
 	m_CameraController.OnUpdate(ts);
 }
 

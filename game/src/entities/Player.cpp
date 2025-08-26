@@ -1,8 +1,9 @@
 #include "Player.h"
 
 Player::Player() : Engine::Entity("Player"),
-	m_acceleration(2000),
-	m_maxSpeed(256),
+	m_deceleration(20.f),
+	m_maxSpeed(250.f),
+	m_acceleration(1000.f),
 	m_health(10) 
 {
 	GetTransform()->scale = { 32.f, 32.f };
@@ -11,66 +12,58 @@ Player::Player() : Engine::Entity("Player"),
 void Player::OnUpdate(Engine::Timestep ts) {
 
 	// Movement
-	glm::vec2 newDir = { 0,0 };
-	if (Engine::Input::IsKeyPressed(EG_KEY_W)) {
-		newDir.y += 1;
-		GetTransform()->rotation = 0.f;
-	}
-	if (Engine::Input::IsKeyPressed(EG_KEY_A)) {
-		newDir.x -= 1;
-		GetTransform()->rotation = 90.f;
-	}
-	if (Engine::Input::IsKeyPressed(EG_KEY_S)) {
-		newDir.y -= 1;
-		GetTransform()->rotation = 180.f;
-	}
+
+	// Currently confined to what the camera sees
+	glm::vec3 direction = glm::vec3(0.f);
+	bool hitWall = false;
 	if (Engine::Input::IsKeyPressed(EG_KEY_D)) {
-		newDir.x += 1;
-		GetTransform()->rotation = 270.f;
-	}
-
-
-	float maxSpeed = newDir.x != 0 && newDir.y != 0 ? sqrtf(2) : m_maxSpeed;							// If the player is moving diagonally, the max speed on either axis is root 2
-
-	// X axis
-	if ((newDir.x != 0 && GetVelocity()->velocity.x == 0) || newDir.x * GetVelocity()->velocity.x > 0) {	// Same direction or just started moving
-		if (abs(GetVelocity()->velocity.x) < m_maxSpeed) {
-			GetVelocity()->velocity.x += m_acceleration * newDir.x * ts;
+		direction.x = 1;
+		if (GetTransform()->position.x > 128) {
+			direction.x = 0;
+			hitWall = true;
+		}
+	} else if (Engine::Input::IsKeyPressed(EG_KEY_A)) {
+		direction.x = -1;
+		if (GetTransform()->position.x < -128) {
+			direction.x = 0;
+			hitWall = true;
 		}
 	}
-	else if (newDir.x == 0) {																				// Not moving on this axis
-		if (GetVelocity()->velocity.x != 0) {														// Decelerate
-			int sign = (GetVelocity()->velocity.x > 0) - (GetVelocity()->velocity.x < 0);	// Hack I found on Stack Overflow
-			GetVelocity()->velocity.x += m_acceleration * ts * -sign;										// Decelerate twice as fast
-			if (GetVelocity()->velocity.x * sign < 0) {												// If we have gone past 0, set it to 0
-				GetVelocity()->velocity.x = 0;
-			}
-		}
-	}
-	else {																									// Going in opposite direction
-		GetVelocity()->velocity.x = m_acceleration * newDir.x * ts;
-	}
+	if ((Engine::Input::IsKeyPressed(EG_KEY_D) && GetVelocity()->velocity.x < 0) || (Engine::Input::IsKeyPressed(EG_KEY_A) && GetVelocity()->velocity.x > 0))
+		GetVelocity()->velocity.x = 0;
 
-	// Y axis
-	if ((newDir.y != 0 && GetVelocity()->velocity.y == 0) || newDir.y * GetVelocity()->velocity.y > 0) {
-		if (abs(GetVelocity()->velocity.y) < m_maxSpeed) {
-			GetVelocity()->velocity.y += m_acceleration * newDir.y * ts;
+	if (Engine::Input::IsKeyPressed(EG_KEY_S) && -128 < GetTransform()->position.y < 128) {
+		direction.y = -1;
+		if (GetTransform()->position.y < -128) {
+			direction.y = 0;
+			hitWall = true;
+		}
+	} else if (Engine::Input::IsKeyPressed(EG_KEY_W) && -128 < GetTransform()->position.y < 128) {
+		direction.y = 1;
+		if (GetTransform()->position.y > 128) {
+			direction.y = 0;
+			hitWall = true;
 		}
 	}
-	else if (newDir.y == 0) {
-		if (GetVelocity()->velocity.y != 0) {
-			int sign = (GetVelocity()->velocity.y > 0) - (GetVelocity()->velocity.y < 0);
-			float accel = GetVelocity()->velocity.y;
-			GetVelocity()->velocity.y += m_acceleration * ts * -sign;
-			if (GetVelocity()->velocity.y * sign < 0) {
-				GetVelocity()->velocity.y = 0;
-			}
-		}
-	}
+	if ((Engine::Input::IsKeyPressed(EG_KEY_W) && GetVelocity()->velocity.y < 0) || (Engine::Input::IsKeyPressed(EG_KEY_S) && GetVelocity()->velocity.y > 0))
+		GetVelocity()->velocity.y = 0;
+
+	if (glm::length(direction) != 0 && glm::length(GetVelocity()->velocity) <= m_maxSpeed)
+		// v = v + direction.nor * a
+		// Got to take the normal of the direction so that player speed is calculated correctly on diagonals
+		GetVelocity()->velocity += glm::normalize(direction) * m_acceleration * ts.GetSeconds();
 	else {
-		GetVelocity()->velocity.y = m_acceleration * newDir.y * ts;
+		// v = v + -v * deceleration
+		GetVelocity()->velocity += -GetVelocity()->velocity * m_deceleration * ts.GetSeconds();
+		if (glm::length(GetVelocity()->velocity) < 20.f)
+			GetVelocity()->velocity = { 0.f, 0.f, 0.f };
 	}
-	
+
+	// Stop all velocity when hit a wall
+	// Currently cannot wall slide
+	if (hitWall) {
+		GetVelocity()->velocity = { 0.f, 0.f, 0.f };
+	}
 
 	Engine::Entity::OnUpdate(ts);
 }
