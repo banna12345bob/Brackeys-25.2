@@ -9,8 +9,9 @@ public:
 	void OnUpdate(Engine::Timestep ts) override;
 	void OnRender() override;
 
+public:
+	int health;
 private:
-	int m_health;
 	float m_acceleration;
 	float m_deceleration;
 	float m_maxSpeed;

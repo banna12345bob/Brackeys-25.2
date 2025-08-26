@@ -8,6 +8,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
+#include "entities/Bullet.h"
+
 GameLayer::GameLayer()
 	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight())
 {
@@ -30,6 +32,14 @@ void GameLayer::OnAttach()
 	m_player->GetSpriteRenderer()->texture = arrowTexture;
 	m_Scene->AddEntity(m_player);
 
+	Bullet* bullet = new Bullet(*m_Scene, "test1");
+	bullet->GetTransform()->position = { 100.f, 100.f, 0.f };
+	m_Scene->AddEntity(bullet);
+
+	//bullet = new Bullet(*m_Scene, "test2");
+	//bullet->GetTransform()->position = { 100.f, 80.f, 0.f };
+	//m_Scene->AddEntity(bullet);
+
 	Enemy* enemy = new Enemy(m_player);
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
 	m_Scene->AddEntity(enemy);
@@ -50,7 +60,7 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 
 	m_Scene->UpdateScene(ts);
 
-	//m_CameraController.setPosition(-m_Scene->GetEntity("Player")->GetTransform()->position);
+	m_CameraController.setPosition(-m_Scene->GetEntity("Player")->GetTransform()->position);
 	m_CameraController.OnUpdate(ts);
 }
 
@@ -79,6 +89,7 @@ void GameLayer::OnImGuiRender()
 	ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
 
 	ImGui::Text(glm::to_string(m_Scene->GetEntity("Player")->GetVelocity()->velocity).c_str());
+	ImGui::Value("health", ((Player*)(m_Scene->GetEntity("Player")))->health);
 
 	// Little header/tree demo
 	if (ImGui::CollapsingHeader("Demo window")) {

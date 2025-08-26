@@ -9,6 +9,7 @@ Enemy::Enemy(Player* player)
 	m_attackRange(128),
 	m_player(player)
 {
+	GetTransform()->scale = { 16.f, 16.f };
 	m_attackRangeSqrd = m_attackRange * m_attackRange;
 }
 
