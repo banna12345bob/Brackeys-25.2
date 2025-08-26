@@ -24,11 +24,12 @@ void GameLayer::OnAttach()
 	Arrow->GetSpriteRenderer()->texture = arrowTexture;
 	m_Scene->AddEntity(Arrow);
 
-	Engine::Entity* PlayerEntity = new Engine::Entity("Player");
-	PlayerEntity->GetSpriteRenderer()->texture = arrowTexture;
-	m_Scene->AddEntity(PlayerEntity);
+	m_player = new Player();
+	m_player->GetSpriteRenderer()->texture = arrowTexture;
+	m_Scene->AddEntity(m_player);
 
-	m_CameraController.SetZoomLevel(5.f);
+	m_CameraController.SetZoomLevel(128);
+	//m_CameraController.setPosition({ -128, 128, 0 });
 }
 
 void GameLayer::OnDetach()
@@ -37,35 +38,12 @@ void GameLayer::OnDetach()
 
 void GameLayer::OnUpdate(Engine::Timestep ts)
 {
+	/*glm::vec2 pos = GetMouseGamePosition();
+	EG_TRACE("Mouse pos: {0}, {1}", pos.x, pos.y);*/
+
 	m_CurrentFrame += 0.0005 * ts.GetMilliseconds();
 
-	if (Engine::Input::IsKeyPressed(EG_KEY_D) && glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) <= m_PlayerMaxAcceleration) {
-		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x += m_PlayerAcceleration * ts;
-		m_Scene->GetEntity("Player")->GetTransform()->rotation = 270.f;
-	}
-	else if (Engine::Input::IsKeyPressed(EG_KEY_A) && glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) <= m_PlayerMaxAcceleration) {
-		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x -= m_PlayerAcceleration * ts;
-		m_Scene->GetEntity("Player")->GetTransform()->rotation = 90.f;
-	}
-	else {
-		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x += -m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x * m_PlayerDeceleration * ts.GetSeconds();
-		if (glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) < 1.f)
-			m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.x = 0;
-	}
-
-	if (Engine::Input::IsKeyPressed(EG_KEY_S) && glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) <= m_PlayerMaxAcceleration) {
-		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y -= m_PlayerAcceleration * ts;
-		m_Scene->GetEntity("Player")->GetTransform()->rotation = 180.f;
-	}
-	else if (Engine::Input::IsKeyPressed(EG_KEY_W) && glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) <= m_PlayerMaxAcceleration) {
-		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y += m_PlayerAcceleration * ts;
-		m_Scene->GetEntity("Player")->GetTransform()->rotation = 0.f;
-	}
-	else {
-		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y += -m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y * m_PlayerDeceleration * ts.GetSeconds();
-		if (glm::length(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration) < 1.f)
-				m_Scene->GetEntity("Player")->GetAcceleration()->acceleration.y = 0;
-	}
+	
 
 	m_Scene->UpdateScene(ts);
 
@@ -133,4 +111,15 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 		return true;
 	}
 	return false;
+}
+
+glm::vec2 GameLayer::GetMouseGamePosition() {
+	glm::vec2 posVec = glm::unProject(
+		glm::vec3(Engine::Input::GetMouseX(), float(Engine::Application::getApplication()->getWindow()->GetHeight()) - Engine::Input::GetMouseY(), 1.0f),
+		glm::mat4(1.0f),
+		m_CameraController.GetCamera().GetViewProjectionMatrix(),
+		glm::vec4(0.0f, 0.0f, float(Engine::Application::getApplication()->getWindow()->GetWidth()), float(Engine::Application::getApplication()->getWindow()->GetHeight()))
+	);
+
+	return posVec;
 }

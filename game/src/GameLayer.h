@@ -1,6 +1,7 @@
 #pragma once
 
 #include <engine.h>
+#include "entities/Player.h"
 
 class GameLayer : public Engine::Layer
 {
@@ -14,6 +15,7 @@ public:
 	void OnRender() override;
 	virtual void OnImGuiRender() override;
 	virtual void OnEvent(Engine::Event& event) override;
+	glm::vec2 GetMouseGamePosition();
 private:
 	bool SprintKey(Engine::KeyPressedEvent& e);
 private:
@@ -23,9 +25,7 @@ private:
 
 	float m_CurrentFrame = 0;
 
-	float m_PlayerDeceleration = 5.f;
-	float m_PlayerAcceleration = 2.f;
-	float m_PlayerMaxAcceleration = 3.f;
+	Player* m_player;
 
 	bool m_ShowImGuiWindow = true;
 	bool m_ShowImGuiDemoWindow = false;
