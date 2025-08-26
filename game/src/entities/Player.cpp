@@ -1,11 +1,11 @@
 #include "Player.h"
 
 Player::Player() : Engine::Entity("Player"),
-	m_acceleration(3000),
+	m_acceleration(2000),
 	m_maxSpeed(256),
 	m_health(10) 
 {
-
+	GetTransform()->scale = { 32.f, 32.f };
 }
 
 void Player::OnUpdate(Engine::Timestep ts) {
@@ -33,42 +33,42 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	float maxSpeed = newDir.x != 0 && newDir.y != 0 ? sqrtf(2) : m_maxSpeed;							// If the player is moving diagonally, the max speed on either axis is root 2
 
 	// X axis
-	if ((newDir.x != 0 && GetAcceleration()->acceleration.x == 0) || newDir.x * GetAcceleration()->acceleration.x > 0) {	// Same direction or just started moving
-		if (abs(GetAcceleration()->acceleration.x) < m_maxSpeed) {
-			GetAcceleration()->acceleration.x += m_acceleration * newDir.x * ts;
+	if ((newDir.x != 0 && GetVelocity()->velocity.x == 0) || newDir.x * GetVelocity()->velocity.x > 0) {	// Same direction or just started moving
+		if (abs(GetVelocity()->velocity.x) < m_maxSpeed) {
+			GetVelocity()->velocity.x += m_acceleration * newDir.x * ts;
 		}
 	}
 	else if (newDir.x == 0) {																				// Not moving on this axis
-		if (GetAcceleration()->acceleration.x != 0) {														// Decelerate
-			int sign = (GetAcceleration()->acceleration.x > 0) - (GetAcceleration()->acceleration.x < 0);	// Hack I found on Stack Overflow
-			GetAcceleration()->acceleration.x += m_acceleration * ts * -sign;										// Decelerate twice as fast
-			if (GetAcceleration()->acceleration.x * sign < 0) {												// If we have gone past 0, set it to 0
-				GetAcceleration()->acceleration.x = 0;
+		if (GetVelocity()->velocity.x != 0) {														// Decelerate
+			int sign = (GetVelocity()->velocity.x > 0) - (GetVelocity()->velocity.x < 0);	// Hack I found on Stack Overflow
+			GetVelocity()->velocity.x += m_acceleration * ts * -sign;										// Decelerate twice as fast
+			if (GetVelocity()->velocity.x * sign < 0) {												// If we have gone past 0, set it to 0
+				GetVelocity()->velocity.x = 0;
 			}
 		}
 	}
 	else {																									// Going in opposite direction
-		GetAcceleration()->acceleration.x = m_acceleration * newDir.x * ts;
+		GetVelocity()->velocity.x = m_acceleration * newDir.x * ts;
 	}
 
 	// Y axis
-	if ((newDir.y != 0 && GetAcceleration()->acceleration.y == 0) || newDir.y * GetAcceleration()->acceleration.y > 0) {
-		if (abs(GetAcceleration()->acceleration.y) < m_maxSpeed) {
-			GetAcceleration()->acceleration.y += m_acceleration * newDir.y * ts;
+	if ((newDir.y != 0 && GetVelocity()->velocity.y == 0) || newDir.y * GetVelocity()->velocity.y > 0) {
+		if (abs(GetVelocity()->velocity.y) < m_maxSpeed) {
+			GetVelocity()->velocity.y += m_acceleration * newDir.y * ts;
 		}
 	}
 	else if (newDir.y == 0) {
-		if (GetAcceleration()->acceleration.y != 0) {
-			int sign = (GetAcceleration()->acceleration.y > 0) - (GetAcceleration()->acceleration.y < 0);
-			float accel = GetAcceleration()->acceleration.y;
-			GetAcceleration()->acceleration.y += m_acceleration * ts * -sign;
-			if (GetAcceleration()->acceleration.y * sign < 0) {
-				GetAcceleration()->acceleration.y = 0;
+		if (GetVelocity()->velocity.y != 0) {
+			int sign = (GetVelocity()->velocity.y > 0) - (GetVelocity()->velocity.y < 0);
+			float accel = GetVelocity()->velocity.y;
+			GetVelocity()->velocity.y += m_acceleration * ts * -sign;
+			if (GetVelocity()->velocity.y * sign < 0) {
+				GetVelocity()->velocity.y = 0;
 			}
 		}
 	}
 	else {
-		GetAcceleration()->acceleration.y = m_acceleration * newDir.y * ts;
+		GetVelocity()->velocity.y = m_acceleration * newDir.y * ts;
 	}
 	
 

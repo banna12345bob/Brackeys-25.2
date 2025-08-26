@@ -29,7 +29,6 @@ void GameLayer::OnAttach()
 	m_Scene->AddEntity(m_player);
 
 	m_CameraController.SetZoomLevel(128);
-	//m_CameraController.setPosition({ -128, 128, 0 });
 }
 
 void GameLayer::OnDetach()
@@ -42,8 +41,6 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 	EG_TRACE("Mouse pos: {0}, {1}", pos.x, pos.y);*/
 
 	m_CurrentFrame += 0.0005 * ts.GetMilliseconds();
-
-	
 
 	m_Scene->UpdateScene(ts);
 
@@ -75,7 +72,7 @@ void GameLayer::OnImGuiRender()
 	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
 	ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
 
-	ImGui::Text(glm::to_string(m_Scene->GetEntity("Player")->GetAcceleration()->acceleration).c_str());
+	ImGui::Text(glm::to_string(m_Scene->GetEntity("Player")->GetVelocity()->velocity).c_str());
 
 	// Little header/tree demo
 	if (ImGui::CollapsingHeader("Demo window")) {
@@ -107,7 +104,7 @@ void GameLayer::OnEvent(Engine::Event& event)
 bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 {
 	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0) {
-		m_Scene->GetEntity("Player")->GetAcceleration()->acceleration *= 15.f;
+		m_Scene->GetEntity("Player")->GetVelocity()->velocity *= 15.f;
 		return true;
 	}
 	return false;
