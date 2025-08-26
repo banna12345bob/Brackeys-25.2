@@ -1,7 +1,7 @@
 #include "Player.h"
 
 Player::Player() : Engine::Entity("Player"),
-	m_acceleration(10000),
+	m_acceleration(3000),
 	m_maxSpeed(256),
 	m_health(10) 
 {
@@ -41,8 +41,8 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	else if (newDir.x == 0) {																				// Not moving on this axis
 		if (GetAcceleration()->acceleration.x != 0) {														// Decelerate
 			int sign = (GetAcceleration()->acceleration.x > 0) - (GetAcceleration()->acceleration.x < 0);	// Hack I found on Stack Overflow
-			GetAcceleration()->acceleration.x -= m_acceleration * 2 * ts;									// Decelerate twice as fast
-			if (GetAcceleration()->acceleration.x * sign > 0) {												// If we have gone past 0, set it to 0
+			GetAcceleration()->acceleration.x += m_acceleration * ts * -sign;										// Decelerate twice as fast
+			if (GetAcceleration()->acceleration.x * sign < 0) {												// If we have gone past 0, set it to 0
 				GetAcceleration()->acceleration.x = 0;
 			}
 		}
@@ -60,8 +60,9 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	else if (newDir.y == 0) {
 		if (GetAcceleration()->acceleration.y != 0) {
 			int sign = (GetAcceleration()->acceleration.y > 0) - (GetAcceleration()->acceleration.y < 0);
-			GetAcceleration()->acceleration.y -= m_acceleration * 2 * ts;
-			if (GetAcceleration()->acceleration.y * sign > 0) {
+			float accel = GetAcceleration()->acceleration.y;
+			GetAcceleration()->acceleration.y += m_acceleration * ts * -sign;
+			if (GetAcceleration()->acceleration.y * sign < 0) {
 				GetAcceleration()->acceleration.y = 0;
 			}
 		}
