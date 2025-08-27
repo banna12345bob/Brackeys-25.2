@@ -3,6 +3,8 @@
 #include <engine.h>
 #include "entities/Player.h"
 #include "entities/Enemy.h"
+#include "environment/Room.h"
+#include <vector>
 
 class GameLayer : public Engine::Layer
 {
@@ -26,7 +28,8 @@ private:
 
 	float m_CurrentFrame = 0;
 
-	Player* m_player;
+	Player* m_Player;
+	std::vector<Room> m_Rooms;
 
 	bool m_ShowImGuiWindow = true;
 	bool m_ShowImGuiDemoWindow = false;

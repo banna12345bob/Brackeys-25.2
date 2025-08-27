@@ -28,9 +28,9 @@ void GameLayer::OnAttach()
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
 	m_Scene->AddEntity(Checkboard);
 
-	m_player = new Player();
-	m_player->GetSpriteRenderer()->texture = arrowTexture;
-	m_Scene->AddEntity(m_player);
+	m_Player = new Player();
+	m_Player->GetSpriteRenderer()->texture = arrowTexture;
+	m_Scene->AddEntity(m_Player);
 
 	Bullet* bullet = new Bullet(*m_Scene, "test1");
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.f };
@@ -40,7 +40,7 @@ void GameLayer::OnAttach()
 	//bullet->GetTransform()->position = { 100.f, 80.f, 0.f };
 	//m_Scene->AddEntity(bullet);
 
-	Enemy* enemy = new Enemy(m_player);
+	Enemy* enemy = new Enemy(m_Player);
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
 	m_Scene->AddEntity(enemy);
 
