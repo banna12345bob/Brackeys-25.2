@@ -42,6 +42,26 @@
             ]
         }
     },
+    "reaper_proj": {
+        "image": "assets/textures/reaper.png",
+        "tileSize": { "x": 32, "y": 16 },
+        "numTiles": { "x": 4, "y": 1 },
+        "topLeft": { "x": 0, "y": 0 },
+        "tiles": {
+            "proj_0": { "x": 0, "y": 0 },
+            "proj_1": { "x": 1, "y": 0 },
+            "proj_2": { "x": 2, "y": 0 },
+            "proj_3": { "x": 3, "y": 0 }
+        },
+        "anims": {
+            "spin": [
+                { "name": "proj_0", "dur": 100 },
+                { "name": "proj_1", "dur": 100 },
+                { "name": "proj_2", "dur": 100 },
+                { "name": "proj_3", "dur": 100 }
+            ]
+        }
+    },
     "reaper": {
         "image": "assets/textures/reaper.png",
         "tileSize": { "x": 96, "y": 80 },
