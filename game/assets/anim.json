@@ -3,7 +3,7 @@
         "image": "assets/textures/player.png",
         "tileSize": { "x": 16, "y": 16 },
         "numTiles": { "x": 4, "y": 4 },
-        "tiles": {
+        "frames": {
             "fwd_0": { "x": 0, "y": 0 },
             "fwd_1": { "x": 1, "y": 0 },
             "left_0": { "x": 2, "y": 0 },
@@ -47,7 +47,7 @@
         "tileSize": { "x": 32, "y": 16 },
         "numTiles": { "x": 4, "y": 1 },
         "topLeft": { "x": 0, "y": 0 },
-        "tiles": {
+        "frames": {
             "proj_0": { "x": 0, "y": 0 },
             "proj_1": { "x": 1, "y": 0 },
             "proj_2": { "x": 2, "y": 0 },
@@ -67,7 +67,7 @@
         "tileSize": { "x": 96, "y": 80 },
         "numTiles": { "x": 4, "y": 4 },
         "topLeft": { "x": 0, "y": 16 },
-        "tiles": {
+        "frames": {
             "atk_0": { "x": 0, "y": 0 },
             "atk_1": { "x": 1, "y": 0 },
             "atk_2": { "x": 2, "y": 0 },
@@ -113,6 +113,61 @@
                 { "name": "despawn_4", "dur": 100 },
                 { "name": "despawn_5", "dur": 100 },
                 { "name": "despawn_6", "dur": 100 }
+            ]
+        }
+    },
+    "psychic": {
+        "image": "assets/textures/psychic.png",
+        "tileSize": { "x": 64, "y": 80 },
+        "numTiles": { "x": 8, "y": 2 },
+        "topLeft": { "x": 0, "y": 16 },
+        "frames": {
+            "hover_0": { "x": 0, "y": 0 },
+            "hover_1": { "x": 1, "y": 0 },
+            "hover_2": { "x": 2, "y": 0 },
+            "hover_3": { "x": 3, "y": 0 },
+            "hover_4": { "x": 4, "y": 0 },
+            "hover_5": { "x": 5, "y": 0 },
+            "hover_6": { "x": 6, "y": 0 },
+            "hover_7": { "x": 7, "y": 0 },
+            "blink_0": { "x": 0, "y": 1 },
+            "blink_1": { "x": 1, "y": 1 },
+            "blink_2": { "x": 2, "y": 1 },
+            "spawn_0": { "x": 3, "y": 1 },
+            "spawn_1": { "x": 4, "y": 1 },
+            "spawn_2": { "x": 5, "y": 1 },
+            "spawn_3": { "x": 6, "y": 1 },
+            "spawn_4": { "x": 7, "y": 1 },
+            "despawn_0": { "x": 7, "y": 1 },
+            "despawn_1": { "x": 6, "y": 1 },
+            "despawn_2": { "x": 5, "y": 1 },
+            "despawn_3": { "x": 4, "y": 1 },
+            "despawn_4": { "x": 3, "y": 1 }
+        },
+        "anims": {
+            "hover": [
+                { "name": "hover_0", "dur": 100 },
+                { "name": "hover_1", "dur": 100 },
+                { "name": "hover_2", "dur": 100 },
+                { "name": "hover_3", "dur": 100 },
+                { "name": "hover_4", "dur": 100 },
+                { "name": "hover_5", "dur": 100 },
+                { "name": "hover_6", "dur": 100 },
+                { "name": "hover_7", "dur": 100 }
+            ],
+            "spawn": [
+                { "name": "spawn_0", "dur": 100 },
+                { "name": "spawn_1", "dur": 100 },
+                { "name": "spawn_2", "dur": 100 },
+                { "name": "spawn_3", "dur": 100 },
+                { "name": "spawn_4", "dur": 100 }
+            ],
+            "despawn": [
+                { "name": "despawn_0", "dur": 100 },
+                { "name": "despawn_1", "dur": 100 },
+                { "name": "despawn_2", "dur": 100 },
+                { "name": "despawn_3", "dur": 100 },
+                { "name": "despawn_4", "dur": 100 }
             ]
         }
     }
