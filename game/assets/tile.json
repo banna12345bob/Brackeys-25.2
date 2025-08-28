@@ -1,0 +1,88 @@
+{
+    "tilesheet": "assets/textures/dungeon_tiles.png",
+    "tileSize": { "x": 16, "y": 16 },
+    "numTiles": { "x": 4 , "y": 3 },
+    "tiles": {
+        "wallTopLeft": {
+            "texCoords": { "x": 0, "y": 0 },
+            "validNeighbours": { 
+                "north": [],
+                "south": ["wallLeft"],
+                "east": ["wallTop"],
+                "west": []
+            }
+        },
+        "wallTopRight": {
+            "texCoords": { "x": 2, "y": 0 },
+            "validNeighbours": { 
+                "north": [],
+                "south": ["wallRight"],
+                "east": [],
+                "west": ["wallTop"]
+            }
+        },
+        "wallTop": {
+            "texCoords": { "x": 3, "y": 2 },
+            "validNeighbours": { 
+                "north": [],
+                "south": ["wall"],
+                "east": ["wallTopRight"],
+                "west": ["wallTopLeft"]
+            }
+        },
+        "wallLeft": {
+            "texCoords": { "x": 0, "y": 1 },
+            "validNeighbours": { 
+                "north": ["wallTopLeft"],
+                "south": ["wallLeft"],
+                "east": ["wall", "floor"],
+                "west": []
+            }
+        },
+        "wallRight": {
+            "texCoords": { "x": 2, "y": 1 },
+            "validNeighbours": { 
+                "north": ["wallTopRight"],
+                "south": ["wallRight"],
+                "east": [],
+                "west": ["wall", "floor"]
+            }
+        },
+        "wallBottomLeft": {
+            "texCoords": { "x": 0, "y": 2 },
+            "validNeighbours": { 
+                "north": [],
+                "south": ["wall"],
+                "east": ["floor"],
+                "west": ["wallTop"]
+            }
+        },
+        "wallBottomRight": {
+            "texCoords": { "x": 2, "y": 2 },
+            "validNeighbours": { 
+                "north": [],
+                "south": ["wall"],
+                "east": ["wallTop"],
+                "west": ["floor"]
+            }
+        },
+        "wall": {
+            "texCoords": { "x": 1, "y": 1 },
+            "validNeighbours": { 
+                "north": ["wallTop", "wallBottomLeft", "wallBottomRight"],
+                "south": ["floor"],
+                "east": ["wallRight"],
+                "west": ["wallLeft"]
+            }
+        },
+        "floor": {
+            "texCoords": { "x": 0, "y": 0},
+            "validNeighbours": { 
+                "north": ["floor", "wall"],
+                "south": ["floor"],
+                "east": ["floor", "wallRight"],
+                "west": ["floor", "wallLeft"]
+            }
+        }
+    }
+}

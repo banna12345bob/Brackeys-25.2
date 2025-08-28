@@ -1,0 +1,99 @@
+{
+    "player": {
+        "image": "assets/textures/player.png",
+        "tileSize": { "x": 16, "y": 16 },
+        "numTiles": { "x": 4, "y": 4 },
+        "tiles": {
+            "fwd_0": { "x": 0, "y": 0 },
+            "fwd_1": { "x": 1, "y": 0 },
+            "left_0": { "x": 2, "y": 0 },
+            "left_1": { "x": 3, "y": 0 },
+            "back_0": { "x": 0, "y": 1 },
+            "back_1": { "x": 1, "y": 1 },
+            "hurt": { "x": 2, "y": 1 },
+            "dead": { "x": 3, "y": 1 },
+            "dash_0": { "x": 0, "y": 2 },
+            "dash_1": { "x": 3, "y": 0 },
+            "dash_2": { "x": 1, "y": 2 },
+            "dash_3": { "x": 2, "y": 2 },
+            "dash_4": { "x": 3, "y": 2 },
+            "dash_5": { "x": 0, "y": 3 },
+            "dash_6": { "x": 1, "y": 3 },
+            "dash_7": { "x": 2, "y": 3 },
+            "dash_8": { "x": 1, "y": 3 }
+        },
+        "anims": {
+            "idle": [{ "name": "fwd_0", "dur": 100 }],
+            "fwd": [ {"name": "fwd_0", "dur": 200 }, { "name": "fwd_1", "dur": 200 } ],
+            "left": [ { "name": "left_0", "dur": 200 }, { "name": "left_1", "dur": 200 } ],
+            "back": [ { "name": "back_0", "dur": 200 }, { "name": "back_1", "dur": 200 } ],
+            "hurt": [ { "name": "hurt_0", "dur": 100 } ],
+            "dead": [ { "name": "dead", "dur": 100 } ],
+            "dash": [
+                { "name": "dash_0", "dur": 100 },
+                { "name": "dash_1", "dur": 100 },
+                { "name": "dash_2", "dur": 100 },
+                { "name": "dash_3", "dur": 100 },
+                { "name": "dash_4", "dur": 100 },
+                { "name": "dash_5", "dur": 100 },
+                { "name": "dash_6", "dur": 100 },
+                { "name": "dash_7", "dur": 100 },
+                { "name": "dash_8", "dur": 100 }
+            ]
+        }
+    },
+    "reaper": {
+        "image": "assets/textures/reaper.png",
+        "tileSize": { "x": 96, "y": 80 },
+        "numTiles": { "x": 4, "y": 4 },
+        "topLeft": { "x": 0, "y": 16 },
+        "tiles": {
+            "atk_0": { "x": 0, "y": 0 },
+            "atk_1": { "x": 1, "y": 0 },
+            "atk_2": { "x": 2, "y": 0 },
+            "atk_3": { "x": 3, "y": 0 },
+            "atk_4": { "x": 4, "y": 0 },
+            "spawn_0": { "x": 0, "y": 1 },
+            "spawn_1": { "x": 1, "y": 1 },
+            "spawn_2": { "x": 2, "y": 1 },
+            "spawn_3": { "x": 3, "y": 1 },
+            "spawn_4": { "x": 4, "y": 1 },
+            "spawn_5": { "x": 5, "y": 1 },
+            "spawn_6": { "x": 6, "y": 1 },
+            "despawn_0": { "x": 6, "y": 1 },
+            "despawn_1": { "x": 5, "y": 1 },
+            "despawn_2": { "x": 4, "y": 1 },
+            "despawn_3": { "x": 3, "y": 1 },
+            "despawn_4": { "x": 2, "y": 1 },
+            "despawn_5": { "x": 1, "y": 1 },
+            "despawn_6": { "x": 0, "y": 1 }
+        },
+        "anims": {
+            "atk": [
+                { "name": "atk_0", "dur": 100 },
+                { "name": "atk_1", "dur": 100 },
+                { "name": "atk_2", "dur": 100 },
+                { "name": "atk_3", "dur": 100 },
+                { "name": "atk_4", "dur": 100 }
+            ],
+            "spawn": [
+                { "name": "spawn_0", "dur": 100 },
+                { "name": "spawn_1", "dur": 100 },
+                { "name": "spawn_2", "dur": 100 },
+                { "name": "spawn_3", "dur": 100 },
+                { "name": "spawn_4", "dur": 100 },
+                { "name": "spawn_5", "dur": 100 },
+                { "name": "spawn_6", "dur": 100 }
+            ],
+            "despawn": [
+                { "name": "despawn_0", "dur": 100 },
+                { "name": "despawn_1", "dur": 100 },
+                { "name": "despawn_2", "dur": 100 },
+                { "name": "despawn_3", "dur": 100 },
+                { "name": "despawn_4", "dur": 100 },
+                { "name": "despawn_5", "dur": 100 },
+                { "name": "despawn_6", "dur": 100 }
+            ]
+        }
+    }
+}
