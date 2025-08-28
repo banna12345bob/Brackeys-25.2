@@ -9,40 +9,51 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "entities/Bullet.h"
+#include "environment/Room.h"
+
 
 GameLayer::GameLayer()
-	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight())
+	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
+	m_WFC("assets/WFC/kenny.json", {5, 5})
 {
 }
 
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
+
+	m_WFC.CreateMap();
 	
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
-	Engine::Entity* Checkboard = new Engine::Entity("Checkboard");
+	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", *m_Scene);
 	Checkboard->GetTransform()->position = { 0.f, 0.f, -0.5f };
 	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
-	m_Scene->AddEntity(Checkboard);
+	//m_Scene->AddEntity(Checkboard);
 
-	m_Player = new Player();
+	m_Player = new Player(*m_Scene);
 	m_Player->GetSpriteRenderer()->texture = arrowTexture;
 	m_Scene->AddEntity(m_Player);
 
 	Bullet* bullet = new Bullet(*m_Scene, "test1");
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.f };
-	m_Scene->AddEntity(bullet);
+	//m_Scene->AddEntity(bullet);
 
 	//bullet = new Bullet(*m_Scene, "test2");
 	//bullet->GetTransform()->position = { 100.f, 80.f, 0.f };
 	//m_Scene->AddEntity(bullet);
 
-	Enemy* enemy = new Enemy(m_Player);
+	Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
-	m_Scene->AddEntity(enemy);
+	//m_Scene->AddEntity(enemy);
+
+	
+	for (int i = 0; i < 10; i++) {
+		Engine::BoundingBox box = Engine::BoundingBox(i * 32, 32, 32, 32);
+		m_Scene->AddCollisionBox(box);
+	}
 
 	m_CameraController.SetZoomLevel(128);
 }
@@ -70,11 +81,13 @@ void GameLayer::OnRender()
 	Engine::RenderCommand::Clear();
 
 	m_Scene->RenderScene(&m_CameraController.GetCamera());
+	m_WFC.Render(&m_CameraController.GetCamera());
 }
 
 void GameLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
+	m_WFC.OnImGuiRender();
 	if (!m_ShowImGuiWindow)
 		return;
 
@@ -123,6 +136,9 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0) {
 		m_Scene->GetEntity("Player")->GetVelocity()->velocity *= 15.f;
 		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_F5 && e.GetRepeatCount() == 0) {
+		m_WFC.Colapse(m_WFC.FindSmallestDomain());
 	}
 	return false;
 }

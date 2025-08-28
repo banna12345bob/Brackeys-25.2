@@ -1,8 +1,8 @@
 #include "Enemy.h"
 #include "Player.h"
 
-Enemy::Enemy(Player* player)
-	: Engine::Entity("Enemy"),
+Enemy::Enemy(std::string name, Engine::Scene& scene, Player& player)
+	: Engine::Entity(name, scene),
 	m_health(10),
 	m_acceleration(700),
 	m_maxSpeed(80),
@@ -14,7 +14,7 @@ Enemy::Enemy(Player* player)
 }
 
 void Enemy::OnUpdate(Engine::Timestep ts) {
-	glm::vec2 offset = { GetTransform()->position.x - m_player->GetTransform()->position.x, GetTransform()->position.y - m_player->GetTransform()->position.y};
+	glm::vec2 offset = { GetTransform()->position.x - m_player.GetTransform()->position.x, GetTransform()->position.y - m_player.GetTransform()->position.y};
 	float lenSqrd = glm::dot(offset, offset);	// Length squared
 
 	glm::vec2 dir = { 0,0 };

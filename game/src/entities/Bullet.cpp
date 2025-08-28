@@ -5,7 +5,7 @@
 #include <algorithm>
 
 Bullet::Bullet(Engine::Scene& scene, std::string name) 
-	: Engine::Entity(name), m_Scene(scene)
+	: Engine::Entity(name, scene)
 {
 	GetTransform()->scale = { 16.f, 16.f };
 	GetSpriteRenderer()->colour = { 1, 0, 0, 1 };

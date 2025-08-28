@@ -1,0 +1,312 @@
+{
+    "tileSheet":"assets/textures/kenny/kenny_tiny_town.png",
+    "tileSize":{"x":16,"y":16},
+    "numTiles":{"x":12,"y":11},
+    "tiles": {
+        "planeGrass": {
+            "texCoords":{"x":0,"y":10},
+            "validNeighbours": {
+                "north":[
+                "planeGrass",
+                "grass",
+                "dirtSouthWest",
+                "dirtSouth",
+                "dirtSouthEast"
+                ],
+                "east":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtWest",
+                "dirtSouthWest"
+                ],
+                "south":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtNorth",
+                "dirtNorthEast"
+                ],
+                "west":[
+                "planeGrass",
+                "grass",
+                "dirtSouthEast",
+                "dirtEast",
+                "dirtNorthEast"
+                ]
+            }
+        },
+        "grass": {
+            "texCoords":{"x":1,"y":10},
+            "validNeighbours":{
+                "north":[
+                "planeGrass",
+                "grass",
+                "dirtSouthWest",
+                "dirtSouth",
+                "dirtSouthEast"
+                ],
+                "east":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtWest",
+                "dirtSouthWest"
+                ],
+                "south":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtNorth",
+                "dirtNorthEast"
+                ],
+                "west":[
+                "planeGrass",
+                "grass",
+                "dirtSouthEast",
+                "dirtEast",
+                "dirtNorthEast"
+                ]
+            }
+        },
+        "dirtNorthWest": {
+            "texCoords":{"x":0,"y":9},
+            "validNeighbours": {
+                "north":[
+                "planeGrass",
+                "grass",
+                "dirtSouthWest",
+                "dirtSouth",
+                "dirtSouthEast"
+                ],
+                "east":["dirtNorth", "dirtNorthEast"],
+                "south":["dirtWest","dirtSouthWest"],
+                "west":[
+                "planeGrass",
+                "grass",
+                "dirtSouthEast",
+                "dirtEast",
+                "dirtNorthEast"
+                ]
+            }
+        },
+        "dirtWest": {
+            "texCoords":{"x":0,"y":8},
+            "validNeighbours":{
+                "north":["dirtNorthWest", "dirtWest"],
+                "east":[
+                "dirtMiddle",
+                "dirtMiddle1",
+                "dirtMiddle2",
+                "dirtMiddle3",
+                "dirtMiddle4",
+                "dirtMiddle5",
+                "dirtEast"],
+                "south":["dirtWest","dirtSouthWest"],
+                "west":[
+                "planeGrass",
+                "grass",
+                "dirtSouthEast",
+                "dirtEast",
+                "dirtNorthEast"
+                ]
+            }
+        },
+        "dirtSouthWest": {
+            "texCoords":{"x":0,"y":7},
+            "validNeighbours":{
+                "north":["dirtNorthWest","dirtWest"],
+                "east":["dirtSouth", "dirtSouthEast"],
+                "south":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtNorth",
+                "dirtNorthEast"
+                ],
+                "west":[
+                "planeGrass",
+                "grass",
+                "dirtSouthEast",
+                "dirtEast",
+                "dirtNorthEast"
+                ]
+            }
+        },
+        "dirtNorth": {
+            "texCoords":{"x":1,"y":9},
+            "validNeighbours":{
+                "north":[
+                "planeGrass",
+                "grass",
+                "dirtSouthWest",
+                "dirtSouth",
+                "dirtSouthEast"
+                ],
+                "east":["dirtNorth", "dirtNorthEast"],
+                "south":[
+                "dirtMiddle",
+                "dirtMiddle1",
+                "dirtMiddle2",
+                "dirtMiddle3",
+                "dirtMiddle4",
+                "dirtMiddle5",
+                "dirtSouth"],
+                "west":["dirtNorth", "dirtNorthWest"]
+            }
+        },
+        "dirtSouth": {
+            "texCoords":{"x":1,"y":7},
+            "validNeighbours":{
+                "north":[
+                "dirtMiddle",
+                "dirtMiddle1",
+                "dirtMiddle2",
+                "dirtMiddle3",
+                "dirtMiddle4",
+                "dirtMiddle5",
+                "dirtNorth"],
+                "east":["dirtSouthEast", "dirtSouth"],
+                "south":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtNorth",
+                "dirtNorthEast"
+                ],
+                "west":["dirtSouthWest", "dirtSouth"]
+            }
+        },
+        "dirtSouthEast": {
+            "texCoords":{"x":2,"y":7},
+            "validNeighbours":{
+                "north":["dirtEast","dirtNorthEast"],
+                "east":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtWest",
+                "dirtSouthWest"
+                ],
+                "south":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtNorth",
+                "dirtNorthEast"
+                ],
+                "west":["dirtSouth","dirtSouthWest"]
+            }
+        },
+        "dirtEast": {
+            "texCoords":{"x":2,"y":8},
+            "validNeighbours":{
+                "north":["dirtEast", "dirtNorthEast"],
+                "east":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtWest",
+                "dirtSouthWest"
+                ],
+                "south":["dirtSouthEast","dirtEast"],
+                "west":[
+                "dirtMiddle",
+                "dirtMiddle1",
+                "dirtMiddle2",
+                "dirtMiddle3",
+                "dirtMiddle4",
+                "dirtMiddle5",
+                "dirtWest"]
+            }
+        },
+        "dirtNorthEast": {
+            "texCoords":{"x":2,"y":9},
+            "validNeighbours":{
+                "north":["grass","planeGrass","dirtSouthWest","dirtSouth","dirtSouthEast"],
+                "east":[
+                "planeGrass",
+                "grass",
+                "dirtNorthWest",
+                "dirtWest",
+                "dirtSouthWest"
+                ],
+                "south":["dirtSouthEast","dirtEast"],
+                "west":["dirtNorth","dirtWest"]
+            }
+        },
+        "dirtMiddle": {
+            "texCoords":{"x":1,"y":8},
+            "validNeighbours":{
+                "north":[
+                "dirtMiddle",
+                "dirtMiddle1",
+                "dirtMiddle2",
+                "dirtMiddle3",
+                "dirtMiddle4",
+                "dirtMiddle5",
+                "dirtNorth"],
+                "east":[
+                "dirtMiddle",
+                "dirtMiddle1",
+                "dirtMiddle2",
+                "dirtMiddle3",
+                "dirtMiddle4",
+                "dirtMiddle5",
+                "dirtEast"],
+                "south":[
+                "dirtMiddle",
+                "dirtMiddle1",
+                "dirtMiddle2",
+                "dirtMiddle3",
+                "dirtMiddle4",
+                "dirtMiddle5",
+                "dirtSouth"],
+                "west":[
+                "dirtMiddle",
+                "dirtMiddle1",
+                "dirtMiddle2",
+                "dirtMiddle3",
+                "dirtMiddle4",
+                "dirtMiddle5",
+                "dirtWest"]
+            }
+        },
+        "dirtMiddle1": {
+            "texCoords":{"x":3,"y":7},
+            "validNeighbours":{
+                "north":["dirtMiddle", "dirtNorth"],
+                "east":["dirtMiddle", "dirtEast"],
+                "south":["dirtMiddle", "dirtSouth"],
+                "west":["dirtMiddle", "dirtWest"]
+            }
+        },
+        "dirtMiddle2": {
+            "texCoords":{"x":4,"y":7},
+            "validNeighbours":{
+                "north":["dirtMiddle", "dirtNorth"],
+                "east":["dirtMiddle", "dirtEast"],
+                "south":["dirtMiddle", "dirtSouth"],
+                "west":["dirtMiddle", "dirtWest"]
+            }
+        },
+        "dirtMiddle3": {
+            "texCoords":{"x":5,"y":7},
+            "validNeighbours":{
+                "north":["dirtMiddle", "dirtNorth"],
+                "east":["dirtMiddle", "dirtEast"],
+                "south":["dirtMiddle", "dirtSouth"],
+                "west":["dirtMiddle", "dirtWest"]
+            }
+        },
+        "dirtMiddle4": {
+            "texCoords":{"x":6,"y":7},
+            "validNeighbours":{
+                "north":["dirtMiddle", "dirtNorth"],
+                "east":["dirtMiddle", "dirtEast"],
+                "south":["dirtMiddle", "dirtSouth"],
+                "west":["dirtMiddle", "dirtWest"]
+            }
+        }
+    }
+}
