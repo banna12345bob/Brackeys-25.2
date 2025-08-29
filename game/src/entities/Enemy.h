@@ -7,7 +7,7 @@ class Player;
 class Enemy : public Engine::Entity
 {
 public:
-	Enemy(Player* player);
+	Enemy(std::string name, Engine::Scene& scene, Player& player);
 	void OnUpdate(Engine::Timestep ts) override;
 	void OnRender() override;
 
@@ -18,6 +18,6 @@ private:
 	int m_attackRange;
 	int m_attackRangeSqrd;
 
-	Player* m_player;
+	Player& m_player;
 };
 

@@ -5,7 +5,7 @@
 class Player : public Engine::Entity
 {
 public:
-	Player();
+	Player(Engine::Scene& scene);
 	void OnUpdate(Engine::Timestep ts) override;
 	void OnRender() override;
 
@@ -16,6 +16,6 @@ private:
 	float m_deceleration;
 	float m_maxSpeed;
 
-	
+	bool m_dashing;
 };
 

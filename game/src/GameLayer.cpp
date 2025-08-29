@@ -9,6 +9,8 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "entities/Bullet.h"
+#include "environment/Room.h"
+
 
 GameLayer::GameLayer()
 	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
@@ -25,27 +27,33 @@ void GameLayer::OnAttach()
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
-	Engine::Entity* Checkboard = new Engine::Entity("Checkboard");
+	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", *m_Scene);
 	Checkboard->GetTransform()->position = { 0.f, 0.f, -0.5f };
 	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
-	m_Scene->AddEntity(Checkboard);
+	//m_Scene->AddEntity(Checkboard);
 
-	m_Player = new Player();
+	m_Player = new Player(*m_Scene);
 	m_Player->GetSpriteRenderer()->texture = arrowTexture;
 	m_Scene->AddEntity(m_Player);
 
 	Bullet* bullet = new Bullet(*m_Scene, "test1");
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.f };
-	m_Scene->AddEntity(bullet);
+	//m_Scene->AddEntity(bullet);
 
 	//bullet = new Bullet(*m_Scene, "test2");
 	//bullet->GetTransform()->position = { 100.f, 80.f, 0.f };
 	//m_Scene->AddEntity(bullet);
 
-	Enemy* enemy = new Enemy(m_Player);
+	Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
-	m_Scene->AddEntity(enemy);
+	//m_Scene->AddEntity(enemy);
+
+	
+	for (int i = 0; i < 10; i++) {
+		Engine::BoundingBox box = Engine::BoundingBox(i * 32, 32, 32, 32);
+		m_Scene->AddCollisionBox(box);
+	}
 
 	m_CameraController.SetZoomLevel(128);
 }

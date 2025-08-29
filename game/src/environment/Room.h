@@ -29,14 +29,14 @@ public:
 	std::vector<Engine::BoundingBox> GetBoundingBoxes();
 	void OnRender();
 
-	static inline Room* GenerateRoom(glm::vec2 position, Side entranceSide, Type type);
-	static inline Room* GenerateHallway(Side entranceSide);
-	static inline std::vector<Engine::BoundingBox> GetWallBoxes(int roomWidth, int roomHeight, bool hasGap, Side side);
+	static Room* GenerateRoom(glm::vec2 position, Side entranceSide, Type type);
+	static Room* GenerateHallway(Side entranceSide);
+	static std::vector<Engine::BoundingBox> GenerateWallBoxes(int roomWidth, int roomHeight, bool hasGap, Side side);
 
 private:
-	Type m_type;
 	int m_width, m_height;
 	std::vector<Engine::BoundingBox> m_wallBoxes;
-	std::vector<Engine::BoundingBox> m_entrances;
+	Side m_entrance, m_exit;
+	Type m_type;
 };
 

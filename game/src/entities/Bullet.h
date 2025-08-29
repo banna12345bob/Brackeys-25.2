@@ -12,6 +12,5 @@ private:
 	bool OverLappingWithEntity(Engine::Entity* entity);
 
 private:
-	Engine::Scene& m_Scene;
 };
 
