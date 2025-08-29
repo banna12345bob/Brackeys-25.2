@@ -14,7 +14,7 @@
 
 GameLayer::GameLayer()
 	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
-	m_WFC("assets/WFC/kenny.json", {25, 25})
+	m_WFC("assets/WFC/kenny.json", { 10, 10 }, { 0, 0, 0 }, { 2, 2 })
 {
 }
 
