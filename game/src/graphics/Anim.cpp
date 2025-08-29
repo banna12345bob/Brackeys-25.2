@@ -94,15 +94,16 @@ Engine::Ref<Engine::Texture2D> Animator::Get() {
 	
 	float timePassed = 0.0f;
 	for (int i = 0; i < anim->frames.size(); ++i) {
+		timePassed += anim->frames[i].duration;
+
 		if (timePassed >= this->progress) {
 			return anim->frames[i].frameTexture;
 		}
-
-		timePassed += anim->frames[i].duration;
 	}
 
 	if(anim->loop)
 		progress = 0.f;
+
 	// Return last if finished
 	int last = anim->frames.size() - 1;
 	return anim->frames[last].frameTexture;
