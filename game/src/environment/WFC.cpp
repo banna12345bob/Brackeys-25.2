@@ -19,13 +19,13 @@ WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridS
 
 WaveFunctionCollapse::~WaveFunctionCollapse()
 {
-	m_Map = std::vector<MapTile>();
+	m_Map = std::vector<MapTile>(m_MapWidth * m_MapHeight, MapTile());
 	m_Tiles = std::unordered_map<std::string, Tile>();
 }
 
 void WaveFunctionCollapse::OnImGuiRender()
 {
-	return;
+	//return;
 	ImGui::Begin("WFC");
 	for (int index = 0; index < m_Map.size(); index++)
 	{
@@ -75,10 +75,10 @@ void WaveFunctionCollapse::CreateMap()
 	//}
 	{
 		EG_PROFILE_SCOPE("Colapse loop");
-		while (FindSmallestDomain() != -1)
-		{
-			Colapse(FindSmallestDomain());
-		}
+		//while (FindSmallestDomain() != -1)
+		//{
+		//	Colapse(FindSmallestDomain());
+		//}
 	}
 }
 
@@ -100,8 +100,6 @@ void WaveFunctionCollapse::Colapse(int index)
 {
 	EG_PROFILE_FUNCTION();
 	if (index == -1)
-		return;
-	if (m_Map[index].texture)
 		return;
 
 	if (m_Map[index].domain.size() == 0) {
@@ -161,7 +159,7 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 int WaveFunctionCollapse::FindSmallestDomain()
 {
 	EG_PROFILE_FUNCTION();
-	int minIndex = 0;
+	int minIndex = -1;
 	int min = std::accumulate(m_NumDomain.begin(), m_NumDomain.end(),
 		m_NumDomain[0], [](int a, int b) {
 			if (a < 1 || b < 1)
@@ -173,8 +171,8 @@ int WaveFunctionCollapse::FindSmallestDomain()
 			if (b >= 1)
 				return a;
 		});
-
-	minIndex = std::find(m_NumDomain.begin(), m_NumDomain.end(), min) - m_NumDomain.begin();
+	if (min != 1)
+		minIndex = std::find(m_NumDomain.begin(), m_NumDomain.end(), min) - m_NumDomain.begin();
 
 	return minIndex;
 }
