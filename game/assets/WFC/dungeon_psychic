@@ -1,10 +1,10 @@
 {
-    "tileSheet": "assets/textures/dungeon_tiles.png",
+    "tileSheet": "assets/textures/dungeon_psychic.png",
     "tileSize": { "x": 16, "y": 16 },
-    "numTiles": { "x": 4 , "y": 3 },
+    "numTiles": { "x": 3 , "y": 3 },
     "tiles": {
         "wallTopLeft": {
-            "texCoords": { "x": 0, "y": 0 },
+            "texCoords": { "x": 0, "y": 2 },
             "validNeighbours": { 
                 "north": [],
                 "south": ["wallLeft"],
@@ -13,7 +13,7 @@
             }
         },
         "wallTopRight": {
-            "texCoords": { "x": 2, "y": 0 },
+            "texCoords": { "x": 2, "y": 2 },
             "validNeighbours": { 
                 "north": [],
                 "south": ["wallRight"],
@@ -22,7 +22,7 @@
             }
         },
         "wallTop": {
-            "texCoords": { "x": 3, "y": 2 },
+            "texCoords": { "x": 1, "y": 2 },
             "validNeighbours": { 
                 "north": [],
                 "south": ["wall"],
@@ -49,7 +49,7 @@
             }
         },
         "wallBottomLeft": {
-            "texCoords": { "x": 0, "y": 2 },
+            "texCoords": { "x": 0, "y": 0 },
             "validNeighbours": { 
                 "north": [],
                 "south": ["wall"],
@@ -58,7 +58,7 @@
             }
         },
         "wallBottomRight": {
-            "texCoords": { "x": 2, "y": 2 },
+            "texCoords": { "x": 2, "y": 0 },
             "validNeighbours": { 
                 "north": [],
                 "south": ["wall"],
@@ -76,7 +76,7 @@
             }
         },
         "floor": {
-            "texCoords": { "x": 0, "y": 0},
+            "texCoords": { "x": 1, "y": 0},
             "validNeighbours": { 
                 "north": ["floor", "wall"],
                 "south": ["floor"],
