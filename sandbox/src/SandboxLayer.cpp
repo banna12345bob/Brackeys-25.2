@@ -26,7 +26,7 @@ void SandboxLayer::OnAttach()
 	m_Animation[1] = Engine::Texture2D::Create("assets/textures/tile2.png");
 	m_Animation[2] = Engine::Texture2D::Create("assets/textures/tile3.png");
 
-	Engine::Entity* ArrowAnimation = new Engine::Entity("Arrow");
+	Engine::Entity* ArrowAnimation = new Engine::Entity("Arrow", *m_Scene);
 	ArrowAnimation->GetTransform()->position = { 0.f, 0.f, 0.5f };
 	m_Scene->AddEntity(ArrowAnimation);
 
@@ -35,7 +35,7 @@ void SandboxLayer::OnAttach()
 	{
 		for (float y = 2; y > -2.f; y -= 0.15f)
 		{
-			Engine::Entity* box = new Engine::Entity("Box"+std::to_string(x)+ std::to_string(y));
+			Engine::Entity* box = new Engine::Entity("Box"+std::to_string(x)+ std::to_string(y), *m_Scene);
 			box->GetTransform()->position = { x, y, 0 };
 			box->GetTransform()->scale = { .1f, .1f };
 			box->GetSpriteRenderer()->colour = { 0, 1, 1, 1 };
