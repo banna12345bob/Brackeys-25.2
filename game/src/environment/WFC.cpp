@@ -31,12 +31,17 @@ void WaveFunctionCollapse::OnImGuiRender()
 	{
 		if (ImGui::TreeNode((std::to_string(index / m_MapWidth) + ", " + std::to_string(index % m_MapHeight) + ": " + std::to_string(m_Map[index].domain.size())).c_str()))
 		{
-			std::string domains = "";
-			for (auto& domain : m_Map[index].domain)
+			for (auto domain : m_Map[index].domain)
 			{
-				domains += domain + ", ";
+				if (ImGui::Button(domain.c_str()))
+				{
+					m_Map[index] = MapTile(m_Tiles[domain]);
+					m_Map[index].domain.push_back(domain);
+					m_NumDomain[index] = 1;
+					Colapse(index);
+					break;
+				}
 			}
-			ImGui::Text(domains.c_str());
 			ImGui::TreePop();
 		}
 	}
@@ -75,7 +80,7 @@ void WaveFunctionCollapse::CreateMap()
 	//}
 	{
 		EG_PROFILE_SCOPE("Colapse loop");
-		//while (FindSmallestDomain() != -1)
+		//while (FindSmallestDomain() > -1)
 		//{
 		//	Colapse(FindSmallestDomain());
 		//}
@@ -88,8 +93,8 @@ void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
 	Engine::Renderer2D::BeginScene(&camera->GetCamera());
 	for (int i = 0; i < m_Map.size(); i++)
 	{
-		if (m_Map[i].texture)
-			Engine::Renderer2D::DrawQuad({ i / m_MapWidth * m_WFCData["tileSize"]["x"], i % m_MapHeight * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, m_Map[i].texture);
+		if (m_Map[i].domain.size() == 1)
+			Engine::Renderer2D::DrawQuad({ i / m_MapWidth * m_WFCData["tileSize"]["x"], i % m_MapHeight * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, m_Tiles[m_Map[i].domain[0]].texture);
 		else
 			Engine::Renderer2D::DrawQuad({ i / m_MapWidth * m_WFCData["tileSize"]["x"], i % m_MapHeight * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, { 1, 0, 1, 1 });
 	}
@@ -162,18 +167,21 @@ int WaveFunctionCollapse::FindSmallestDomain()
 	int minIndex = -1;
 	int min = std::accumulate(m_NumDomain.begin(), m_NumDomain.end(),
 		m_NumDomain[0], [](int a, int b) {
-			if (a < 1 || b < 1)
-				return 0;
-			if (a > 1 && b > 1)
-				return std::min(a, b);
-			if (a >= 1)
-				return b;
-			if (b >= 1)
-				return a;
+			if (a <= 1 || b <= 1)
+				return std::max(a, b);
+			return std::min(a, b);
 		});
-	if (min != 1)
-		minIndex = std::find(m_NumDomain.begin(), m_NumDomain.end(), min) - m_NumDomain.begin();
 
+	minIndex = std::find(m_NumDomain.begin(), m_NumDomain.end(), min) - m_NumDomain.begin();
+	while (m_Map[minIndex].domain.size() == 1)
+	{
+		minIndex++;
+		if (minIndex == m_NumDomain.size()-2)
+		{
+			minIndex = -1;
+			break;
+		}
+	}
 	return minIndex;
 }
 

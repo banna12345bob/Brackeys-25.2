@@ -14,7 +14,7 @@
 
 GameLayer::GameLayer()
 	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
-	m_WFC("assets/WFC/kenny.json", {5, 5})
+	m_WFC("assets/WFC/kenny.json", {10, 10})
 {
 }
 
@@ -52,7 +52,7 @@ void GameLayer::OnAttach()
 	
 	for (int i = 0; i < 10; i++) {
 		Engine::BoundingBox box = Engine::BoundingBox(i * 32, 32, 32, 32);
-		m_Scene->AddCollisionBox(box);
+		//m_Scene->AddCollisionBox(box);
 	}
 
 	m_CameraController.SetZoomLevel(128);
