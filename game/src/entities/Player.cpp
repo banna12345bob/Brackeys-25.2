@@ -18,16 +18,16 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	bool hitWall = false;
 	if (Engine::Input::IsKeyPressed(EG_KEY_D)) {
 		direction.x = 1;
-		if (GetTransform()->position.x > 128) {
-			direction.x = 0;
-			hitWall = true;
-		}
+		//if (GetTransform()->position.x > 128) {
+		//	direction.x = 0;
+		//	hitWall = true;
+		//}
 	} else if (Engine::Input::IsKeyPressed(EG_KEY_A)) {
 		direction.x = -1;
-		if (GetTransform()->position.x < -128) {
-			direction.x = 0;
-			hitWall = true;
-		}
+		//if (GetTransform()->position.x < -128) {
+		//	direction.x = 0;
+		//	hitWall = true;
+		//}
 	}
 	if ((Engine::Input::IsKeyPressed(EG_KEY_D) && GetVelocity()->velocity.x < 0) || (Engine::Input::IsKeyPressed(EG_KEY_A) && GetVelocity()->velocity.x > 0)) {
 		GetVelocity()->velocity.x = 0;
@@ -35,16 +35,16 @@ void Player::OnUpdate(Engine::Timestep ts) {
 
 	if (Engine::Input::IsKeyPressed(EG_KEY_S) && -128 < GetTransform()->position.y < 128) {
 		direction.y = -1;
-		if (GetTransform()->position.y < -128) {
-			direction.y = 0;
-			hitWall = true;
-		}
+		//if (GetTransform()->position.y < -128) {
+		//	direction.y = 0;
+		//	hitWall = true;
+		//}
 	} else if (Engine::Input::IsKeyPressed(EG_KEY_W) && -128 < GetTransform()->position.y < 128) {
 		direction.y = 1;
-		if (GetTransform()->position.y > 128) {
-			direction.y = 0;
-			hitWall = true;
-		}
+		//if (GetTransform()->position.y > 128) {
+		//	direction.y = 0;
+		//	hitWall = true;
+		//}
 	}
 	//if ((Engine::Input::IsKeyPressed(EG_KEY_W) && GetVelocity()->velocity.y < 0) || (Engine::Input::IsKeyPressed(EG_KEY_S) && GetVelocity()->velocity.y > 0)) {
 	//	GetVelocity()->velocity.y = 0;

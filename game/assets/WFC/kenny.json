@@ -1,5 +1,5 @@
 {
-    "tilesheet":"assets/textures/kenny/kenny_tiny_town.png",
+    "tileSheet":"assets/textures/kenny/kenny_tiny_town.png",
     "tileSize":{"x":16,"y":16},
     "numTiles":{"x":12,"y":11},
     "tiles": {

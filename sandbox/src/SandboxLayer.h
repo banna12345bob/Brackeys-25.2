@@ -1,7 +1,6 @@
 #pragma once
 
 #include <engine.h>
-#include "WFC.h"
 
 class SandboxLayer : public Engine::Layer
 {
@@ -28,8 +27,6 @@ private:
 	Engine::Ref<Engine::Texture2D> m_Animation[3];
 
 	Engine::Scene* m_Scene;
-
-	WaveFunctionCollapse m_WFC;
 
 	float m_CurrentFrame = 0;
 

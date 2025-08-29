@@ -11,13 +11,16 @@
 #include "entities/Bullet.h"
 
 GameLayer::GameLayer()
-	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight())
+	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
+	m_WFC("assets/WFC/kenny.json", {5, 5})
 {
 }
 
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
+
+	m_WFC.CreateMap();
 	
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
@@ -70,11 +73,13 @@ void GameLayer::OnRender()
 	Engine::RenderCommand::Clear();
 
 	m_Scene->RenderScene(&m_CameraController.GetCamera());
+	m_WFC.Render(&m_CameraController.GetCamera());
 }
 
 void GameLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
+	m_WFC.OnImGuiRender();
 	if (!m_ShowImGuiWindow)
 		return;
 
@@ -123,6 +128,9 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0) {
 		m_Scene->GetEntity("Player")->GetVelocity()->velocity *= 15.f;
 		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_F5 && e.GetRepeatCount() == 0) {
+		m_WFC.Colapse(m_WFC.FindSmallestDomain());
 	}
 	return false;
 }

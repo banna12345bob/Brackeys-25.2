@@ -1,11 +1,12 @@
 #include "WFC.h"
 
-#include <time.h>
+#include <iostream>
 #include <random>
 
 #include <imgui/imgui.h>
 
-WaveFunctionCollapse::WaveFunctionCollapse(std::string filename)
+WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridSize)
+	: m_MapWidth(gridSize.x), m_MapHeight(gridSize.y)
 {
 	EG_PROFILE_FUNCTION();
 	m_Offsets[north] = { 0, 1 };
@@ -24,7 +25,7 @@ WaveFunctionCollapse::~WaveFunctionCollapse()
 
 void WaveFunctionCollapse::OnImGuiRender()
 {
-	return;
+	//return;
 	ImGui::Begin("WFC");
 	for (int index = 0; index < m_Map.size(); index++)
 	{
@@ -72,8 +73,11 @@ void WaveFunctionCollapse::CreateMap()
 	//	}
 	//}
 
-	CalcuateDomain();
-	Colapse(FindSmallestDomain());
+	CalcuateDomain(0);
+	while (FindSmallestDomain() != -1)
+	{
+		Colapse(FindSmallestDomain());
+	}
 }
 
 void WaveFunctionCollapse::Render(Engine::Camera* camera)
@@ -110,40 +114,38 @@ void WaveFunctionCollapse::Colapse(int index)
 	m_Map[index] = MapTile(m_Tiles[node]);
 	m_Map[index].domain.push_back(node);
 
-	CalcuateDomain();
-
-	Colapse(FindSmallestDomain());
-	return;
+	for (int i = 0; i < m_Map.size(); i++)
+	{
+		CalcuateDomain(i);
+	}
+	EG_TRACE("{0}, {1}", index, node);
 }	
 
-void WaveFunctionCollapse::CalcuateDomain()
+void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 {
 	EG_PROFILE_FUNCTION();
-	for (int mapIndex = 0; mapIndex < m_Map.size(); mapIndex++)
+	for (auto it = m_Offsets.begin(); it != m_Offsets.end(); it++)
 	{
-		for (auto it = m_Offsets.begin(); it != m_Offsets.end(); it++)
+		std::vector<std::string> newDomain;
+		glm::vec2 offset = { std::round(mapIndex / m_MapWidth), mapIndex % m_MapHeight };
+		offset += it->second;
+		if (offset.y > m_MapHeight - 1 || offset.y < 0 || offset.x > m_MapWidth - 1 || offset.x < 0)
+			continue;
+
+		for (auto& domainItem : m_Map[mapIndex].domain)
 		{
-			std::vector<std::string> newDomain;
-			glm::vec2 offset = { std::round(mapIndex / m_MapWidth), mapIndex % m_MapHeight };
-			offset += it->second;
-			if (offset.y > m_MapHeight - 1 || offset.y < 0 || offset.x > m_MapWidth - 1 || offset.x < 0)
-				continue;
+			for (auto& item : m_Tiles[domainItem].validNeighbours[it->first]) {
+				if (!std::count(m_Map[offset.x * m_MapWidth + offset.y].domain.begin(), m_Map[offset.x * m_MapWidth + offset.y].domain.end(), item))
+					continue;
 
-			for (auto& domainItem : m_Map[mapIndex].domain)
-			{
-				for (auto& item : m_Tiles[domainItem].validNeighbours[it->first]) {
-					if (!std::count(m_Map[offset.x * m_MapWidth + offset.y].domain.begin(), m_Map[offset.x * m_MapWidth + offset.y].domain.end(), item))
-						continue;
+				if (std::count(newDomain.begin(), newDomain.end(), item))
+					continue;
 
-					if (std::count(newDomain.begin(), newDomain.end(), item))
-						continue;
-
-					newDomain.push_back(item);
-				}
+				newDomain.push_back(item);
 			}
-			if (newDomain.size() != 0)
-				m_Map[offset.x * m_MapWidth + offset.y].domain = newDomain;
 		}
+		if (newDomain.size() != 0)
+			m_Map[offset.x * m_MapWidth + offset.y].domain = newDomain;
 	}
 }
 
@@ -180,7 +182,7 @@ int WaveFunctionCollapse::FindSmallestDomain()
 void WaveFunctionCollapse::LoadTiles()
 {
 	EG_PROFILE_FUNCTION();
-	Engine::Ref<Engine::Texture2D> tilesheet = Engine::Texture2D::Create(m_WFCData["tilesheet"]);
+	Engine::Ref<Engine::Texture2D> tilesheet = Engine::Texture2D::Create(m_WFCData["tileSheet"]);
 	glm::vec2 tileSize = { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] };
 	for (json::iterator it = m_WFCData["tiles"].begin(); it != m_WFCData["tiles"].end(); ++it) {
 		std::unordered_map<direction, std::vector<std::string>> validNeighbours;

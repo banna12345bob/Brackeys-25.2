@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 SandboxLayer::SandboxLayer()
-	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight(), glm::vec3(0.f), true, true), m_WFC("assets/WFC/demo.json")
+	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight(), glm::vec3(0.f), true, true)
 {
 }
 
@@ -15,7 +15,6 @@ void SandboxLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
 
-	m_WFC.CreateMap();
 
 	//m_sandBoxTexture = Engine::Texture2D::Create("assets/textures/Oak_Log.png");
 	m_Tilesheet = Engine::Texture2D::Create("assets/textures/kenny/kenny_tiny_town.png");
@@ -66,13 +65,11 @@ void SandboxLayer::OnRender()
 	Engine::RenderCommand::Clear();
 
 	//m_Scene->RenderScene(&m_CameraController.GetCamera());
-	m_WFC.Render(&m_CameraController.GetCamera());
 }
 
 void SandboxLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
-	m_WFC.OnImGuiRender();
 
 	if (!m_ShowImGuiWindow)
 		return;
@@ -130,16 +127,4 @@ void SandboxLayer::OnImGuiRender()
 void SandboxLayer::OnEvent(Engine::Event& event)
 {
 	m_CameraController.OnEvent(event);
-
-	//Engine::EventDispatcher dispatcher(event);
-	//dispatcher.Dispatch<Engine::KeyPressedEvent>(EG_BIND_EVENT_FN(SandboxLayer::WFCDebug));
-}
-
-bool SandboxLayer::WFCDebug(Engine::KeyPressedEvent& e)
-{
-	if (e.GetKeyCode() == EG_KEY_F5 && e.GetRepeatCount() == 0) {
-		m_WFC.Colapse(m_WFC.FindSmallestDomain());
-		return true;
-	}
-	return false;
 }

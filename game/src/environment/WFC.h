@@ -14,7 +14,7 @@ enum direction {
 class WaveFunctionCollapse
 {
 public:
-	WaveFunctionCollapse(std::string filename);
+	WaveFunctionCollapse(std::string filename, glm::vec2 gridSize);
 
 	~WaveFunctionCollapse();
 
@@ -30,7 +30,7 @@ private:
 	void LoadTiles();
 	json readJson(std::string filename);
 
-	void CalcuateDomain();
+	void CalcuateDomain(int i);
 
 
 	struct Tile {
@@ -57,8 +57,8 @@ private:
 
 	std::unordered_map<std::string, Tile> m_Tiles;
 
-	int m_MapWidth = 10;
-	int m_MapHeight = 10;
+	int m_MapWidth;
+	int m_MapHeight;
 	std::vector<MapTile> m_Map;
 
 	std::unordered_map<direction, glm::vec2> m_Offsets;

@@ -22,7 +22,6 @@ project "sandbox"
 		"%{wks.location}/engine/src",
 		"%{wks.location}/engine/vendor",
 		"%{IncludeDir.SDL3}",
-		"%{IncludeDir.json}",
 		"%{IncludeDir.glm}",
 	}
 
