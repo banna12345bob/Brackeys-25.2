@@ -81,7 +81,7 @@ void GameLayer::OnRender()
 	Engine::RenderCommand::Clear();
 
 	m_Scene->RenderScene(&m_CameraController.GetCamera());
-	m_WFC.Render(&m_CameraController.GetCamera());
+	m_WFC.Render(&m_CameraController);
 }
 
 void GameLayer::OnImGuiRender()

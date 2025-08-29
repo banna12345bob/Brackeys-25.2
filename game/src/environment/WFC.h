@@ -20,7 +20,7 @@ public:
 
 	void CreateMap();
 
-	void Render(Engine::Camera* camera);
+	void Render(Engine::OrthographicCameraController* camera);
 
 	void OnImGuiRender();
 
@@ -62,5 +62,6 @@ private:
 	std::vector<MapTile> m_Map;
 
 	std::unordered_map<direction, glm::vec2> m_Offsets;
+	std::vector<int> m_NumDomain;
 };
 

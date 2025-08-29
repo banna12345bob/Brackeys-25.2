@@ -25,7 +25,7 @@ WaveFunctionCollapse::~WaveFunctionCollapse()
 
 void WaveFunctionCollapse::OnImGuiRender()
 {
-	//return;
+	return;
 	ImGui::Begin("WFC");
 	for (int index = 0; index < m_Map.size(); index++)
 	{
@@ -56,6 +56,7 @@ void WaveFunctionCollapse::CreateMap()
 				tile.domain.push_back(it->first);
 			}
 			m_Map.push_back(tile);
+			m_NumDomain.push_back(tile.domain.size());
 		}
 	}
 
@@ -72,18 +73,19 @@ void WaveFunctionCollapse::CreateMap()
 	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle4");
 	//	}
 	//}
-
-	CalcuateDomain(0);
-	while (FindSmallestDomain() != -1)
 	{
-		Colapse(FindSmallestDomain());
+		EG_PROFILE_SCOPE("Colapse loop");
+		while (FindSmallestDomain() != -1)
+		{
+			Colapse(FindSmallestDomain());
+		}
 	}
 }
 
-void WaveFunctionCollapse::Render(Engine::Camera* camera)
+void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
 {
 	EG_PROFILE_FUNCTION();
-	Engine::Renderer2D::BeginScene(camera);
+	Engine::Renderer2D::BeginScene(&camera->GetCamera());
 	for (int i = 0; i < m_Map.size(); i++)
 	{
 		if (m_Map[i].texture)
@@ -99,6 +101,8 @@ void WaveFunctionCollapse::Colapse(int index)
 	EG_PROFILE_FUNCTION();
 	if (index == -1)
 		return;
+	if (m_Map[index].texture)
+		return;
 
 	if (m_Map[index].domain.size() == 0) {
 		EG_ERROR("{0}: ERROR domain is empty", index);
@@ -113,17 +117,21 @@ void WaveFunctionCollapse::Colapse(int index)
 	std::string node = m_Map[index].domain[tile];
 	m_Map[index] = MapTile(m_Tiles[node]);
 	m_Map[index].domain.push_back(node);
+	m_NumDomain[index] = 1;
 
 	for (int i = 0; i < m_Map.size(); i++)
 	{
 		CalcuateDomain(i);
 	}
 	EG_TRACE("{0}, {1}", index, node);
-}	
+}
 
 void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 {
 	EG_PROFILE_FUNCTION();
+	if (mapIndex > m_Map.size() - 1 || mapIndex < 0)
+		return;
+
 	for (auto it = m_Offsets.begin(); it != m_Offsets.end(); it++)
 	{
 		std::vector<std::string> newDomain;
@@ -132,9 +140,9 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 		if (offset.y > m_MapHeight - 1 || offset.y < 0 || offset.x > m_MapWidth - 1 || offset.x < 0)
 			continue;
 
-		for (auto& domainItem : m_Map[mapIndex].domain)
+		for (int domainIndex = 0; domainIndex < m_Map[mapIndex].domain.size(); domainIndex++)
 		{
-			for (auto& item : m_Tiles[domainItem].validNeighbours[it->first]) {
+			for (auto& item : m_Tiles[m_Map[mapIndex].domain[domainIndex]].validNeighbours[it->first]) {
 				if (!std::count(m_Map[offset.x * m_MapWidth + offset.y].domain.begin(), m_Map[offset.x * m_MapWidth + offset.y].domain.end(), item))
 					continue;
 
@@ -146,36 +154,28 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 		}
 		if (newDomain.size() != 0)
 			m_Map[offset.x * m_MapWidth + offset.y].domain = newDomain;
+		m_NumDomain[offset.x * m_MapWidth + offset.y] = m_Map[offset.x * m_MapWidth + offset.y].domain.size();
 	}
 }
 
 int WaveFunctionCollapse::FindSmallestDomain()
 {
 	EG_PROFILE_FUNCTION();
-	MapTile* min = new MapTile();
-	for (int i = 0; i < 100; i++)
-	{
-		min->domain.push_back(std::to_string(i));
-	}
-	int minIndex = -1;
+	int minIndex = 0;
+	int min = std::accumulate(m_NumDomain.begin(), m_NumDomain.end(),
+		m_NumDomain[0], [](int a, int b) {
+			if (a < 1 || b < 1)
+				return 0;
+			if (a > 1 && b > 1)
+				return std::min(a, b);
+			if (a >= 1)
+				return b;
+			if (b >= 1)
+				return a;
+		});
 
-	for (int i = 0; i < m_Map.size(); i++)
-	{
-		if (min->texture) {
-			min = new MapTile();
-			for (int i = 0; i < 100; i++)
-			{
-				min->domain.push_back(std::to_string(i));
-			}
-			continue;
-		}
+	minIndex = std::find(m_NumDomain.begin(), m_NumDomain.end(), min) - m_NumDomain.begin();
 
-		if (m_Map[i].domain.size() < min->domain.size() && !m_Map[i].texture && m_Map[i].domain.size() != 0)
-		{
-			minIndex = i;
-			min = &m_Map[i];
-		}
-	}
 	return minIndex;
 }
 
