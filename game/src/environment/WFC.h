@@ -26,6 +26,7 @@ public:
 
 	void Colapse(int index);
 	int FindSmallestDomain();
+	bool showImGuiWindow = false;
 private:
 	void LoadTiles();
 	json readJson(std::string filename);

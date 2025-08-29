@@ -25,10 +25,14 @@ WaveFunctionCollapse::~WaveFunctionCollapse()
 
 void WaveFunctionCollapse::OnImGuiRender()
 {
-	//return;
+	if (!showImGuiWindow)
+		return;
 	ImGui::Begin("WFC");
 	for (int index = 0; index < m_Map.size(); index++)
 	{
+		if (m_Map[index].domain.size() <= 1)
+			continue;
+
 		if (ImGui::TreeNode((std::to_string(index / m_MapWidth) + ", " + std::to_string(index % m_MapHeight) + ": " + std::to_string(m_Map[index].domain.size())).c_str()))
 		{
 			for (auto domain : m_Map[index].domain)
@@ -38,7 +42,10 @@ void WaveFunctionCollapse::OnImGuiRender()
 					m_Map[index] = MapTile(m_Tiles[domain]);
 					m_Map[index].domain.push_back(domain);
 					m_NumDomain[index] = 1;
-					Colapse(index);
+					for (int i = 0; i < m_Map.size(); i++)
+					{
+						CalcuateDomain(i);
+					}
 					break;
 				}
 			}
