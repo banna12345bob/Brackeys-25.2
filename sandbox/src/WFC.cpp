@@ -3,146 +3,175 @@
 #include <time.h>
 #include <random>
 
+#include <imgui/imgui.h>
+
 WaveFunctionCollapse::WaveFunctionCollapse(std::string filename)
 {
+	EG_PROFILE_FUNCTION();
+	m_Offsets[north] = { 0, 1 };
+	m_Offsets[east] = { 1, 0 };
+	m_Offsets[south] = { 0, -1 };
+	m_Offsets[west] = { -1, 0 };
     m_WFCData = readJson(filename);
 	LoadTiles();
 }
 
+WaveFunctionCollapse::~WaveFunctionCollapse()
+{
+	m_Map = std::vector<MapTile>();
+	m_Tiles = std::unordered_map<std::string, Tile>();
+}
+
+void WaveFunctionCollapse::OnImGuiRender()
+{
+	return;
+	ImGui::Begin("WFC");
+	for (int index = 0; index < m_Map.size(); index++)
+	{
+		if (ImGui::TreeNode((std::to_string(index / m_MapWidth) + ", " + std::to_string(index % m_MapHeight) + ": " + std::to_string(m_Map[index].domain.size())).c_str()))
+		{
+			std::string domains = "";
+			for (auto& domain : m_Map[index].domain)
+			{
+				domains += domain + ", ";
+			}
+			ImGui::Text(domains.c_str());
+			ImGui::TreePop();
+		}
+	}
+	ImGui::End();
+}
+
 void WaveFunctionCollapse::CreateMap()
 {
-	for (int x = 0; x < sizeof(m_Map) / sizeof(m_Map[0]); x++)
+	EG_PROFILE_FUNCTION();
+	for (int x = 0; x < m_MapWidth; x++)
 	{
-		for (int y = 0; y < sizeof(m_Map[0]) / sizeof(MapTile); y++)
+		for (int y = 0; y < m_MapHeight; y++)
 		{
 			MapTile tile;
-			for (auto it = m_Tiles.begin(); it != m_Tiles.end(); )
+			for (auto it = m_Tiles.begin(); it != m_Tiles.end(); it++)
 			{
 				tile.domain.push_back(it->first);
-				m_Map[x][y] = tile;
-
-				it++;
 			}
+			m_Map.push_back(tile);
 		}
 	}
 
-	//m_Map[5][5] = MapTile(m_Tiles["dirtMiddle"]);
-	//CalcuateDomain(5, 5);
+	//glm::vec2 offset = { 2, 2 };
+	//for (int x = 0; x < 5; x++)
+	//{
+	//	for (int y = 0; y < 5; y++)
+	//	{
+	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y] = MapTile();
+	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle");
+	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle1");
+	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle2");
+	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle3");
+	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle4");
+	//	}
+	//}
 
-	std::vector<int> smallestDomain = FindSmallestDomain();
-
-	Colapse(smallestDomain[0], smallestDomain[1]);
-	for (int x = 0; x < sizeof(m_Map) / sizeof(m_Map[0]); x++)
-		for (int y = 0; y < sizeof(m_Map[0]) / sizeof(MapTile); y++)
-			if (!m_Map[x][y].texture)
-				EG_ERROR("{0},{1}", x, y);
+	CalcuateDomain();
+	Colapse(FindSmallestDomain());
 }
 
 void WaveFunctionCollapse::Render(Engine::Camera* camera)
 {
+	EG_PROFILE_FUNCTION();
 	Engine::Renderer2D::BeginScene(camera);
-	for (int x = 0; x < sizeof(m_Map) / sizeof(m_Map[0]); x++)
+	for (int i = 0; i < m_Map.size(); i++)
 	{
-		for (int y = 0; y < sizeof(m_Map[0]) / sizeof(MapTile); y++)
-		{
-			if (m_Map[x][y].texture)
-				Engine::Renderer2D::DrawQuad({ x * m_WFCData["tileSize"]["x"], y * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, m_Map[x][y].texture);
-			else
-				Engine::Renderer2D::DrawQuad({ x * m_WFCData["tileSize"]["x"], y * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, { 1, 0, 1, 1 });
-
-			Engine::Renderer2D::DrawQuad({ x * m_WFCData["tileSize"]["x"], y * m_WFCData["tileSize"]["y"], 0.1f }, { 1, 1 }, { 0, 0,0,1 });
-		}
+		if (m_Map[i].texture)
+			Engine::Renderer2D::DrawQuad({ i / m_MapWidth * m_WFCData["tileSize"]["x"], i % m_MapHeight * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, m_Map[i].texture);
+		else
+			Engine::Renderer2D::DrawQuad({ i / m_MapWidth * m_WFCData["tileSize"]["x"], i % m_MapHeight * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, { 1, 0, 1, 1 });
 	}
-	Engine::Renderer2D::DrawQuad({ 5 * m_WFCData["tileSize"]["x"], 5 * m_WFCData["tileSize"]["y"], 0.15f }, { 1, 1 }, { 0, 1, 1, 1 });
 	Engine::Renderer2D::EndScene();
 }
 
-void WaveFunctionCollapse::Colapse(int x, int y)
+void WaveFunctionCollapse::Colapse(int index)
 {
-	if (x == -1 || y == -1)
+	EG_PROFILE_FUNCTION();
+	if (index == -1)
 		return;
 
-	if (m_Map[x][y].domain.size() == 1) 
-		m_Map[x][y] = MapTile(m_Tiles[m_Map[x][y].domain[0]]);
-	if (m_Map[x][y].domain.size() == 0) {
-		Colapse(FindSmallestDomain()[0], FindSmallestDomain()[1]);
+	if (m_Map[index].domain.size() == 0) {
+		EG_ERROR("{0}: ERROR domain is empty", index);
+		Colapse(FindSmallestDomain());
 		return;
 	}
 
 	std::random_device dev;
 	std::mt19937 rng(dev());
-	std::uniform_int_distribution<std::mt19937::result_type> dist(0, m_Map[x][y].domain.size() - 1);
+	std::uniform_int_distribution<std::mt19937::result_type> dist(0, m_Map[index].domain.size() - 1);
 	int tile = dist(rng);
+	std::string node = m_Map[index].domain[tile];
+	m_Map[index] = MapTile(m_Tiles[node]);
+	m_Map[index].domain.push_back(node);
 
-	EG_TRACE("{0},{1}: {2}", x, y, m_Map[x][y].domain[tile]);
+	CalcuateDomain();
 
-	m_Map[x][y] = MapTile(m_Tiles[m_Map[x][y].domain[tile]]);
-
-	CalcuateDomain(x, y);
-
-	std::vector<int> minDomain = FindSmallestDomain();
-
-	Colapse(minDomain[0], minDomain[1]);
+	Colapse(FindSmallestDomain());
 	return;
 }	
 
-void WaveFunctionCollapse::CalcuateDomain(int x, int y)
+void WaveFunctionCollapse::CalcuateDomain()
 {
-	for (auto it = m_Map[x][y].validNeighbours.begin(); it != m_Map[x][y].validNeighbours.end(); )
+	EG_PROFILE_FUNCTION();
+	for (int mapIndex = 0; mapIndex < m_Map.size(); mapIndex++)
 	{
-		int nX = x;
-		int nY = y;
-		if (it->first == north && nY != sizeof(m_Map[0]) / sizeof(MapTile) - 1)
-			nY++; 
-		else if (it->first == south && nY != 0)
-			nY--;
-		else if (it->first == east && nX != sizeof(m_Map) / sizeof(m_Map[0]) - 1)
-			nX++;
-		else if (it->first == west && nX != 0)
-			nX--;
-		else {
-			it++;
-			continue;
-		}
-
-		std::vector<std::string> newDomain;
-		for (auto& tile : it->second)
+		for (auto it = m_Offsets.begin(); it != m_Offsets.end(); it++)
 		{
-			if (std::find(m_Map[nX][nY].domain.begin(), m_Map[nX][nY].domain.end(), tile) != m_Map[nX][nY].domain.end())
+			std::vector<std::string> newDomain;
+			glm::vec2 offset = { std::round(mapIndex / m_MapWidth), mapIndex % m_MapHeight };
+			offset += it->second;
+			if (offset.y > m_MapHeight - 1 || offset.y < 0 || offset.x > m_MapWidth - 1 || offset.x < 0)
+				continue;
+
+			for (auto& domainItem : m_Map[mapIndex].domain)
 			{
-				if (m_Tiles.contains(tile))
-					// TODO: Proergate the new domain out
-					newDomain.push_back(tile);
+				for (auto& item : m_Tiles[domainItem].validNeighbours[it->first]) {
+					if (!std::count(m_Map[offset.x * m_MapWidth + offset.y].domain.begin(), m_Map[offset.x * m_MapWidth + offset.y].domain.end(), item))
+						continue;
+
+					if (std::count(newDomain.begin(), newDomain.end(), item))
+						continue;
+
+					newDomain.push_back(item);
+				}
 			}
+			if (newDomain.size() != 0)
+				m_Map[offset.x * m_MapWidth + offset.y].domain = newDomain;
 		}
-
-		m_Map[nX][nY].domain = newDomain;
-
-		it++;
 	}
 }
 
-std::vector<int> WaveFunctionCollapse::FindSmallestDomain()
+int WaveFunctionCollapse::FindSmallestDomain()
 {
+	EG_PROFILE_FUNCTION();
 	MapTile* min = new MapTile();
 	for (int i = 0; i < 100; i++)
 	{
 		min->domain.push_back(std::to_string(i));
 	}
-	std::vector<int> minIndex = std::vector<int>();
-	minIndex.push_back(-1);
-	minIndex.push_back(-1);
+	int minIndex = -1;
 
-	for (int x = 0; x < sizeof(m_Map) / sizeof(m_Map[0]); x++)
+	for (int i = 0; i < m_Map.size(); i++)
 	{
-		for (int y = 0; y < sizeof(m_Map[0]) / sizeof(MapTile); y++)
-		{
-			if (m_Map[x][y].domain.size() < min->domain.size() && m_Map[x][y].domain.size() != 0)
+		if (min->texture) {
+			min = new MapTile();
+			for (int i = 0; i < 100; i++)
 			{
-				minIndex[0] = x;
-				minIndex[1] = y;
-				min = &m_Map[x][y];
+				min->domain.push_back(std::to_string(i));
 			}
+			continue;
+		}
+
+		if (m_Map[i].domain.size() < min->domain.size() && !m_Map[i].texture && m_Map[i].domain.size() != 0)
+		{
+			minIndex = i;
+			min = &m_Map[i];
 		}
 	}
 	return minIndex;
@@ -150,6 +179,7 @@ std::vector<int> WaveFunctionCollapse::FindSmallestDomain()
 
 void WaveFunctionCollapse::LoadTiles()
 {
+	EG_PROFILE_FUNCTION();
 	Engine::Ref<Engine::Texture2D> tilesheet = Engine::Texture2D::Create(m_WFCData["tilesheet"]);
 	glm::vec2 tileSize = { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] };
 	for (json::iterator it = m_WFCData["tiles"].begin(); it != m_WFCData["tiles"].end(); ++it) {

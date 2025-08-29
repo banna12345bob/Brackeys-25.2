@@ -16,6 +16,8 @@ public:
 	virtual void OnImGuiRender() override;
 	virtual void OnEvent(Engine::Event& event) override;
 private:
+	bool WFCDebug(Engine::KeyPressedEvent& e);
+private:
 	Engine::OrthographicCameraController m_CameraController;
 
 	Engine::Ref<Engine::Texture2D> m_Tilesheet;

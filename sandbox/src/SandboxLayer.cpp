@@ -72,6 +72,8 @@ void SandboxLayer::OnRender()
 void SandboxLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
+	m_WFC.OnImGuiRender();
+
 	if (!m_ShowImGuiWindow)
 		return;
 
@@ -129,4 +131,15 @@ void SandboxLayer::OnEvent(Engine::Event& event)
 {
 	m_CameraController.OnEvent(event);
 
+	//Engine::EventDispatcher dispatcher(event);
+	//dispatcher.Dispatch<Engine::KeyPressedEvent>(EG_BIND_EVENT_FN(SandboxLayer::WFCDebug));
+}
+
+bool SandboxLayer::WFCDebug(Engine::KeyPressedEvent& e)
+{
+	if (e.GetKeyCode() == EG_KEY_F5 && e.GetRepeatCount() == 0) {
+		m_WFC.Colapse(m_WFC.FindSmallestDomain());
+		return true;
+	}
+	return false;
 }

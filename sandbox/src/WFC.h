@@ -16,17 +16,21 @@ class WaveFunctionCollapse
 public:
 	WaveFunctionCollapse(std::string filename);
 
+	~WaveFunctionCollapse();
+
 	void CreateMap();
 
 	void Render(Engine::Camera* camera);
+
+	void OnImGuiRender();
+
+	void Colapse(int index);
+	int FindSmallestDomain();
 private:
 	void LoadTiles();
 	json readJson(std::string filename);
 
-	void Colapse(int x, int y);
-	void CalcuateDomain(int x, int y);
-
-	std::vector<int> FindSmallestDomain();
+	void CalcuateDomain();
 
 
 	struct Tile {
@@ -35,7 +39,7 @@ private:
 
 		Tile() = default;
 		Tile(const Tile&) = default;
-		Tile(Engine::Ref<Engine::Texture2D> tilesheet, glm::vec2 texCoords, glm::vec2 tileSize, std::unordered_map<direction, std::vector<std::string>> validNeighbours)
+		Tile(const Engine::Ref<Engine::Texture2D> tilesheet, const glm::vec2 texCoords, const glm::vec2 tileSize, const std::unordered_map<direction, std::vector<std::string>> validNeighbours)
 		: validNeighbours(validNeighbours)
 		{
 			texture = Engine::SubTexture2D::CreateFromCoords(tilesheet, texCoords, tileSize);
@@ -53,6 +57,10 @@ private:
 
 	std::unordered_map<std::string, Tile> m_Tiles;
 
-	MapTile m_Map[10][10];
+	int m_MapWidth = 10;
+	int m_MapHeight = 10;
+	std::vector<MapTile> m_Map;
+
+	std::unordered_map<direction, glm::vec2> m_Offsets;
 };
 
