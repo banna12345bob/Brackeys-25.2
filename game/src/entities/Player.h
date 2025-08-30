@@ -19,6 +19,6 @@ private:
 	float m_maxSpeed;
 
 	bool m_dashing;
-	Animator* m_PlayerAnimator;
+	std::unordered_map<std::string, Animator*> m_Animations;
 };
 

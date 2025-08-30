@@ -9,29 +9,44 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 {
 	GetTransform()->scale = { 32.f, 32.f };
 	m_BoundingBox = Engine::BoundingBox(-16, -16, 32, 32);
-	m_PlayerAnimator = new Animator(animations->at("player_idle"));
+
+	m_Animations["player_idle"] = new Animator(animations->at("player_idle"));
+	m_Animations["player_back"] = new Animator(animations->at("player_back"));
+	m_Animations["player_fwd"] = new Animator(animations->at("player_fwd"));
+	m_Animations["player_left"] = new Animator(animations->at("player_left"));
 }
 
 void Player::OnUpdate(Engine::Timestep ts) {
 
 	// Movement
-	m_PlayerAnimator->progress += ts.GetSeconds();
-	GetSpriteRenderer()->texture = m_PlayerAnimator->Get();
+	for (auto& animation : m_Animations)
+	{
+		animation.second->progress += ts.GetSeconds();
+	}
 
 	// Currently confined to what the camera sees
 	glm::vec2 dir = glm::vec2(0.f);
 	if (Engine::Input::IsKeyPressed(EG_KEY_W)) {
 		dir.y += 1;
+		GetSpriteRenderer()->texture = m_Animations["player_back"]->Get();
 	}
 	if (Engine::Input::IsKeyPressed(EG_KEY_A)) {
 		dir.x -= 1;
+		GetSpriteRenderer()->texture = m_Animations["player_left"]->Get();
+		GetSpriteRenderer()->texture->flipAcrossYAxis(false);
 	}
 	if (Engine::Input::IsKeyPressed(EG_KEY_S)) {
 		dir.y -= 1;
+		GetSpriteRenderer()->texture = m_Animations["player_fwd"]->Get();
 	}
 	if (Engine::Input::IsKeyPressed(EG_KEY_D)) {
 		dir.x += 1;
+		GetSpriteRenderer()->texture = m_Animations["player_left"]->Get();
+		GetSpriteRenderer()->texture->flipAcrossYAxis(true);
 	}
+
+	if (glm::length(dir) == 0)
+		GetSpriteRenderer()->texture = m_Animations["player_idle"]->Get();
 
 	Engine::Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
 
