@@ -4,6 +4,7 @@
 #include "entities/Player.h"
 #include "entities/Enemy.h"
 #include "environment/WFC.h"
+#include "graphics/Anim.h"
 
 class GameLayer : public Engine::Layer
 {
@@ -30,6 +31,7 @@ private:
 	Player* m_Player;
 
 	WaveFunctionCollapse m_WFC;
+	std::thread m_WorldGenThread;
 
 	bool m_ShowImGuiWindow = true;
 	bool m_ShowImGuiDemoWindow = false;

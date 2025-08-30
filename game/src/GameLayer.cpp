@@ -21,8 +21,11 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
+	//m_WFC.showImGuiWindow = true;
 
-	m_WFC.CreateMap();
+	m_WorldGenThread = std::thread(&WaveFunctionCollapse::CreateMap, &m_WFC);
+	if (m_WorldGenThread.joinable())
+		m_WorldGenThread.detach();
 	
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
@@ -60,6 +63,8 @@ void GameLayer::OnAttach()
 
 void GameLayer::OnDetach()
 {
+	if (m_WorldGenThread.joinable())
+		m_WorldGenThread.join();
 }
 
 void GameLayer::OnUpdate(Engine::Timestep ts)

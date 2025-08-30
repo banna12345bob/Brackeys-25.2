@@ -1,6 +1,5 @@
 #include "WFC.h"
 
-#include <iostream>
 #include <random>
 
 #include <imgui/imgui.h>
@@ -19,8 +18,6 @@ WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridS
 
 WaveFunctionCollapse::~WaveFunctionCollapse()
 {
-	m_Map = std::vector<MapTile>(m_MapWidth * m_MapHeight, MapTile());
-	m_Tiles = std::unordered_map<std::string, Tile>();
 }
 
 void WaveFunctionCollapse::OnImGuiRender()
@@ -30,25 +27,25 @@ void WaveFunctionCollapse::OnImGuiRender()
 	ImGui::Begin("WFC");
 	for (int index = 0; index < m_Map.size(); index++)
 	{
-		if (m_Map[index].domain.size() <= 1)
-			continue;
-
 		if (ImGui::TreeNode((std::to_string(index / m_MapWidth) + ", " + std::to_string(index % m_MapHeight) + ": " + std::to_string(m_Map[index].domain.size())).c_str()))
 		{
+			std::string domains;
 			for (auto domain : m_Map[index].domain)
 			{
-				if (ImGui::Button(domain.c_str()))
-				{
-					m_Map[index] = MapTile(m_Tiles[domain]);
-					m_Map[index].domain.push_back(domain);
-					m_NumDomain[index] = 1;
-					for (int i = 0; i < m_Map.size(); i++)
-					{
-						CalcuateDomain(i);
-					}
-					break;
-				}
+				domains += domain + ", ";
+				//if (ImGui::Button(domain.c_str()))
+				//{
+				//	m_Map[index] = MapTile(m_Tiles[domain]);
+				//	m_Map[index].domain.push_back(domain);
+				//	m_NumDomain[index] = 1;
+				//	for (int i = 0; i < m_Map.size(); i++)
+				//	{
+				//		CalcuateDomain(i);
+				//	}
+				//	break;
+				//}
 			}
+			ImGui::Text(domains.c_str());
 			ImGui::TreePop();
 		}
 	}
@@ -58,6 +55,7 @@ void WaveFunctionCollapse::OnImGuiRender()
 void WaveFunctionCollapse::CreateMap()
 {
 	EG_PROFILE_FUNCTION();
+	m_mtx.lock();
 	for (int x = 0; x < m_MapWidth; x++)
 	{
 		for (int y = 0; y < m_MapHeight; y++)
@@ -87,11 +85,13 @@ void WaveFunctionCollapse::CreateMap()
 	//}
 	{
 		EG_PROFILE_SCOPE("Colapse loop");
-		//while (FindSmallestDomain() > -1)
-		//{
-		//	Colapse(FindSmallestDomain());
-		//}
+		while (FindSmallestDomain() > -1)
+		{
+			Colapse(FindSmallestDomain());
+		}
+		EG_TRACE("World Gen Finished");
 	}
+	m_mtx.unlock();
 }
 
 void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
