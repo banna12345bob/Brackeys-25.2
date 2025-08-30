@@ -8,10 +8,10 @@
             "fwd_1": { "x": 1, "y": 3 },
             "left_0": { "x": 2, "y": 3 },
             "left_1": { "x": 3, "y": 3 },
-            "back_0": { "x": 0, "y": 3 },
-            "back_1": { "x": 1, "y": 3 },
-            "hurt": { "x": 2, "y": 3 },
-            "dead": { "x": 3, "y": 3 },
+            "back_0": { "x": 0, "y": 2 },
+            "back_1": { "x": 1, "y": 2 },
+            "hurt": { "x": 2, "y": 2 },
+            "dead": { "x": 3, "y": 2 },
             "dash_0": { "x": 0, "y": 1 },
             "dash_1": { "x": 3, "y": 1 },
             "dash_2": { "x": 1, "y": 1 },
@@ -45,13 +45,12 @@
     "reaper_proj": {
         "image": "assets/textures/reaper.png",
         "tileSize": { "x": 32, "y": 16 },
-        "numTiles": { "x": 4, "y": 1 },
-        "topLeft": { "x": 0, "y": 0 },
+        "numTiles": { "x": 4, "y": 11 },
         "frames": {
-            "proj_0": { "x": 0, "y": 0 },
-            "proj_1": { "x": 1, "y": 0 },
-            "proj_2": { "x": 2, "y": 0 },
-            "proj_3": { "x": 3, "y": 0 }
+            "proj_0": { "x": 0, "y": 10 },
+            "proj_1": { "x": 1, "y": 10 },
+            "proj_2": { "x": 2, "y": 10 },
+            "proj_3": { "x": 3, "y": 10 }
         },
         "anims": {
             "spin": [
@@ -65,28 +64,27 @@
     "reaper": {
         "image": "assets/textures/reaper.png",
         "tileSize": { "x": 96, "y": 80 },
-        "numTiles": { "x": 4, "y": 4 },
-        "topLeft": { "x": 0, "y": 16 },
+        "numTiles": { "x": 7, "y": 2 },
         "frames": {
-            "atk_0": { "x": 0, "y": 0 },
-            "atk_1": { "x": 1, "y": 0 },
-            "atk_2": { "x": 2, "y": 0 },
-            "atk_3": { "x": 3, "y": 0 },
-            "atk_4": { "x": 4, "y": 0 },
-            "spawn_0": { "x": 0, "y": 1 },
-            "spawn_1": { "x": 1, "y": 1 },
-            "spawn_2": { "x": 2, "y": 1 },
-            "spawn_3": { "x": 3, "y": 1 },
-            "spawn_4": { "x": 4, "y": 1 },
-            "spawn_5": { "x": 5, "y": 1 },
-            "spawn_6": { "x": 6, "y": 1 },
-            "despawn_0": { "x": 6, "y": 1 },
-            "despawn_1": { "x": 5, "y": 1 },
-            "despawn_2": { "x": 4, "y": 1 },
-            "despawn_3": { "x": 3, "y": 1 },
-            "despawn_4": { "x": 2, "y": 1 },
-            "despawn_5": { "x": 1, "y": 1 },
-            "despawn_6": { "x": 0, "y": 1 }
+            "atk_0": { "x": 0, "y": 1 },
+            "atk_1": { "x": 1, "y": 1 },
+            "atk_2": { "x": 2, "y": 1 },
+            "atk_3": { "x": 3, "y": 1 },
+            "atk_4": { "x": 4, "y": 1 },
+            "spawn_0": { "x": 0, "y": 0 },
+            "spawn_1": { "x": 1, "y": 0 },
+            "spawn_2": { "x": 2, "y": 0 },
+            "spawn_3": { "x": 3, "y": 0 },
+            "spawn_4": { "x": 4, "y": 0 },
+            "spawn_5": { "x": 5, "y": 0 },
+            "spawn_6": { "x": 6, "y": 0 },
+            "despawn_0": { "x": 6, "y": 0 },
+            "despawn_1": { "x": 5, "y": 0 },
+            "despawn_2": { "x": 4, "y": 0 },
+            "despawn_3": { "x": 3, "y": 0 },
+            "despawn_4": { "x": 2, "y": 0 },
+            "despawn_5": { "x": 1, "y": 0 },
+            "despawn_6": { "x": 0, "y": 0 }
         },
         "anims": {
             "atk": [
@@ -116,33 +114,51 @@
             ]
         }
     },
+    "psychic_proj": {
+        "image": "assets/textures/psychic.png",
+        "tileSize": { "x": 16, "y": 16 },
+        "numTiles": { "x": 8, "y": 6 },
+        "frames": {
+            "spin_0": { "x": 0, "y": 5 },
+            "spin_1": { "x": 1, "y": 5 },
+            "spin_2": { "x": 2, "y": 5 },
+            "spin_3": { "x": 3, "y": 5 }
+        },
+        "anims": {
+            "spin": [
+                { "name": "spin_0", "dur": 100 },
+                { "name": "spin_1", "dur": 100 },
+                { "name": "spin_2", "dur": 100 },
+                { "name": "spin_3", "dur": 100 }
+            ]
+        }
+    },
     "psychic": {
         "image": "assets/textures/psychic.png",
         "tileSize": { "x": 64, "y": 80 },
         "numTiles": { "x": 8, "y": 2 },
-        "topLeft": { "x": 0, "y": 16 },
         "frames": {
-            "hover_0": { "x": 0, "y": 0 },
-            "hover_1": { "x": 1, "y": 0 },
-            "hover_2": { "x": 2, "y": 0 },
-            "hover_3": { "x": 3, "y": 0 },
-            "hover_4": { "x": 4, "y": 0 },
-            "hover_5": { "x": 5, "y": 0 },
-            "hover_6": { "x": 6, "y": 0 },
-            "hover_7": { "x": 7, "y": 0 },
-            "blink_0": { "x": 0, "y": 1 },
-            "blink_1": { "x": 1, "y": 1 },
-            "blink_2": { "x": 2, "y": 1 },
-            "spawn_0": { "x": 3, "y": 1 },
-            "spawn_1": { "x": 4, "y": 1 },
-            "spawn_2": { "x": 5, "y": 1 },
-            "spawn_3": { "x": 6, "y": 1 },
-            "spawn_4": { "x": 7, "y": 1 },
-            "despawn_0": { "x": 7, "y": 1 },
-            "despawn_1": { "x": 6, "y": 1 },
-            "despawn_2": { "x": 5, "y": 1 },
-            "despawn_3": { "x": 4, "y": 1 },
-            "despawn_4": { "x": 3, "y": 1 }
+            "hover_0": { "x": 0, "y": 1 },
+            "hover_1": { "x": 1, "y": 1 },
+            "hover_2": { "x": 2, "y": 1 },
+            "hover_3": { "x": 3, "y": 1 },
+            "hover_4": { "x": 4, "y": 1 },
+            "hover_5": { "x": 5, "y": 1 },
+            "hover_6": { "x": 6, "y": 1 },
+            "hover_7": { "x": 7, "y": 1 },
+            "blink_0": { "x": 0, "y": 0 },
+            "blink_1": { "x": 1, "y": 0 },
+            "blink_2": { "x": 2, "y": 0 },
+            "spawn_0": { "x": 3, "y": 0 },
+            "spawn_1": { "x": 4, "y": 0 },
+            "spawn_2": { "x": 5, "y": 0 },
+            "spawn_3": { "x": 6, "y": 0 },
+            "spawn_4": { "x": 7, "y": 0 },
+            "despawn_0": { "x": 7, "y": 0 },
+            "despawn_1": { "x": 6, "y": 0 },
+            "despawn_2": { "x": 5, "y": 0 },
+            "despawn_3": { "x": 4, "y": 0 },
+            "despawn_4": { "x": 3, "y": 0 }
         },
         "anims": {
             "hover": [
