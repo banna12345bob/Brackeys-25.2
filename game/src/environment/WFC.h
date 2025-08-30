@@ -49,6 +49,7 @@ public:
 
 	std::vector<MapTile> map;
 	std::unordered_map<std::string, Tile> tiles;
+	bool generating = false;
 	bool showImGuiWindow = false;
 private:
 	void LoadTiles();

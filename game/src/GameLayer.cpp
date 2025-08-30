@@ -20,32 +20,34 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 10, 10 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	for (int i = 0; i < 10; i++)
-	{
-		m_WFC->SetTile(i * 10, "stoneWall");
-		m_WFC->SetTile(i * 10 + 9, "stoneWall");
-		m_WFC->SetTile(i, "stoneWall");
-		m_WFC->SetTile(90 + i, "stoneWall");
-	}
+	//for (int i = 0; i < 25; i+=2)
+	//{
+	//	m_WFC->SetTile(i * 25, "stoneWall");
+	//	m_WFC->SetTile(i * 25 + 24, "stoneWall");
+	//	m_WFC->SetTile(i, "stoneWall");
+	//	m_WFC->SetTile(25*24 + i, "stoneWall");
+	//}
+
 
 	m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
 	if (m_WorldGenThread.joinable())
 		m_WorldGenThread.detach();
-	
+
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
 	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", *m_Scene);
-	Checkboard->GetTransform()->position = { 0.f, 0.f, -0.5f };
+	Checkboard->GetTransform()->position = { 0.f, 0.f, 0.1f };
 	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
-	//m_Scene->AddEntity(Checkboard);
+	m_Scene->AddEntity(Checkboard);
 
 	m_Player = new Player(*m_Scene, &m_Animations);
+	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
 	m_Scene->AddEntity(m_Player);
 
 	Bullet* bullet = new Bullet(*m_Scene, "test1");
@@ -78,6 +80,8 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 	EG_TRACE("Mouse pos: {0}, {1}", pos.x, pos.y);*/
 
 	m_Scene->UpdateScene(ts);
+
+	m_Scene->GetEntity("Checkboard")->hide = !m_WFC->generating;
 
 	m_CameraController.setPosition(-m_Scene->GetEntity("Player")->GetTransform()->position);
 	m_CameraController.OnUpdate(ts);

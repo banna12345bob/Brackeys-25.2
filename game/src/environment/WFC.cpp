@@ -74,13 +74,15 @@ void WaveFunctionCollapse::CreateMap()
 void WaveFunctionCollapse::ColapseLoop()
 {
 	EG_PROFILE_FUNCTION();
+	generating = true;
 	m_mtx.lock();
 	while (FindSmallestDomain() > -1)
 	{
 		Colapse(FindSmallestDomain());
 	}
-	EG_INFO("World Gen Finished");
 	m_mtx.unlock();
+	generating = false;
+	EG_INFO("World Gen Finished");
 }
 
 void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
