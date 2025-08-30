@@ -24,12 +24,12 @@ void GameLayer::OnAttach()
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	//for (int i = 0; i < 25; i+=2)
+	//for (int i = 0; i < 100; i++)
 	//{
-	//	m_WFC->SetTile(i * 25, "stoneWall");
-	//	m_WFC->SetTile(i * 25 + 24, "stoneWall");
+	//	m_WFC->SetTile(i * 100, "stoneWall");
+	//	m_WFC->SetTile(i * 100 + 99, "stoneWall");
 	//	m_WFC->SetTile(i, "stoneWall");
-	//	m_WFC->SetTile(25*24 + i, "stoneWall");
+	//	m_WFC->SetTile(100*99 + i, "stoneWall");
 	//}
 
 
@@ -115,6 +115,20 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 		m_Scene->GetEntity("Player")->GetVelocity()->velocity *= 15.f;
 		return true;
 	}
+#if 0
+	if (e.GetKeyCode() == EG_KEY_PAGE_UP && e.GetRepeatCount() == 0) {
+		m_CameraController.SetZoomLevel(m_CameraController.GetZoomLevel() + 128);
+		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_PAGE_DOWN && e.GetRepeatCount() == 0) {
+		m_CameraController.SetZoomLevel(m_CameraController.GetZoomLevel() - 128);
+		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_HOME && e.GetRepeatCount() == 0) {
+		m_CameraController.SetZoomLevel(128);
+		return true;
+	}
+#endif
 	// WFC Debug Window
 	if (e.GetKeyCode() == EG_KEY_F5 && e.GetRepeatCount() == 0) {
 		m_WFC->showImGuiWindow = !m_WFC->showImGuiWindow;

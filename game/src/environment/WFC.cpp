@@ -138,10 +138,17 @@ void WaveFunctionCollapse::SetTile(int index, std::string tile)
 		m_Scene->AddCollisionBox(map[index].boundingBox);
 	}
 
-	for (int i = 0; i < map.size(); i++)
+	for (int x = -5; x <= 5; x++)
 	{
-		CalcuateDomain(i);
+		for (int y = -5; y <= 5; y++)
+		{
+			CalcuateDomain(index + x * m_MapWidth + y);
+		}
 	}
+	//for (int i = 0; i < map.size(); i++)
+	//{
+	//	CalcuateDomain(i); 
+	//}
 }
 
 void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
