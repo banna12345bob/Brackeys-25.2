@@ -5,21 +5,22 @@
 using json = nlohmann::json;
 
 struct Frame {
-	std::array<glm::vec2, 4> uvs;
+	Engine::Ref<Engine::Texture2D> frameTexture;
 	float duration;
 };
 
 class Anim {
 public: 
-	static std::vector<Engine::Ref<Anim>> LoadAnims(std::string path);
+	static std::unordered_map<std::string, Engine::Ref<Anim>> LoadAnims(std::string path);
 
 	std::string name;
 	std::vector<Frame> frames;
 	Engine::Ref<Engine::Texture2D> texture;
+	bool loop;
 private:
 	static json readJson(std::string path);
 
-	Anim(std::string name, std::vector<Frame> frames, Engine::Ref<Engine::Texture2D> texture);
+	Anim(std::string name, std::vector<Frame> frames, Engine::Ref<Engine::Texture2D> texture, bool loop);
 };
 
 class Animator {
@@ -29,5 +30,5 @@ public:
 
 	Animator(Engine::Ref<Anim> anim);
 
-	std::array<glm::vec2, 4> Get();
+	Engine::Ref<Engine::Texture2D> Get();
 };

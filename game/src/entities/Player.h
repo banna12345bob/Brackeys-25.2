@@ -1,11 +1,13 @@
 #pragma once
 
-#include "engine.h"
+#include <engine.h>
+// idk why it needs ../
+#include "../graphics/Anim.h"
 
 class Player : public Engine::Entity
 {
 public:
-	Player(Engine::Scene& scene);
+	Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations);
 	void OnUpdate(Engine::Timestep ts) override;
 	void OnRender() override;
 
@@ -17,5 +19,6 @@ private:
 	float m_maxSpeed;
 
 	bool m_dashing;
+	Animator* m_PlayerAnimator;
 };
 

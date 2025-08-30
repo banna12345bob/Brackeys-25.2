@@ -12,15 +12,16 @@ json Anim::readJson(std::string filename)
 	return data;
 }
 
-Anim::Anim(std::string name, std::vector<Frame> frames, Engine::Ref<Engine::Texture2D> texture) {
+Anim::Anim(std::string name, std::vector<Frame> frames, Engine::Ref<Engine::Texture2D> texture, bool loop) {
 	this->name = name;
 	this->frames = frames;
 	this->texture = texture;
+	this->loop = loop;
 }
 
-std::vector<Engine::Ref<Anim>> Anim::LoadAnims(std::string path) {
+std::unordered_map<std::string, Engine::Ref<Anim>> Anim::LoadAnims(std::string path) {
 	json data = readJson(path);
-	std::vector<Engine::Ref<Anim>> allAnims = {};
+	std::unordered_map<std::string, Engine::Ref<Anim>> allAnims = {};
 
 	for (auto item = data.begin(); item != data.end(); ++item) {
 		std::string prefix = item.key();
@@ -38,20 +39,22 @@ std::vector<Engine::Ref<Anim>> Anim::LoadAnims(std::string path) {
 
 		// Create unordered map of defined frames
 		json framesJson = properties["frames"];
-		std::unordered_map<std::string, std::array<glm::vec2, 4>> frameMap = {};
+		std::unordered_map<std::string, Engine::Ref<Engine::Texture2D>> frameMap = {};
 		for (auto framePair = framesJson.begin(); framePair != framesJson.end(); ++framePair) {
 			std::string name = framePair.key();
 			json value = framePair.value();
 			int frameX = value["x"];
 			int frameY = value["y"];
 
-			glm::vec2 tl = { (frameX * tileSizeX) / textureWidth, (frameY * tileSizeY) / textureHeight };
-			glm::vec2 tr = { ((frameX + 1) * tileSizeX) / textureWidth, (frameY * tileSizeY) / textureHeight };
-			glm::vec2 br = { ((frameX + 1) * tileSizeX) / textureWidth, ((frameY + 1) * tileSizeY) / textureHeight };
-			glm::vec2 bl = { (frameX * tileSizeX) / textureWidth, ((frameY + 1) * tileSizeY) / textureHeight };
-			std::array<glm::vec2, 4> uvs = { tl, tr, br, bl };
+			Engine::Ref<Engine::Texture2D> frameTex = Engine::SubTexture2D::CreateFromCoords(texture, { frameX, frameY }, { tileSizeX, tileSizeY });
 
-			frameMap.insert({ name, uvs });
+			//glm::vec2 tl = { (frameX * tileSizeX) / textureWidth, (frameY * tileSizeY) / textureHeight };
+			//glm::vec2 tr = { ((frameX + 1) * tileSizeX) / textureWidth, (frameY * tileSizeY) / textureHeight };
+			//glm::vec2 br = { ((frameX + 1) * tileSizeX) / textureWidth, ((frameY + 1) * tileSizeY) / textureHeight };
+			//glm::vec2 bl = { (frameX * tileSizeX) / textureWidth, ((frameY + 1) * tileSizeY) / textureHeight };
+			//std::array<glm::vec2, 4> uvs = { tl, tr, br, bl };
+
+			frameMap.insert({ name, frameTex });
 		}
 
 		// Create anims using predefined frames
@@ -63,15 +66,17 @@ std::vector<Engine::Ref<Anim>> Anim::LoadAnims(std::string path) {
 			for (auto framePair = value.begin(); framePair != value.end(); ++framePair) {
 				json frameValue = framePair.value();
 				std::string frameName = frameValue["name"];
-				std::array<glm::vec2, 4> uvs = frameMap[frameName];
+				Engine::Ref<Engine::Texture2D> subTexture = frameMap[frameName];
 				int duration_ms = frameValue["dur"];
 				float duration = (float)duration_ms / 1000.0f;
-				frames.push_back(Frame{ uvs, duration });
+				frames.push_back(Frame{ subTexture, duration });
 			}
 
 			EG_CORE_INFO("Deserialized Anim {} ({} frame(s))", name, frames.size());
-			Anim* anim = new Anim(name, frames, texture);
-			allAnims.push_back(Engine::Ref<Anim>(anim));
+			// Figure out how to properally decide if animation loops for now loop = true
+			Anim* anim = new Anim(name, frames, texture, true);
+			allAnims[name] = Engine::Ref<Anim>(anim);
+			//allAnims.push_back(Engine::Ref<Anim>(anim));
 		}
 
 	}
@@ -84,19 +89,21 @@ Animator::Animator(Engine::Ref<Anim> anim) {
 	this->progress = 0.0f;
 }
 
-std::array<glm::vec2, 4> Animator::Get() {
+Engine::Ref<Engine::Texture2D> Animator::Get() {
 	Anim* anim = this->anim.get();
 	
 	float timePassed = 0.0f;
 	for (int i = 0; i < anim->frames.size(); ++i) {
 		if (timePassed >= this->progress) {
-			return anim->frames[i].uvs;
+			return anim->frames[i].frameTexture;
 		}
 
 		timePassed += anim->frames[i].duration;
 	}
 
+	if(anim->loop)
+		progress = 0.f;
 	// Return last if finished
 	int last = anim->frames.size() - 1;
-	return anim->frames[last].uvs;
+	return anim->frames[last].frameTexture;
 }

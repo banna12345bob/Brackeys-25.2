@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(Engine::Scene& scene) : Engine::Entity("Player", scene),
+Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations) : Engine::Entity("Player", scene),
 	m_deceleration(20.f),
 	m_maxSpeed(250.f),
 	m_acceleration(3000.f),
@@ -9,11 +9,15 @@ Player::Player(Engine::Scene& scene) : Engine::Entity("Player", scene),
 {
 	GetTransform()->scale = { 32.f, 32.f };
 	m_BoundingBox = Engine::BoundingBox(-16, -16, 32, 32);
+	m_PlayerAnimator = new Animator(animations->at("player_idle"));
 }
 
 void Player::OnUpdate(Engine::Timestep ts) {
 
 	// Movement
+	m_PlayerAnimator->progress += ts.GetSeconds();
+	GetSpriteRenderer()->texture = m_PlayerAnimator->Get();
+	EG_TRACE(m_PlayerAnimator->progress);
 
 	// Currently confined to what the camera sees
 	glm::vec2 dir = glm::vec2(0.f);

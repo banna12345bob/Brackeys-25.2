@@ -14,14 +14,14 @@
 
 GameLayer::GameLayer()
 	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
-	m_WFC("assets/WFC/kenny.json", {10, 10})
+	m_WFC("assets/WFC/kenny.json", {25, 25})
 {
 }
 
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-	//m_WFC.showImGuiWindow = true;
+	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
 	m_WorldGenThread = std::thread(&WaveFunctionCollapse::CreateMap, &m_WFC);
 	if (m_WorldGenThread.joinable())
@@ -36,17 +36,13 @@ void GameLayer::OnAttach()
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
 	//m_Scene->AddEntity(Checkboard);
 
-	m_Player = new Player(*m_Scene);
-	m_Player->GetSpriteRenderer()->texture = arrowTexture;
+	m_Player = new Player(*m_Scene, &m_Animations);
 	m_Scene->AddEntity(m_Player);
 
 	Bullet* bullet = new Bullet(*m_Scene, "test1");
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.f };
 	//m_Scene->AddEntity(bullet);
 
-	//bullet = new Bullet(*m_Scene, "test2");
-	//bullet->GetTransform()->position = { 100.f, 80.f, 0.f };
-	//m_Scene->AddEntity(bullet);
 
 	Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
@@ -142,8 +138,10 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 		m_Scene->GetEntity("Player")->GetVelocity()->velocity *= 15.f;
 		return true;
 	}
+	// WFC Debug Window
 	if (e.GetKeyCode() == EG_KEY_F5 && e.GetRepeatCount() == 0) {
-		m_WFC.Colapse(m_WFC.FindSmallestDomain());
+		m_WFC.showImGuiWindow = !m_WFC.showImGuiWindow;
+		return true;
 	}
 	return false;
 }

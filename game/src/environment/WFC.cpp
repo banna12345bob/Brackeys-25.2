@@ -70,19 +70,6 @@ void WaveFunctionCollapse::CreateMap()
 		}
 	}
 
-	//glm::vec2 offset = { 2, 2 };
-	//for (int x = 0; x < 5; x++)
-	//{
-	//	for (int y = 0; y < 5; y++)
-	//	{
-	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y] = MapTile();
-	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle");
-	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle1");
-	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle2");
-	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle3");
-	//		m_Map[((x + offset.x) * m_MapWidth) + y + offset.y].domain.push_back("dirtMiddle4");
-	//	}
-	//}
 	{
 		EG_PROFILE_SCOPE("Colapse loop");
 		while (FindSmallestDomain() > -1)
