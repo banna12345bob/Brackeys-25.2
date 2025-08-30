@@ -18,13 +18,17 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_Animations["player_dead"] = new Animator(animations->at("player_dead"));
 	m_Animations["player_sleep"] = new Animator(animations->at("player_sleep"));
 
-	m_ZZZ = new Engine::Entity("zzz", scene);
 	Engine::Ref<Engine::Texture2D> zzz = Engine::Texture2D::Create("assets/textures/zzz.png");
-	m_ZZZ->GetTransform()->position = { 0, 0, 0.5 };
-	m_ZZZ->GetSpriteRenderer()->texture = zzz;
-	m_ZZZ->GetTransform()->scale = {16, 16 };
-	scene.AddEntity(m_ZZZ);
-	m_ZZZ->hide = true;
+
+	for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity*); i++)
+	{
+		m_ZZZ[i] = new Engine::Entity("zzz"+std::to_string(i), scene);
+		m_ZZZ[i]->GetSpriteRenderer()->texture = zzz;
+		m_ZZZ[i]->GetTransform()->position = {0, 0, 0.1*i};
+		m_ZZZ[i]->GetTransform()->scale = {16, 16};
+		m_ZZZ[i]->hide = true;
+		scene.AddEntity(m_ZZZ[i]);
+	}
 }
 
 void Player::OnUpdate(Engine::Timestep ts) {
@@ -65,24 +69,52 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	if (m_SleepTimer > 10)
 	{
 		GetSpriteRenderer()->texture = m_Animations["player_sleep"]->Get();
-		m_ZZZ->hide = false;
-		m_ZZZ->GetVelocity()->velocity = { 0.5f, 1.f, 0 };
-		m_ZZZ->GetVelocity()->scaleVelocity = { -1, -1 };
-		m_ZZZ->GetSpriteRenderer()->colour.a -= 0.05 * ts;
-		if (m_ZZZ->GetSpriteRenderer()->colour.a < 0.25) {
-			m_ZZZ->hide = true;
-		}
-		if (m_ZZZ->GetSpriteRenderer()->colour.a < 0) {
-			m_ZZZ->hide = false;
-			m_ZZZ->GetSpriteRenderer()->colour.a = 1;
-			m_ZZZ->GetTransform()->scale = { 16, 16 };
-			m_ZZZ->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.5);
+		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity*) - 1; i++)
+		{
+			m_ZZZ[i]->hide = false;
+			m_ZZZ[i]->GetVelocity()->velocity = { 0.5f, 1.f, 0 };
+			m_ZZZ[i]->GetVelocity()->scaleVelocity = { -1, -1 };
+			m_ZZZ[i]->GetVelocity()->rotationVelocity = -2.5f;
+			m_ZZZ[i]->GetSpriteRenderer()->colour.a -= 0.05 * ts;
+			if (m_ZZZ[i]->GetSpriteRenderer()->colour.a < 0.75)
+			{
+				m_ZZZ[i+1]->hide = false;
+				m_ZZZ[i+1]->GetVelocity()->velocity = { 0.5f, 1.f, 0 };
+				m_ZZZ[i+1]->GetVelocity()->scaleVelocity = { -1, -1 };
+				m_ZZZ[i+1]->GetVelocity()->rotationVelocity = -2.5f;
+				m_ZZZ[i+1]->GetSpriteRenderer()->colour.a -= 0.05 * ts;
+			}
+			if (m_ZZZ[i]->GetSpriteRenderer()->colour.a < 0.5) {
+				m_ZZZ[i]->hide = true;
+			}
+			if (m_ZZZ[i+1]->GetSpriteRenderer()->colour.a < 0.5) {
+				m_ZZZ[i+1]->hide = true;
+			}
+
+			if (m_ZZZ[i]->GetSpriteRenderer()->colour.a < 0.25) {
+				m_ZZZ[i]->hide = false;
+				m_ZZZ[i]->GetSpriteRenderer()->colour.a = 1;
+				m_ZZZ[i]->GetTransform()->scale = { 16, 16 };
+				m_ZZZ[i]->GetTransform()->rotation = 0;
+				m_ZZZ[i]->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.1*i);
+			}
+			if (m_ZZZ[i+1]->GetSpriteRenderer()->colour.a < 0.25) {
+				m_ZZZ[i+1]->hide = false;
+				m_ZZZ[i+1]->GetSpriteRenderer()->colour.a = 1;
+				m_ZZZ[i+1]->GetTransform()->scale = { 16, 16 };
+				m_ZZZ[i+1]->GetTransform()->rotation = 0;
+				m_ZZZ[i + 1]->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.1 * (i+1));
+			}
 		}
 	} else {
-		m_ZZZ->GetTransform()->scale = { 16, 16 };
-		m_ZZZ->GetSpriteRenderer()->colour.a = 1;
-		m_ZZZ->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.5);
-		m_ZZZ->hide = true;
+		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity*); i++)
+		{
+			m_ZZZ[i]->GetTransform()->scale = { 16, 16 };
+			m_ZZZ[i]->GetTransform()->rotation = 0;
+			m_ZZZ[i]->GetSpriteRenderer()->colour.a = 1;
+			m_ZZZ[i]->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.1*i);
+			m_ZZZ[i]->hide = true;
+		}
 	}
 
 	if (health < 1)

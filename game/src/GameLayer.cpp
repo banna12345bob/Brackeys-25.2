@@ -20,21 +20,17 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 10, 10 }, { 0, 0, 0 }, { 2, 2 });
+	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 10, 10 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	//for (int x = 0; x < 10; x++)
-	//{
-	//	m_WFC->SetTile(x * 10, "stoneWall");
-	//	m_WFC->SetTile(x * 10 + 9, "stoneWall");
-	//}
-
-	//for (int y = 0; y < 10; y++)
-	//{
-	//	m_WFC->SetTile(y, "stoneWall");
-	//	m_WFC->SetTile(90 + y, "stoneWall");
-	//}
+	for (int i = 0; i < 10; i++)
+	{
+		m_WFC->SetTile(i * 10, "stoneWall");
+		m_WFC->SetTile(i * 10 + 9, "stoneWall");
+		m_WFC->SetTile(i, "stoneWall");
+		m_WFC->SetTile(90 + i, "stoneWall");
+	}
 
 	m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
 	if (m_WorldGenThread.joinable())

@@ -22,6 +22,6 @@ private:
 	float m_SleepTimer = 0;
 	std::unordered_map<std::string, Animator*> m_Animations;
 
-	Engine::Entity* m_ZZZ;
+	Engine::Entity* m_ZZZ[3];
 };
 
