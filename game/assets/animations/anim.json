@@ -23,7 +23,7 @@
             "dash_8": { "x": 1, "y": 0 }
         },
         "anims": {
-            "idle": [{ "name": "fwd_0", "dur": 1000 }, { "name": "fwd_1", "dur": 1000 }],
+            "idle": [{ "name": "fwd_1", "dur": 5000 }, { "name": "fwd_0", "dur": 5000 }, { "name": "hurt", "dur": 1000 }, { "name": "fwd_0", "dur": 5000 }],
             "fwd": [ {"name": "fwd_0", "dur": 200 }, { "name": "fwd_1", "dur": 200 } ],
             "left": [ { "name": "left_0", "dur": 200 }, { "name": "left_1", "dur": 200 } ],
             "back": [ { "name": "back_0", "dur": 200 }, { "name": "back_1", "dur": 200 } ],

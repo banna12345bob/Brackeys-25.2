@@ -14,6 +14,7 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_Animations["player_back"] = new Animator(animations->at("player_back"));
 	m_Animations["player_fwd"] = new Animator(animations->at("player_fwd"));
 	m_Animations["player_left"] = new Animator(animations->at("player_left"));
+	m_Animations["player_dead"] = new Animator(animations->at("player_dead"));
 }
 
 void Player::OnUpdate(Engine::Timestep ts) {
@@ -47,6 +48,12 @@ void Player::OnUpdate(Engine::Timestep ts) {
 
 	if (glm::length(dir) == 0)
 		GetSpriteRenderer()->texture = m_Animations["player_idle"]->Get();
+
+	if (health < 1)
+	{
+		GetSpriteRenderer()->texture = m_Animations["player_dead"]->Get();
+		dir = glm::vec2(0.f);
+	}
 
 	Engine::Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
 
