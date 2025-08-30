@@ -100,37 +100,6 @@ void GameLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
 	m_WFC->OnImGuiRender();
-	if (!m_ShowImGuiWindow)
-		return;
-
-	// Begin with window. Requires window name
-	ImGui::Begin("Window info");
-
-	ImGui::SeparatorText("Window Size");
-	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
-	ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
-
-	ImGui::Text(glm::to_string(m_Scene->GetEntity("Player")->GetVelocity()->velocity).c_str());
-	ImGui::Value("health", ((Player*)(m_Scene->GetEntity("Player")))->health);
-
-	// Little header/tree demo
-	if (ImGui::CollapsingHeader("Demo window")) {
-		if (ImGui::TreeNode("Test"))
-		{
-			std::string demoWindowValue = m_ShowImGuiDemoWindow ? "True" : "False";
-			if (ImGui::Button(("Show demo window: " + demoWindowValue).c_str())) {
-				m_ShowImGuiDemoWindow = !m_ShowImGuiDemoWindow;
-			}
-
-			ImGui::TreePop();
-		}
-	}
-
-	// Remember to end the window
-	ImGui::End();
-
-	if (m_ShowImGuiDemoWindow)
-		ImGui::ShowDemoWindow(&m_ShowImGuiDemoWindow);
 }
 
 void GameLayer::OnEvent(Engine::Event& event)

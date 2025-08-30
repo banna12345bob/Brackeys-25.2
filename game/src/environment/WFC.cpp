@@ -101,7 +101,6 @@ void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
 
 void WaveFunctionCollapse::Colapse(int index)
 {
-	EG_PROFILE_FUNCTION();
 	if (index == -1)
 		return;
 
@@ -147,7 +146,6 @@ void WaveFunctionCollapse::SetTile(int index, std::string tile)
 
 void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 {
-	EG_PROFILE_FUNCTION();
 	if (mapIndex > map.size() - 1 || mapIndex < 0)
 		return;
 
@@ -179,7 +177,6 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 
 int WaveFunctionCollapse::FindSmallestDomain()
 {
-	EG_PROFILE_FUNCTION();
 	int minIndex = -1;
 	int min = std::accumulate(m_NumDomain.begin(), m_NumDomain.end(),
 		m_NumDomain[0], [](int a, int b) {
