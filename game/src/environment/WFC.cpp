@@ -119,6 +119,14 @@ void WaveFunctionCollapse::Colapse(int index)
 
 void WaveFunctionCollapse::SetTile(int index, std::string tile)
 {
+	if (index > map.size() - 1)
+		return;
+	if (map[index].domain.size() == 1)
+	{
+		EG_WARN("Tried to set tile {0}: Tile already set", index);
+		return;
+	}
+
 	map[index] = MapTile(tiles[tile]);
 	map[index].domain.push_back(tile);
 	m_NumDomain[index] = 1;

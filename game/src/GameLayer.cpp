@@ -24,10 +24,17 @@ void GameLayer::OnAttach()
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	for (int x = 0; x < 10; x++)
-	{
-		m_WFC->SetTile(x*10, "stoneWall");
-	}
+	//for (int x = 0; x < 10; x++)
+	//{
+	//	m_WFC->SetTile(x * 10, "stoneWall");
+	//	m_WFC->SetTile(x * 10 + 9, "stoneWall");
+	//}
+
+	//for (int y = 0; y < 10; y++)
+	//{
+	//	m_WFC->SetTile(y, "stoneWall");
+	//	m_WFC->SetTile(90 + y, "stoneWall");
+	//}
 
 	m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
 	if (m_WorldGenThread.joinable())

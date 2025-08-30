@@ -1,6 +1,7 @@
 #include "Player.h"
 
-Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations) : Engine::Entity("Player", scene),
+Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations) 
+	: Engine::Entity("Player", scene),
 	m_deceleration(20.f),
 	m_maxSpeed(250.f),
 	m_acceleration(3000.f),
@@ -16,6 +17,14 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_Animations["player_left"] = new Animator(animations->at("player_left"));
 	m_Animations["player_dead"] = new Animator(animations->at("player_dead"));
 	m_Animations["player_sleep"] = new Animator(animations->at("player_sleep"));
+
+	m_ZZZ = new Engine::Entity("zzz", scene);
+	Engine::Ref<Engine::Texture2D> zzz = Engine::Texture2D::Create("assets/textures/zzz.png");
+	m_ZZZ->GetTransform()->position = { 0, 0, 0.5 };
+	m_ZZZ->GetSpriteRenderer()->texture = zzz;
+	m_ZZZ->GetTransform()->scale = {16, 16 };
+	scene.AddEntity(m_ZZZ);
+	m_ZZZ->hide = true;
 }
 
 void Player::OnUpdate(Engine::Timestep ts) {
@@ -56,6 +65,24 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	if (m_SleepTimer > 10)
 	{
 		GetSpriteRenderer()->texture = m_Animations["player_sleep"]->Get();
+		m_ZZZ->hide = false;
+		m_ZZZ->GetVelocity()->velocity = { 0.5f, 1.f, 0 };
+		m_ZZZ->GetVelocity()->scaleVelocity = { -1, -1 };
+		m_ZZZ->GetSpriteRenderer()->colour.a -= 0.05 * ts;
+		if (m_ZZZ->GetSpriteRenderer()->colour.a < 0.25) {
+			m_ZZZ->hide = true;
+		}
+		if (m_ZZZ->GetSpriteRenderer()->colour.a < 0) {
+			m_ZZZ->hide = false;
+			m_ZZZ->GetSpriteRenderer()->colour.a = 1;
+			m_ZZZ->GetTransform()->scale = { 16, 16 };
+			m_ZZZ->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.5);
+		}
+	} else {
+		m_ZZZ->GetTransform()->scale = { 16, 16 };
+		m_ZZZ->GetSpriteRenderer()->colour.a = 1;
+		m_ZZZ->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.5);
+		m_ZZZ->hide = true;
 	}
 
 	if (health < 1)
