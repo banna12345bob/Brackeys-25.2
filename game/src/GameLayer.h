@@ -27,7 +27,7 @@ private:
 
 	Player* m_Player;
 
-	WaveFunctionCollapse m_WFC;
+	WaveFunctionCollapse* m_WFC;
 	std::thread m_WorldGenThread;
 	std::unordered_map<std::string, Engine::Ref<Anim>> m_Animations;
 

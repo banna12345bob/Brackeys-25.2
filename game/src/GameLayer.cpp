@@ -13,17 +13,23 @@
 
 
 GameLayer::GameLayer()
-	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
-	m_WFC("assets/WFC/kenny.json", { 10, 10 }, { 0, 0, 0 }, { 2, 2 })
+	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight())
 {
 }
 
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
+	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 10, 10 }, { 0, 0, 0 }, { 2, 2 });
+
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	m_WorldGenThread = std::thread(&WaveFunctionCollapse::CreateMap, &m_WFC);
+	for (int x = 0; x < 10; x++)
+	{
+		m_WFC->SetTile(x*10, "stoneWall");
+	}
+
+	m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
 	if (m_WorldGenThread.joinable())
 		m_WorldGenThread.detach();
 	
@@ -80,13 +86,13 @@ void GameLayer::OnRender()
 	Engine::RenderCommand::Clear();
 
 	m_Scene->RenderScene(&m_CameraController.GetCamera());
-	m_WFC.Render(&m_CameraController);
+	m_WFC->Render(&m_CameraController);
 }
 
 void GameLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
-	m_WFC.OnImGuiRender();
+	m_WFC->OnImGuiRender();
 	if (!m_ShowImGuiWindow)
 		return;
 
@@ -135,7 +141,7 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 	}
 	// WFC Debug Window
 	if (e.GetKeyCode() == EG_KEY_F5 && e.GetRepeatCount() == 0) {
-		m_WFC.showImGuiWindow = !m_WFC.showImGuiWindow;
+		m_WFC->showImGuiWindow = !m_WFC->showImGuiWindow;
 		return true;
 	}
 	return false;

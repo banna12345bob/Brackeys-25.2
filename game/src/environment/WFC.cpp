@@ -4,8 +4,8 @@
 
 #include <imgui/imgui.h>
 
-WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridSize, glm::vec3 posOffset, glm::vec2 scaleMult)
-	: m_MapWidth(gridSize.x), m_MapHeight(gridSize.y), m_PosOffset(posOffset), m_ScaleMult(scaleMult)
+WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, Engine::Scene* scene, glm::vec2 gridSize, glm::vec3 posOffset, glm::vec2 scaleMult)
+	: m_MapWidth(gridSize.x), m_MapHeight(gridSize.y), m_PosOffset(posOffset), m_ScaleMult(scaleMult), m_Scene(scene)
 {
 	EG_PROFILE_FUNCTION();
 	m_Offsets[north] = { 0, 1 };
@@ -14,6 +14,7 @@ WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridS
 	m_Offsets[west] = { -1, 0 };
     m_WFCData = readJson(filename);
 	LoadTiles();
+	CreateMap();
 }
 
 WaveFunctionCollapse::~WaveFunctionCollapse()
@@ -55,7 +56,6 @@ void WaveFunctionCollapse::OnImGuiRender()
 void WaveFunctionCollapse::CreateMap()
 {
 	EG_PROFILE_FUNCTION();
-	m_mtx.lock();
 	for (int x = 0; x < m_MapWidth; x++)
 	{
 		for (int y = 0; y < m_MapHeight; y++)
@@ -68,16 +68,18 @@ void WaveFunctionCollapse::CreateMap()
 			map.push_back(tile);
 			m_NumDomain.push_back(tile.domain.size());
 		}
-	}
+	}	
+}
 
+void WaveFunctionCollapse::ColapseLoop()
+{
+	EG_PROFILE_FUNCTION();
+	m_mtx.lock();
+	while (FindSmallestDomain() > -1)
 	{
-		EG_PROFILE_SCOPE("Colapse loop");
-		while (FindSmallestDomain() > -1)
-		{
-			Colapse(FindSmallestDomain());
-		}
-		EG_INFO("World Gen Finished");
+		Colapse(FindSmallestDomain());
 	}
+	EG_INFO("World Gen Finished");
 	m_mtx.unlock();
 }
 
@@ -112,9 +114,20 @@ void WaveFunctionCollapse::Colapse(int index)
 	std::uniform_int_distribution<std::mt19937::result_type> dist(0, map[index].domain.size() - 1);
 	int tile = dist(rng);
 	std::string node = map[index].domain[tile];
-	map[index] = MapTile(tiles[node]);
-	map[index].domain.push_back(node);
+	SetTile(index, node);
+}
+
+void WaveFunctionCollapse::SetTile(int index, std::string tile)
+{
+	map[index] = MapTile(tiles[tile]);
+	map[index].domain.push_back(tile);
 	m_NumDomain[index] = 1;
+
+	if (glm::length(map[index].boundingBox.size()) != 0) {
+		map[index].boundingBox.x = (glm::vec3(index / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).x;
+		map[index].boundingBox.y = (glm::vec3(index / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).y;
+		m_Scene->AddCollisionBox(map[index].boundingBox);
+	}
 
 	for (int i = 0; i < map.size(); i++)
 	{
@@ -199,7 +212,11 @@ void WaveFunctionCollapse::LoadTiles()
 			validNeighbours[west] = m_WFCData["tiles"][it.key()]["validNeighbours"].get<std::vector<std::string>>();
 		}
 
-		tiles[it.key()] = Tile(tilesheet, { it.value()["texCoords"]["x"], it.value()["texCoords"]["y"] }, tileSize, validNeighbours);
+		Engine::BoundingBox box = Engine::BoundingBox(0, 0, 0, 0);
+		if (m_WFCData["tiles"][it.key()].contains("collision"))
+			if (m_WFCData["tiles"][it.key()]["collision"])
+				box = Engine::BoundingBox(0, 0, m_WFCData["tileSize"]["x"] * m_ScaleMult.x, m_WFCData["tileSize"]["y"] * m_ScaleMult.y);
+		tiles[it.key()] = Tile(tilesheet, { it.value()["texCoords"]["x"], it.value()["texCoords"]["y"] }, tileSize, validNeighbours, box);
 	}
 }
 

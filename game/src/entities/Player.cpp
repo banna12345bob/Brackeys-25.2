@@ -8,7 +8,7 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_dashing(false)
 {
 	GetTransform()->scale = { 32.f, 32.f };
-	m_BoundingBox = Engine::BoundingBox(-16, -16, 32, 32);
+	m_BoundingBox = Engine::BoundingBox(-GetTransform()->scale.x / 2, -GetTransform()->scale.y / 2, 31, 30);
 
 	m_Animations["player_idle"] = new Animator(animations->at("player_idle"));
 	m_Animations["player_back"] = new Animator(animations->at("player_back"));
