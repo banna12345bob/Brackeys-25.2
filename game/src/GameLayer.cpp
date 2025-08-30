@@ -68,8 +68,6 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 	/*glm::vec2 pos = GetMouseGamePosition();
 	EG_TRACE("Mouse pos: {0}, {1}", pos.x, pos.y);*/
 
-	m_CurrentFrame += 0.0005 * ts.GetMilliseconds();
-
 	m_Scene->UpdateScene(ts);
 
 	m_CameraController.setPosition(-m_Scene->GetEntity("Player")->GetTransform()->position);
@@ -94,9 +92,6 @@ void GameLayer::OnImGuiRender()
 
 	// Begin with window. Requires window name
 	ImGui::Begin("Window info");
-
-	//ImGui::Text(("FPS: " + std::to_string(Engine::Application::getApplication()->m_frameRate)).c_str());
-	ImGui::Text(("AnimationIndex: " + std::to_string(m_CurrentFrame)).c_str());
 
 	ImGui::SeparatorText("Window Size");
 	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());

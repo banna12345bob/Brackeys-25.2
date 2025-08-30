@@ -24,16 +24,6 @@ public:
 
 	void OnImGuiRender();
 
-	void Colapse(int index);
-	int FindSmallestDomain();
-	bool showImGuiWindow = false;
-private:
-	void LoadTiles();
-	json readJson(std::string filename);
-
-	void CalcuateDomain(int i);
-
-
 	struct Tile {
 		Engine::Ref<Engine::Texture2D> texture;
 		std::unordered_map<direction, std::vector<std::string>> validNeighbours;
@@ -53,16 +43,25 @@ private:
 		MapTile() = default;
 		MapTile(const Tile& t) : Tile(t) {}
 	};
+
+	std::vector<MapTile> map;
+	std::unordered_map<std::string, Tile> tiles;
+	bool showImGuiWindow = false;
+private:
+	void LoadTiles();
+	json readJson(std::string filename);
+	void Colapse(int index);
+	int FindSmallestDomain();
+
+	void CalcuateDomain(int i);
 private:
 	json m_WFCData;
 
-	std::unordered_map<std::string, Tile> m_Tiles;
 	glm::vec3 m_PosOffset;
 	glm::vec2 m_ScaleMult;
 
 	int m_MapWidth;
 	int m_MapHeight;
-	std::vector<MapTile> m_Map;
 
 	std::mutex m_mtx;
 

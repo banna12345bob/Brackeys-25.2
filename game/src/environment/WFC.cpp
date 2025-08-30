@@ -25,20 +25,20 @@ void WaveFunctionCollapse::OnImGuiRender()
 	if (!showImGuiWindow)
 		return;
 	ImGui::Begin("WFC");
-	for (int index = 0; index < m_Map.size(); index++)
+	for (int index = 0; index < map.size(); index++)
 	{
-		if (ImGui::TreeNode((std::to_string(index / m_MapWidth) + ", " + std::to_string(index % m_MapHeight) + ": " + std::to_string(m_Map[index].domain.size())).c_str()))
+		if (ImGui::TreeNode((std::to_string(index / m_MapWidth) + ", " + std::to_string(index % m_MapHeight) + ": " + std::to_string(map[index].domain.size())).c_str()))
 		{
 			std::string domains;
-			for (auto domain : m_Map[index].domain)
+			for (auto domain : map[index].domain)
 			{
 				domains += domain + ", ";
 				//if (ImGui::Button(domain.c_str()))
 				//{
-				//	m_Map[index] = MapTile(m_Tiles[domain]);
-				//	m_Map[index].domain.push_back(domain);
+				//	map[index] = MapTile(tiles[domain]);
+				//	map[index].domain.push_back(domain);
 				//	m_NumDomain[index] = 1;
-				//	for (int i = 0; i < m_Map.size(); i++)
+				//	for (int i = 0; i < map.size(); i++)
 				//	{
 				//		CalcuateDomain(i);
 				//	}
@@ -61,11 +61,11 @@ void WaveFunctionCollapse::CreateMap()
 		for (int y = 0; y < m_MapHeight; y++)
 		{
 			MapTile tile;
-			for (auto it = m_Tiles.begin(); it != m_Tiles.end(); it++)
+			for (auto it = tiles.begin(); it != tiles.end(); it++)
 			{
 				tile.domain.push_back(it->first);
 			}
-			m_Map.push_back(tile);
+			map.push_back(tile);
 			m_NumDomain.push_back(tile.domain.size());
 		}
 	}
@@ -85,10 +85,10 @@ void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
 {
 	EG_PROFILE_FUNCTION();
 	Engine::Renderer2D::BeginScene(&camera->GetCamera());
-	for (int i = 0; i < m_Map.size(); i++)
+	for (int i = 0; i < map.size(); i++)
 	{
-		if (m_Map[i].domain.size() == 1)
-			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, m_Tiles[m_Map[i].domain[0]].texture);
+		if (map[i].domain.size() == 1)
+			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, tiles[map[i].domain[0]].texture);
 		else
 			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, { 1, 0, 1, 1 });
 	}
@@ -101,7 +101,7 @@ void WaveFunctionCollapse::Colapse(int index)
 	if (index == -1)
 		return;
 
-	if (m_Map[index].domain.size() == 0) {
+	if (map[index].domain.size() == 0) {
 		EG_ERROR("{0}: ERROR domain is empty", index);
 		Colapse(FindSmallestDomain());
 		return;
@@ -109,14 +109,14 @@ void WaveFunctionCollapse::Colapse(int index)
 
 	std::random_device dev;
 	std::mt19937 rng(dev());
-	std::uniform_int_distribution<std::mt19937::result_type> dist(0, m_Map[index].domain.size() - 1);
+	std::uniform_int_distribution<std::mt19937::result_type> dist(0, map[index].domain.size() - 1);
 	int tile = dist(rng);
-	std::string node = m_Map[index].domain[tile];
-	m_Map[index] = MapTile(m_Tiles[node]);
-	m_Map[index].domain.push_back(node);
+	std::string node = map[index].domain[tile];
+	map[index] = MapTile(tiles[node]);
+	map[index].domain.push_back(node);
 	m_NumDomain[index] = 1;
 
-	for (int i = 0; i < m_Map.size(); i++)
+	for (int i = 0; i < map.size(); i++)
 	{
 		CalcuateDomain(i);
 	}
@@ -125,7 +125,7 @@ void WaveFunctionCollapse::Colapse(int index)
 void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 {
 	EG_PROFILE_FUNCTION();
-	if (mapIndex > m_Map.size() - 1 || mapIndex < 0)
+	if (mapIndex > map.size() - 1 || mapIndex < 0)
 		return;
 
 	for (auto it = m_Offsets.begin(); it != m_Offsets.end(); it++)
@@ -136,10 +136,10 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 		if (offset.y > m_MapHeight - 1 || offset.y < 0 || offset.x > m_MapWidth - 1 || offset.x < 0)
 			continue;
 
-		for (int domainIndex = 0; domainIndex < m_Map[mapIndex].domain.size(); domainIndex++)
+		for (int domainIndex = 0; domainIndex < map[mapIndex].domain.size(); domainIndex++)
 		{
-			for (auto& item : m_Tiles[m_Map[mapIndex].domain[domainIndex]].validNeighbours[it->first]) {
-				if (!std::count(m_Map[offset.x * m_MapWidth + offset.y].domain.begin(), m_Map[offset.x * m_MapWidth + offset.y].domain.end(), item))
+			for (auto& item : tiles[map[mapIndex].domain[domainIndex]].validNeighbours[it->first]) {
+				if (!std::count(map[offset.x * m_MapWidth + offset.y].domain.begin(), map[offset.x * m_MapWidth + offset.y].domain.end(), item))
 					continue;
 
 				if (std::count(newDomain.begin(), newDomain.end(), item))
@@ -149,8 +149,8 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 			}
 		}
 		if (newDomain.size() != 0)
-			m_Map[offset.x * m_MapWidth + offset.y].domain = newDomain;
-		m_NumDomain[offset.x * m_MapWidth + offset.y] = m_Map[offset.x * m_MapWidth + offset.y].domain.size();
+			map[offset.x * m_MapWidth + offset.y].domain = newDomain;
+		m_NumDomain[offset.x * m_MapWidth + offset.y] = map[offset.x * m_MapWidth + offset.y].domain.size();
 	}
 }
 
@@ -166,7 +166,7 @@ int WaveFunctionCollapse::FindSmallestDomain()
 		});
 
 	minIndex = std::find(m_NumDomain.begin(), m_NumDomain.end(), min) - m_NumDomain.begin();
-	while (m_Map[minIndex].domain.size() == 1)
+	while (map[minIndex].domain.size() == 1)
 	{
 		minIndex++;
 		if (minIndex == m_NumDomain.size()-2)
@@ -199,7 +199,7 @@ void WaveFunctionCollapse::LoadTiles()
 			validNeighbours[west] = m_WFCData["tiles"][it.key()]["validNeighbours"].get<std::vector<std::string>>();
 		}
 
-		m_Tiles[it.key()] = Tile(tilesheet, { it.value()["texCoords"]["x"], it.value()["texCoords"]["y"] }, tileSize, validNeighbours);
+		tiles[it.key()] = Tile(tilesheet, { it.value()["texCoords"]["x"], it.value()["texCoords"]["y"] }, tileSize, validNeighbours);
 	}
 }
 

@@ -25,8 +25,6 @@ private:
 
 	Engine::Scene* m_Scene;
 
-	float m_CurrentFrame = 0;
-
 	Player* m_Player;
 
 	WaveFunctionCollapse m_WFC;
