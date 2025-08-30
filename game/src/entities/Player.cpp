@@ -17,7 +17,6 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	// Movement
 	m_PlayerAnimator->progress += ts.GetSeconds();
 	GetSpriteRenderer()->texture = m_PlayerAnimator->Get();
-	EG_TRACE(m_PlayerAnimator->progress);
 
 	// Currently confined to what the camera sees
 	glm::vec2 dir = glm::vec2(0.f);

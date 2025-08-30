@@ -4,8 +4,8 @@
 
 #include <imgui/imgui.h>
 
-WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridSize)
-	: m_MapWidth(gridSize.x), m_MapHeight(gridSize.y)
+WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridSize, glm::vec3 posOffset, glm::vec2 scaleMult)
+	: m_MapWidth(gridSize.x), m_MapHeight(gridSize.y), m_PosOffset(posOffset), m_ScaleMult(scaleMult)
 {
 	EG_PROFILE_FUNCTION();
 	m_Offsets[north] = { 0, 1 };
@@ -76,7 +76,7 @@ void WaveFunctionCollapse::CreateMap()
 		{
 			Colapse(FindSmallestDomain());
 		}
-		EG_TRACE("World Gen Finished");
+		EG_INFO("World Gen Finished");
 	}
 	m_mtx.unlock();
 }
@@ -88,9 +88,9 @@ void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
 	for (int i = 0; i < m_Map.size(); i++)
 	{
 		if (m_Map[i].domain.size() == 1)
-			Engine::Renderer2D::DrawQuad({ i / m_MapWidth * m_WFCData["tileSize"]["x"], i % m_MapHeight * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, m_Tiles[m_Map[i].domain[0]].texture);
+			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, m_Tiles[m_Map[i].domain[0]].texture);
 		else
-			Engine::Renderer2D::DrawQuad({ i / m_MapWidth * m_WFCData["tileSize"]["x"], i % m_MapHeight * m_WFCData["tileSize"]["y"], 0.f }, { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] }, { 1, 0, 1, 1 });
+			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, { 1, 0, 1, 1 });
 	}
 	Engine::Renderer2D::EndScene();
 }
@@ -120,7 +120,6 @@ void WaveFunctionCollapse::Colapse(int index)
 	{
 		CalcuateDomain(i);
 	}
-	EG_TRACE("{0}, {1}", index, node);
 }
 
 void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
