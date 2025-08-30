@@ -19,6 +19,7 @@ private:
 	float m_maxSpeed;
 
 	bool m_dashing;
+	float m_SleepTimer = 0;
 	std::unordered_map<std::string, Animator*> m_Animations;
 };
 

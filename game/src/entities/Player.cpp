@@ -15,6 +15,7 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_Animations["player_fwd"] = new Animator(animations->at("player_fwd"));
 	m_Animations["player_left"] = new Animator(animations->at("player_left"));
 	m_Animations["player_dead"] = new Animator(animations->at("player_dead"));
+	m_Animations["player_sleep"] = new Animator(animations->at("player_sleep"));
 }
 
 void Player::OnUpdate(Engine::Timestep ts) {
@@ -46,8 +47,16 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		GetSpriteRenderer()->texture->flipAcrossYAxis(true);
 	}
 
-	if (glm::length(dir) == 0)
+	if (glm::length(dir) == 0) {
 		GetSpriteRenderer()->texture = m_Animations["player_idle"]->Get();
+		m_SleepTimer += ts.GetSeconds();
+	} else
+		m_SleepTimer = 0;
+
+	if (m_SleepTimer > 10)
+	{
+		GetSpriteRenderer()->texture = m_Animations["player_sleep"]->Get();
+	}
 
 	if (health < 1)
 	{
