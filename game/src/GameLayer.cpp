@@ -51,11 +51,8 @@ void GameLayer::OnAttach()
 	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
 	m_Scene->AddEntity(m_Player);
 
-	Bullet* bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID);
+	Bullet* bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID, 3.1415926);
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.2f };
-	m_Scene->AddEntity(bullet);
-	bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID);
-	bullet->GetTransform()->position = { -100.f, 100.f, 0.2f };
 	m_Scene->AddEntity(bullet);
 
 
