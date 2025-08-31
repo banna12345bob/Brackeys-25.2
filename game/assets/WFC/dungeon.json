@@ -1,0 +1,127 @@
+{
+    "tileSheet":"assets/textures/WFC.png",
+    "tileSize":{"x":16,"y":16},
+    "numTiles":{ "x": 10, "y": 3 },
+    "tiles": {
+        "outside": {
+            "texCoords":{"x":9,"y":0},
+            "validNeighbours": {
+                "north":["outside"],
+                "east":["outside"],
+                "south":["outside"],
+                "west":["outside"]
+            }
+        },
+        "psychicFloor": {
+            "texCoords":{"x":1,"y":0},
+            "validNeighbours": {
+                "north":[
+                "psychicFloor"
+                ],
+                "east":[
+                "psychicFloor"
+                ],
+                "south":[
+                "psychicFloor"
+                ],
+                "west":[
+                "psychicFloor",
+                "psychicWallEast"
+                ]
+            }
+        },
+        "psychicWallEast": {
+            "texCoords":{"x":0,"y":1},
+            "collision":true,
+            "validNeighbours": {
+                "north":[
+                "psychicWallEast"
+                ],
+                "west":[
+                "outside"
+                ],
+                "south":[
+                "psychicWallEast"
+                ],
+                "east":[
+                "psychicFloor"
+                ]
+            }
+        },
+        "psychicWallWest": {
+            "texCoords":{"x":2,"y":1},
+            "collision":true,
+            "validNeighbours": {
+                "north":[
+                "psychicWallWest"
+                ],
+                "east":[
+                "outside"
+                ],
+                "south":[
+                "psychicWallWest"
+                ],
+                "west":[
+                "psychicFloor"
+                ]
+            }
+        },
+        "psychicWallNorth": {
+            "texCoords":{"x":1,"y":2},
+            "collision":true,
+            "validNeighbours": {
+                "south":[
+                "psychicFloor"
+                ],
+                "east":[
+                "psychicWallSouth"
+                ],
+                "north":[
+                "outside"
+                ],
+                "west":[
+                "psychicWallSouth"
+                ]
+            }
+        },
+        "psychicWallSouth": {
+            "texCoords":{"x":9,"y":1},
+            "collision":true,
+            "validNeighbours": {
+                "north":[
+                "psychicFloor"
+                ],
+                "east":[
+                "psychicWallSouth"
+                ],
+                "south":[
+                "outside"
+                ],
+                "west":[
+                "psychicWallSouth"
+                ]
+            }
+        },
+        "reaperFloor": {
+            "texCoords":{"x":4,"y":0},
+            "validNeighbours": {
+                "north":[
+                "psychicFloor",
+                "reaperFloor"
+                ],
+                "east":[
+                "psychicFloor",
+                "reaperFloor"
+                ],
+                "south":[
+                "psychicFloor",
+                "reaperFloor"
+                ],
+                "west":[
+                "psychicFloor",
+                "reaperFloor"
+                ]
+            }
+        }
+    }
+}

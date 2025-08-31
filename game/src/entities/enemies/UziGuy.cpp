@@ -6,7 +6,7 @@
 UziGuy::UziGuy(std::string name, Engine::Scene& scene, Player& player)
 	: Enemy(name, scene, player)
 {
-	m_health = 10;
+	health = 10;
 	m_acceleration = 400;
 	m_maxSpeed = 60;
 	m_attackRange = 192;

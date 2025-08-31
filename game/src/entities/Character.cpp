@@ -22,8 +22,8 @@ bool Character::Damage(int damage)
 {
 	if (invincible || m_HurtIndex > 0)
 		return false;
-	EG_TRACE(health);
 	health -= damage;
+	EG_TRACE(health);
 	m_HurtIndex = .4f;
 	return true;
 }

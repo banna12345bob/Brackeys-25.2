@@ -11,6 +11,7 @@ public:
 
 	float theta;
 	float speed;
+	float lifetime;
 private:
 	bool OverLappingWithEntity(Engine::Entity* entity);
 

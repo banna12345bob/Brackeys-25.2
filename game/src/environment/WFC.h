@@ -42,6 +42,7 @@ public:
 
 	struct MapTile : public Tile {
 		std::vector<std::string> domain;
+		bool generated = false;
 
 		MapTile() = default;
 		MapTile(const Tile& t) : Tile(t) {}
