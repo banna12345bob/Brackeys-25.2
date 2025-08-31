@@ -3,7 +3,7 @@
 #include "../Bullet.h"
 #include "../Player.h"
 
-Reaper::Reaper(std::string name, Engine::Scene& scene, Player& player, std::unordered_map<std::string, Engine::Ref<Anim>>* animations)
+Reaper::Reaper(std::string name, Engine::Scene& scene, Player* player, std::unordered_map<std::string, Engine::Ref<Anim>>* animations)
 	: Enemy(name, scene, player)
 {
 	health = 10;
@@ -59,7 +59,7 @@ void Reaper::OnUpdate(Engine::Timestep ts) {
 
 void Reaper::Attack(glm::vec2 dir)
 {
-	Bullet* bullet = new Bullet(m_Scene, "test", m_player.EntityUUID, 150, glm::atan(dir.x, dir.y));
+	Bullet* bullet = new Bullet(m_Scene, "test", m_player, 150, glm::atan(dir.x, dir.y));
 	bullet->GetTransform()->position = GetTransform()->position;
 	m_Scene.AddEntity(bullet);
 	

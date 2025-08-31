@@ -63,7 +63,7 @@ void GameLayer::OnAttach()
 	enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
 	m_Scene->AddEntity(enemy);
 
-	Reaper* reaper = new Reaper("Enemy", * m_Scene, * m_Player, &m_Animations);
+	Reaper* reaper = new Reaper("Enemy", * m_Scene, m_Player, &m_Animations);
 	reaper->GetTransform()->position = { 40.0f, 0.f, 0.2f };
 	m_Scene->AddEntity(reaper);
 
