@@ -121,11 +121,10 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		}
 	}
 
-	if (m_HurtIndex > 0)
+	if (m_HurtIndex > 0 && m_SleepTimer > 0)
 	{
 		GetSpriteRenderer()->texture = m_Animations["player_hurt"]->Get();
-	} else {
-		GetSpriteRenderer()->colour = { 1, 1, 1, 1 };
+		m_SleepTimer = 0;
 	}
 
 	if (dashIndex > 0)

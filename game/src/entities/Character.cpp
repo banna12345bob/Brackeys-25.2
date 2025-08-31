@@ -21,5 +21,5 @@ void Character::OnUpdate(Engine::Timestep ts)
 void Character::Damage(int damage)
 {
 	health -= damage;
-	m_HurtIndex = .2f;
+	m_HurtIndex = .4f;
 }
