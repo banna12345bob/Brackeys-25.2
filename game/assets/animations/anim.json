@@ -46,37 +46,37 @@
             "fwd": [ {"name": "fwd_0", "dur": 200 }, { "name": "fwd_1", "dur": 200 } ],
             "left": [ { "name": "left_0", "dur": 200 }, { "name": "left_1", "dur": 200 } ],
             "back": [ { "name": "back_0", "dur": 200 }, { "name": "back_1", "dur": 200 } ],
-            "hurt": [ { "name": "hurt_0", "dur": 100 } ],
+            "hurt": [ { "name": "hurt", "dur": 100 } ],
             "dead": [ { "name": "dead", "dur": 100 } ],
             "dash_left": [
-                { "name": "dash_left_0", "dur": 100 },
-                { "name": "dash_left_1", "dur": 100 },
-                { "name": "dash_left_2", "dur": 100 },
-                { "name": "dash_left_3", "dur": 100 },
-                { "name": "dash_left_4", "dur": 100 },
-                { "name": "dash_left_5", "dur": 100 },
-                { "name": "dash_left_6", "dur": 100 },
-                { "name": "dash_left_7", "dur": 100 }
+                { "name": "dash_left_0", "dur": 75 },
+                { "name": "dash_left_1", "dur": 75 },
+                { "name": "dash_left_2", "dur": 75 },
+                { "name": "dash_left_3", "dur": 75 },
+                { "name": "dash_left_4", "dur": 75 },
+                { "name": "dash_left_5", "dur": 75 },
+                { "name": "dash_left_6", "dur": 75 },
+                { "name": "dash_left_7", "dur": 75 }
             ],
             "dash_fwd": [
-                { "name": "dash_fwd_0", "dur": 100 },
-                { "name": "dash_fwd_1", "dur": 100 },
-                { "name": "dash_fwd_2", "dur": 100 },
-                { "name": "dash_fwd_3", "dur": 100 },
-                { "name": "dash_fwd_4", "dur": 100 },
-                { "name": "dash_fwd_5", "dur": 100 },
-                { "name": "dash_fwd_6", "dur": 100 },
-                { "name": "dash_fwd_7", "dur": 100 }
+                { "name": "dash_fwd_0", "dur": 75 },
+                { "name": "dash_fwd_1", "dur": 75 },
+                { "name": "dash_fwd_2", "dur": 75 },
+                { "name": "dash_fwd_3", "dur": 75 },
+                { "name": "dash_fwd_4", "dur": 75 },
+                { "name": "dash_fwd_5", "dur": 75 },
+                { "name": "dash_fwd_6", "dur": 75 },
+                { "name": "dash_fwd_7", "dur": 75 }
             ],
             "dash_backwd": [
-                { "name": "dash_backwd_0", "dur": 100 },
-                { "name": "dash_backwd_1", "dur": 100 },
-                { "name": "dash_backwd_2", "dur": 100 },
-                { "name": "dash_backwd_3", "dur": 100 },
-                { "name": "dash_backwd_4", "dur": 100 },
-                { "name": "dash_backwd_5", "dur": 100 },
-                { "name": "dash_backwd_6", "dur": 100 },
-                { "name": "dash_backwd_7", "dur": 100 }
+                { "name": "dash_backwd_0", "dur": 75 },
+                { "name": "dash_backwd_1", "dur": 75 },
+                { "name": "dash_backwd_2", "dur": 75 },
+                { "name": "dash_backwd_3", "dur": 75 },
+                { "name": "dash_backwd_4", "dur": 75 },
+                { "name": "dash_backwd_5", "dur": 75 },
+                { "name": "dash_backwd_6", "dur": 75 },
+                { "name": "dash_backwd_7", "dur": 75 }
             ]
         }
     },

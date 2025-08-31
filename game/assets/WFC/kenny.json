@@ -307,6 +307,28 @@
                 "south":["dirtMiddle", "dirtSouth"],
                 "west":["dirtMiddle", "dirtWest"]
             }
+        },
+        "stoneWall": {
+            "texCoords":{"x":1,"y":1},
+            "collision":true,
+            "validNeighbours":{
+                "north":[
+                "planeGrass",
+                "grass"
+                ],
+                "east":[
+                "planeGrass",
+                "grass"
+                ],
+                "south":[
+                "planeGrass",
+                "grass"
+                ],
+                "west":[
+                "planeGrass",
+                "grass"
+                ]
+            }
         }
     }
 }

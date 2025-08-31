@@ -9,49 +9,65 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "entities/Bullet.h"
+#include "entities/enemies/PistolGuy.h"
+#include "entities/enemies/UziGuy.h"
 #include "environment/Room.h"
 
 
 GameLayer::GameLayer()
 	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
-	m_WFC("assets/WFC/kenny.json", { 10, 10 }, { 0, 0, 0 }, { 2, 2 })
+	m_CheckerboardUUID(0)
 {
 }
 
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
+	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	m_WorldGenThread = std::thread(&WaveFunctionCollapse::CreateMap, &m_WFC);
+	for (int i = 0; i < 25; i++)
+	{
+		m_WFC->SetTile(i * 25, "psychicWallSouth");
+		m_WFC->SetTile(i * 25 + 24, "psychicWallNorth");
+		m_WFC->SetTile(i, "psychicWallEast");
+		m_WFC->SetTile(25 * 24 + i, "psychicWallWest");
+	}
+
+	m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
 	if (m_WorldGenThread.joinable())
 		m_WorldGenThread.detach();
-	
+
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
 	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", *m_Scene);
-	Checkboard->GetTransform()->position = { 0.f, 0.f, -0.5f };
+	Checkboard->GetTransform()->position = { 0.f, 0.f, 0.1f };
 	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
-	//m_Scene->AddEntity(Checkboard);
+	Checkboard->hide = true;
+	m_Scene->AddEntity(Checkboard, &m_CheckerboardUUID);
 
 	m_Player = new Player(*m_Scene, &m_Animations);
+	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
 	m_Scene->AddEntity(m_Player);
 
-	Bullet* bullet = new Bullet(*m_Scene, "test1");
-	bullet->GetTransform()->position = { 100.f, 100.f, 0.f };
-	//m_Scene->AddEntity(bullet);
+	Bullet* bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID, 3.1415926);
+	bullet->GetTransform()->position = { 100.f, 100.f, 0.2f };
+	m_Scene->AddEntity(bullet);
 
-
-	Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
+	UziGuy* enemy = new UziGuy("Enemy", *m_Scene, *m_Player);
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
-	//m_Scene->AddEntity(enemy);
+	enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
+	m_Scene->AddEntity(enemy);
 
 	
-	for (int i = 0; i < 10; i++) {
-		Engine::BoundingBox box = Engine::BoundingBox(i * 32, 32, 32, 32);
-		//m_Scene->AddCollisionBox(box);
+	for (int i = 0; i < 3; i++) {
+		PistolGuy* enemy = new PistolGuy("Enemy", *m_Scene, *m_Player);
+		enemy->GetSpriteRenderer()->texture = arrowTexture;
+		enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
+		m_Scene->AddEntity(enemy);
 	}
 
 	m_CameraController.SetZoomLevel(128);
@@ -70,7 +86,9 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 
 	m_Scene->UpdateScene(ts);
 
-	m_CameraController.setPosition(-m_Scene->GetEntity("Player")->GetTransform()->position);
+	//m_Scene->GetEntity(m_CheckerboardUUID)->hide = !m_WFC->generating;
+
+	m_CameraController.setPosition(-m_Player->GetTransform()->position);
 	m_CameraController.OnUpdate(ts);
 }
 
@@ -80,16 +98,14 @@ void GameLayer::OnRender()
 	Engine::RenderCommand::Clear();
 
 	m_Scene->RenderScene(&m_CameraController.GetCamera());
-	m_WFC.Render(&m_CameraController);
+	m_WFC->Render(&m_CameraController);
 }
 
 void GameLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
-	m_WFC.OnImGuiRender();
-	if (!m_ShowImGuiWindow)
-		return;
-
+	m_WFC->OnImGuiRender();
+	return;
 	// Begin with window. Requires window name
 	ImGui::Begin("Window info");
 
@@ -97,27 +113,8 @@ void GameLayer::OnImGuiRender()
 	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
 	ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
 
-	ImGui::Text(glm::to_string(m_Scene->GetEntity("Player")->GetVelocity()->velocity).c_str());
-	ImGui::Value("health", ((Player*)(m_Scene->GetEntity("Player")))->health);
-
-	// Little header/tree demo
-	if (ImGui::CollapsingHeader("Demo window")) {
-		if (ImGui::TreeNode("Test"))
-		{
-			std::string demoWindowValue = m_ShowImGuiDemoWindow ? "True" : "False";
-			if (ImGui::Button(("Show demo window: " + demoWindowValue).c_str())) {
-				m_ShowImGuiDemoWindow = !m_ShowImGuiDemoWindow;
-			}
-
-			ImGui::TreePop();
-		}
-	}
-
-	// Remember to end the window
+	ImGui::Text(glm::to_string(m_Player->GetVelocity()->velocity).c_str());
 	ImGui::End();
-
-	if (m_ShowImGuiDemoWindow)
-		ImGui::ShowDemoWindow(&m_ShowImGuiDemoWindow);
 }
 
 void GameLayer::OnEvent(Engine::Event& event)
@@ -129,13 +126,42 @@ void GameLayer::OnEvent(Engine::Event& event)
 
 bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 {
-	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0) {
-		m_Scene->GetEntity("Player")->GetVelocity()->velocity *= 15.f;
+	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
+		m_Player->dashIndex = .2f;
 		return true;
 	}
+	if (e.GetKeyCode() == EG_KEY_SPACE && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
+		m_Player->Attack();
+		return true;
+	}
+#if !defined(EG_DIST)
+	if (e.GetKeyCode() == EG_KEY_PAGE_UP && e.GetRepeatCount() == 0) {
+		m_CameraController.SetZoomLevel(m_CameraController.GetZoomLevel() + 128);
+		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_PAGE_DOWN && e.GetRepeatCount() == 0) {
+		m_CameraController.SetZoomLevel(m_CameraController.GetZoomLevel() - 128);
+		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_HOME && e.GetRepeatCount() == 0) {
+		m_CameraController.SetZoomLevel(128);
+		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_F6 && e.GetRepeatCount() == 0 && !m_WFC->generating) {
+		if (m_WorldGenThread.joinable())
+			m_WorldGenThread.join();
+		m_WFC->~WaveFunctionCollapse();
+
+		m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth() / 4, -Engine::Application::getApplication()->getWindow()->GetHeight() / 4, 0 }, { 2, 2 });
+		m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
+		if (m_WorldGenThread.joinable())
+			m_WorldGenThread.detach();
+		return true;
+	}
+#endif
 	// WFC Debug Window
 	if (e.GetKeyCode() == EG_KEY_F5 && e.GetRepeatCount() == 0) {
-		m_WFC.showImGuiWindow = !m_WFC.showImGuiWindow;
+		m_WFC->showImGuiWindow = !m_WFC->showImGuiWindow;
 		return true;
 	}
 	return false;

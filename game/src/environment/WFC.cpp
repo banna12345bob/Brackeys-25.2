@@ -4,8 +4,8 @@
 
 #include <imgui/imgui.h>
 
-WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridSize, glm::vec3 posOffset, glm::vec2 scaleMult)
-	: m_MapWidth(gridSize.x), m_MapHeight(gridSize.y), m_PosOffset(posOffset), m_ScaleMult(scaleMult)
+WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, Engine::Scene* scene, glm::vec2 gridSize, glm::vec3 posOffset, glm::vec2 scaleMult)
+	: m_MapWidth(gridSize.x), m_MapHeight(gridSize.y), m_PosOffset(posOffset), m_ScaleMult(scaleMult), m_Scene(scene)
 {
 	EG_PROFILE_FUNCTION();
 	m_Offsets[north] = { 0, 1 };
@@ -14,10 +14,20 @@ WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, glm::vec2 gridS
 	m_Offsets[west] = { -1, 0 };
     m_WFCData = readJson(filename);
 	LoadTiles();
+	CreateMap();
 }
 
 WaveFunctionCollapse::~WaveFunctionCollapse()
 {
+	for (int i = 0; i < map.size(); i++)
+	{
+		if (glm::length(map[i].boundingBox.size()) == 0)
+			continue;
+
+		m_Scene->RemoveCollisionBox(map[i].boundingBox.BoxUUID);
+	}
+	map = std::vector<MapTile>();
+	tiles = std::unordered_map<std::string, Tile>();
 }
 
 void WaveFunctionCollapse::OnImGuiRender()
@@ -33,17 +43,19 @@ void WaveFunctionCollapse::OnImGuiRender()
 			for (auto domain : map[index].domain)
 			{
 				domains += domain + ", ";
-				//if (ImGui::Button(domain.c_str()))
-				//{
-				//	map[index] = MapTile(tiles[domain]);
-				//	map[index].domain.push_back(domain);
-				//	m_NumDomain[index] = 1;
-				//	for (int i = 0; i < map.size(); i++)
-				//	{
-				//		CalcuateDomain(i);
-				//	}
-				//	break;
-				//}
+#if 0
+				if (ImGui::Button(domain.c_str()))
+				{
+					map[index] = MapTile(tiles[domain]);
+					map[index].domain.push_back(domain);
+					m_NumDomain[index] = 1;
+					for (int i = 0; i < map.size(); i++)
+					{
+						CalcuateDomain(i);
+					}
+					break;
+				}
+#endif
 			}
 			ImGui::Text(domains.c_str());
 			ImGui::TreePop();
@@ -55,7 +67,6 @@ void WaveFunctionCollapse::OnImGuiRender()
 void WaveFunctionCollapse::CreateMap()
 {
 	EG_PROFILE_FUNCTION();
-	m_mtx.lock();
 	for (int x = 0; x < m_MapWidth; x++)
 	{
 		for (int y = 0; y < m_MapHeight; y++)
@@ -68,17 +79,21 @@ void WaveFunctionCollapse::CreateMap()
 			map.push_back(tile);
 			m_NumDomain.push_back(tile.domain.size());
 		}
-	}
+	}	
+}
 
+void WaveFunctionCollapse::ColapseLoop()
+{
+	EG_PROFILE_FUNCTION();
+	generating = true;
+	m_mtx.lock();
+	while (FindSmallestDomain() > -1)
 	{
-		EG_PROFILE_SCOPE("Colapse loop");
-		while (FindSmallestDomain() > -1)
-		{
-			Colapse(FindSmallestDomain());
-		}
-		EG_INFO("World Gen Finished");
+		Colapse(FindSmallestDomain());
 	}
 	m_mtx.unlock();
+	generating = false;
+	EG_INFO("World Gen Finished");
 }
 
 void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
@@ -87,17 +102,26 @@ void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
 	Engine::Renderer2D::BeginScene(&camera->GetCamera());
 	for (int i = 0; i < map.size(); i++)
 	{
+		glm::vec3 pos = glm::vec3(i / m_MapWidth * (m_TileSize.x * m_ScaleMult.x), i % m_MapHeight * (m_TileSize.y * m_ScaleMult.y), 0.f) + m_PosOffset;
+		if (pos.y + m_TileSize.y * m_ScaleMult.y <= camera->getBounds().Bottom - camera->getPosition().y)
+			continue;
+		if (pos.y - m_TileSize.y * m_ScaleMult.y >= camera->getBounds().Top - camera->getPosition().y)
+			continue;
+		if (pos.x + m_TileSize.x * m_ScaleMult.x <= camera->getBounds().Left - camera->getPosition().x)
+			continue;
+		if (pos.x - m_TileSize.x * m_ScaleMult.x >= camera->getBounds().Right - camera->getPosition().x)
+			continue;
+
 		if (map[i].domain.size() == 1)
-			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, tiles[map[i].domain[0]].texture);
+			Engine::Renderer2D::DrawQuad(pos, m_TileSize * m_ScaleMult, tiles[map[i].domain[0]].texture);
 		else
-			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, { 1, 0, 1, 1 });
+			Engine::Renderer2D::DrawQuad(pos, m_TileSize * m_ScaleMult, { 1, 0, 1, 1 });
 	}
 	Engine::Renderer2D::EndScene();
 }
 
 void WaveFunctionCollapse::Colapse(int index)
 {
-	EG_PROFILE_FUNCTION();
 	if (index == -1)
 		return;
 
@@ -112,19 +136,45 @@ void WaveFunctionCollapse::Colapse(int index)
 	std::uniform_int_distribution<std::mt19937::result_type> dist(0, map[index].domain.size() - 1);
 	int tile = dist(rng);
 	std::string node = map[index].domain[tile];
-	map[index] = MapTile(tiles[node]);
-	map[index].domain.push_back(node);
-	m_NumDomain[index] = 1;
+	SetTile(index, node);
+}
 
-	for (int i = 0; i < map.size(); i++)
+void WaveFunctionCollapse::SetTile(int index, std::string tile)
+{
+	if (index > map.size() - 1)
+		return;
+	if (map[index].generated)
 	{
-		CalcuateDomain(i);
+		EG_WARN("Tried to set tile {0}: Tile already set", index);
+		return;
 	}
+
+	map[index] = MapTile(tiles[tile]);
+	map[index].domain.push_back(tile);
+	map[index].generated = true;
+	m_NumDomain[index] = 1;
+	
+	if (glm::length(map[index].boundingBox.size()) != 0) {
+		map[index].boundingBox.x = (glm::vec3(index / m_MapWidth * (m_TileSize.x * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_TileSize.y * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).x;
+		map[index].boundingBox.y = (glm::vec3(index / m_MapWidth * (m_TileSize.x * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_TileSize.y * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).y;
+		m_Scene->AddCollisionBox(&map[index].boundingBox);
+	}
+
+	for (int x = -5; x <= 5; x++)
+	{
+		for (int y = -5; y <= 5; y++)
+		{
+			CalcuateDomain(index + x * m_MapWidth + y);
+		}
+	}
+	//for (int i = 0; i < map.size(); i++)
+	//{
+	//	CalcuateDomain(i); 
+	//}
 }
 
 void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 {
-	EG_PROFILE_FUNCTION();
 	if (mapIndex > map.size() - 1 || mapIndex < 0)
 		return;
 
@@ -156,7 +206,6 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 
 int WaveFunctionCollapse::FindSmallestDomain()
 {
-	EG_PROFILE_FUNCTION();
 	int minIndex = -1;
 	int min = std::accumulate(m_NumDomain.begin(), m_NumDomain.end(),
 		m_NumDomain[0], [](int a, int b) {
@@ -166,10 +215,10 @@ int WaveFunctionCollapse::FindSmallestDomain()
 		});
 
 	minIndex = std::find(m_NumDomain.begin(), m_NumDomain.end(), min) - m_NumDomain.begin();
-	while (map[minIndex].domain.size() == 1)
+	while (map[minIndex].generated)
 	{
 		minIndex++;
-		if (minIndex == m_NumDomain.size()-2)
+		if (minIndex == map.size())
 		{
 			minIndex = -1;
 			break;
@@ -182,7 +231,7 @@ void WaveFunctionCollapse::LoadTiles()
 {
 	EG_PROFILE_FUNCTION();
 	Engine::Ref<Engine::Texture2D> tilesheet = Engine::Texture2D::Create(m_WFCData["tileSheet"]);
-	glm::vec2 tileSize = { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] };
+	m_TileSize = { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] };
 	for (json::iterator it = m_WFCData["tiles"].begin(); it != m_WFCData["tiles"].end(); ++it) {
 		std::unordered_map<direction, std::vector<std::string>> validNeighbours;
 
@@ -199,7 +248,11 @@ void WaveFunctionCollapse::LoadTiles()
 			validNeighbours[west] = m_WFCData["tiles"][it.key()]["validNeighbours"].get<std::vector<std::string>>();
 		}
 
-		tiles[it.key()] = Tile(tilesheet, { it.value()["texCoords"]["x"], it.value()["texCoords"]["y"] }, tileSize, validNeighbours);
+		Engine::BoundingBox box = Engine::BoundingBox(0, 0, 0, 0);
+		if (m_WFCData["tiles"][it.key()].contains("collision"))
+			if (m_WFCData["tiles"][it.key()]["collision"])
+				box = Engine::BoundingBox(0, 0, m_WFCData["tileSize"]["x"] * m_ScaleMult.x, m_WFCData["tileSize"]["y"] * m_ScaleMult.y);
+		tiles[it.key()] = Tile(tilesheet, { it.value()["texCoords"]["x"], it.value()["texCoords"]["y"] }, m_TileSize, validNeighbours, box);
 	}
 }
 

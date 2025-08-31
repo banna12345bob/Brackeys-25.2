@@ -56,7 +56,7 @@ void SandboxLayer::OnUpdate(Engine::Timestep ts)
 	m_CurrentFrame += 0.0005 * ts.GetMilliseconds();
 	m_CameraController.OnUpdate(ts);
 
-	m_Scene->GetEntity("Arrow")->GetSpriteRenderer()->texture = m_Animation[(int)m_CurrentFrame % 3];
+	//m_Scene->GetEntity("Arrow")->GetSpriteRenderer()->texture = m_Animation[(int)m_CurrentFrame % 3];
 }
 
 void SandboxLayer::OnRender()
@@ -64,7 +64,7 @@ void SandboxLayer::OnRender()
 	Engine::RenderCommand::SetClearColor({ 0, 0, 0, 0 });
 	Engine::RenderCommand::Clear();
 
-	//m_Scene->RenderScene(&m_CameraController.GetCamera());
+	m_Scene->RenderScene(&m_CameraController.GetCamera());
 }
 
 void SandboxLayer::OnImGuiRender()

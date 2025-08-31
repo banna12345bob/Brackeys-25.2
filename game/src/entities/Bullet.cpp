@@ -1,21 +1,32 @@
 #include "Bullet.h"
 
-#include "Player.h"
+#include "Character.h"
 
 #include <algorithm>
 
-Bullet::Bullet(Engine::Scene& scene, std::string name) 
-	: Engine::Entity(name, scene)
+Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, int speed, float initalAngle, float lifetime)
+	: Engine::Entity(name, scene), m_PlayerUUID(playerUUID), theta(initalAngle), speed(speed), lifetime(lifetime)
 {
 	GetTransform()->scale = { 16.f, 16.f };
 	GetSpriteRenderer()->colour = { 1, 0, 0, 1 };
+
+	GetVelocity()->velocity.x = speed * glm::sin(theta);
+	GetVelocity()->velocity.y = speed * glm::cos(theta);
 }
 
 void Bullet::OnUpdate(Engine::Timestep ts)
 {
-	Player* player = (Player*)m_Scene.GetEntity("Player");
+	if (lifetime < 0)
+	{
+		this->active = false;
+		this->hide = true;
+		return;
+	}
 
-	float theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
+	Character* player = (Character*)m_Scene.GetEntity(m_PlayerUUID);
+	//m_Theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
+
+	//float theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
 
 	// tan(theta) = (pos.y - posP.y) / (pos.x - posP.x)
 	// (pos.x - posP.x) * tan(theta) = pos.y - posP.y
@@ -23,20 +34,22 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 	// tan(theta) * pos.x = (pos.y - posP.y) + (tan(theta) * posP.x)
 	// pos.x = (pos.y - posP.y) + (tan(theta) * posP.x) / tan(theta)
 	// pos.x = (pos.y - posP.y) / tan(theta) + posP.x
-	GetVelocity()->velocity.x = (GetTransform()->position.y - player->GetTransform()->position.y) / glm::tan(-theta) + player->GetTransform()->position.x * ts;
+	//GetVelocity()->velocity.x = (GetTransform()->position.y - player->GetTransform()->position.y) / glm::tan(-theta) + player->GetTransform()->position.x * ts;
 
 	// theta = archtan((pos.y - posP.y) / (pos.x - posP.x))
 	// tan(theta) = (pos.y - posP.y) / (pos.x - posP.x)
 	// (pos.x - posP.x) * tan(theta) = pos.y - posP.y
 	// pos.y = (pos.x - posP.x) * tan(theta) + posP.y
-	GetVelocity()->velocity.y = (GetTransform()->position.x - player->GetTransform()->position.x) * glm::tan(-theta) + player->GetTransform()->position.y * ts;
+	//GetVelocity()->velocity.y = (GetTransform()->position.x - player->GetTransform()->position.x) * glm::tan(-theta) + player->GetTransform()->position.y * ts;
 
 	if (OverLappingWithEntity(player)) {
-		player->health--;
-		this->active = false;
-		this->hide = true;
+		if (player->Damage(1)) {
+			this->active = false;
+			this->hide = true;
+		}
 	}
-
+	
+	lifetime -= ts;
 	Engine::Entity::OnUpdate(ts);
 }
 
