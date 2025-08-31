@@ -2,7 +2,7 @@
 #include "Player.h"
 
 Enemy::Enemy(std::string name, Engine::Scene& scene, Player& player)
-	: Engine::Entity(name, scene),
+	: Character(name, scene),
 	m_health(10),
 	m_acceleration(700),
 	m_maxSpeed(80),
@@ -31,9 +31,5 @@ void Enemy::OnUpdate(Engine::Timestep ts) {
 
 	Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
 
-	Entity::OnUpdate(ts);
-}
-
-void Enemy::OnRender() {
-	Engine::Entity::OnRender();
+	Character::OnUpdate(ts);
 }

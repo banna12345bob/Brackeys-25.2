@@ -52,13 +52,15 @@ void GameLayer::OnAttach()
 	m_Scene->AddEntity(m_Player);
 
 	Bullet* bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID, 3.1415926);
+	bullet->speed = 0;
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.2f };
 	m_Scene->AddEntity(bullet);
 
 
 	Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
-	//m_Scene->AddEntity(enemy);
+	enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
+	m_Scene->AddEntity(enemy);
 
 	
 	for (int i = 0; i < 10; i++) {

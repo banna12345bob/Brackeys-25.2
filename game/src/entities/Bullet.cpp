@@ -36,7 +36,7 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 	GetVelocity()->velocity.y = speed * glm::cos(theta) * ts;
 
 	if (OverLappingWithEntity(player)) {
-		player->health--;
+		player->Damage(1);
 		this->active = false;
 		this->hide = true;
 	}

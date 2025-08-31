@@ -4,12 +4,13 @@
 // idk why it needs ../
 #include "../graphics/Anim.h"
 
-class Player : public Engine::Entity
+#include "Character.h"
+
+class Player : public Character
 {
 public:
 	Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations);
 	void OnUpdate(Engine::Timestep ts) override;
-	void OnRender() override;
 
 public:
 	int health;

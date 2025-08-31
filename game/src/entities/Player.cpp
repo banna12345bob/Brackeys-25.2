@@ -1,7 +1,7 @@
 #include "Player.h"
 
 Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations) 
-	: Engine::Entity("Player", scene),
+	: Character("Player", scene),
 	m_deceleration(20.f),
 	m_maxSpeed(250.f),
 	m_acceleration(3000.f),
@@ -17,6 +17,7 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_Animations["player_left"] = new Animator(animations->at("player_left"));
 	m_Animations["player_dead"] = new Animator(animations->at("player_dead"));
 	m_Animations["player_sleep"] = new Animator(animations->at("player_sleep"));
+	m_Animations["player_hurt"] = new Animator(animations->at("player_hurt"));
 
 	Engine::Ref<Engine::Texture2D> zzz = Engine::Texture2D::Create("assets/textures/zzz.png");
 
@@ -122,12 +123,14 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		GetSpriteRenderer()->texture = m_Animations["player_dead"]->Get();
 		dir = glm::vec2(0.f);
 	}
+	if (m_HurtIndex > 0)
+	{
+		GetSpriteRenderer()->texture = m_Animations["player_hurt"]->Get();
+	} else {
+		GetSpriteRenderer()->colour = { 1, 1, 1, 1 };
+	}
 
 	Engine::Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
 
-	Engine::Entity::OnUpdate(ts);
-}
-
-void Player::OnRender() {
-	Engine::Entity::OnRender();
+	Character::OnUpdate(ts);
 }

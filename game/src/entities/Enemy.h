@@ -2,14 +2,15 @@
 
 #include <engine.h>
 
+#include "Character.h"
+
 class Player;
 
-class Enemy : public Engine::Entity
+class Enemy : public Character
 {
 public:
 	Enemy(std::string name, Engine::Scene& scene, Player& player);
 	void OnUpdate(Engine::Timestep ts) override;
-	void OnRender() override;
 
 private:
 	int m_health;
