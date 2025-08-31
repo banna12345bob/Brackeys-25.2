@@ -63,6 +63,7 @@ private:
 
 	glm::vec3 m_PosOffset;
 	glm::vec2 m_ScaleMult;
+	glm::vec2 m_TileSize;
 
 	int m_MapWidth;
 	int m_MapHeight;

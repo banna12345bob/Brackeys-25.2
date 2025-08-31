@@ -21,16 +21,16 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 10, 10 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	//for (int i = 0; i < 10; i++)
+	//for (int i = 0; i < 25; i++)
 	//{
-	//	m_WFC->SetTile(i * 10, "stoneWall");
-	//	m_WFC->SetTile(i * 10 + 9, "stoneWall");
+	//	m_WFC->SetTile(i * 25, "stoneWall");
+	//	m_WFC->SetTile(i * 25 + 24, "stoneWall");
 	//	m_WFC->SetTile(i, "stoneWall");
-	//	m_WFC->SetTile(10*9 + i, "stoneWall");
+	//	m_WFC->SetTile(25*24 + i, "stoneWall");
 	//}
 
 

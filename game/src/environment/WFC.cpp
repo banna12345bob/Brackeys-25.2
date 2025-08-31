@@ -100,20 +100,20 @@ void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
 	Engine::Renderer2D::BeginScene(&camera->GetCamera());
 	for (int i = 0; i < map.size(); i++)
 	{
-		glm::vec3 pos = glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset;
-		if (pos.y + m_WFCData["tileSize"]["y"] * m_ScaleMult.y <= camera->getBounds().Bottom - camera->getPosition().y)
+		glm::vec3 pos = glm::vec3(i / m_MapWidth * (m_TileSize.x * m_ScaleMult.x), i % m_MapHeight * (m_TileSize.y * m_ScaleMult.y), 0.f) + m_PosOffset;
+		if (pos.y + m_TileSize.y * m_ScaleMult.y <= camera->getBounds().Bottom - camera->getPosition().y)
 			continue;
-		if (pos.y - m_WFCData["tileSize"]["y"] * m_ScaleMult.y >= camera->getBounds().Top - camera->getPosition().y)
+		if (pos.y - m_TileSize.y * m_ScaleMult.y >= camera->getBounds().Top - camera->getPosition().y)
 			continue;
-		if (pos.x + m_WFCData["tileSize"]["x"] * m_ScaleMult.x <= camera->getBounds().Left - camera->getPosition().x)
+		if (pos.x + m_TileSize.x * m_ScaleMult.x <= camera->getBounds().Left - camera->getPosition().x)
 			continue;
-		if (pos.x - m_WFCData["tileSize"]["x"] * m_ScaleMult.x >= camera->getBounds().Right - camera->getPosition().x)
+		if (pos.x - m_TileSize.x * m_ScaleMult.x >= camera->getBounds().Right - camera->getPosition().x)
 			continue;
 
 		if (map[i].domain.size() == 1)
-			Engine::Renderer2D::DrawQuad(pos, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, tiles[map[i].domain[0]].texture);
+			Engine::Renderer2D::DrawQuad(pos, m_TileSize * m_ScaleMult, tiles[map[i].domain[0]].texture);
 		else
-			Engine::Renderer2D::DrawQuad(pos, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, { 1, 0, 1, 1 });
+			Engine::Renderer2D::DrawQuad(pos, m_TileSize * m_ScaleMult, { 1, 0, 1, 1 });
 	}
 	Engine::Renderer2D::EndScene();
 }
@@ -228,7 +228,7 @@ void WaveFunctionCollapse::LoadTiles()
 {
 	EG_PROFILE_FUNCTION();
 	Engine::Ref<Engine::Texture2D> tilesheet = Engine::Texture2D::Create(m_WFCData["tileSheet"]);
-	glm::vec2 tileSize = { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] };
+	m_TileSize = { m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"] };
 	for (json::iterator it = m_WFCData["tiles"].begin(); it != m_WFCData["tiles"].end(); ++it) {
 		std::unordered_map<direction, std::vector<std::string>> validNeighbours;
 
@@ -249,7 +249,7 @@ void WaveFunctionCollapse::LoadTiles()
 		if (m_WFCData["tiles"][it.key()].contains("collision"))
 			if (m_WFCData["tiles"][it.key()]["collision"])
 				box = Engine::BoundingBox(0, 0, m_WFCData["tileSize"]["x"] * m_ScaleMult.x, m_WFCData["tileSize"]["y"] * m_ScaleMult.y);
-		tiles[it.key()] = Tile(tilesheet, { it.value()["texCoords"]["x"], it.value()["texCoords"]["y"] }, tileSize, validNeighbours, box);
+		tiles[it.key()] = Tile(tilesheet, { it.value()["texCoords"]["x"], it.value()["texCoords"]["y"] }, m_TileSize, validNeighbours, box);
 	}
 }
 
