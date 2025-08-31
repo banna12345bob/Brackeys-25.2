@@ -1,7 +1,7 @@
 #include "Character.h"
 
-Character::Character(std::string name, Engine::Scene& scene)
-	: Engine::Entity(name, scene)
+Character::Character(std::string name, Engine::Scene& scene, int health)
+	: Engine::Entity(name, scene), health(health)
 {
 }
 
@@ -18,8 +18,12 @@ void Character::OnUpdate(Engine::Timestep ts)
 	Entity::OnUpdate(ts);
 }
 
-void Character::Damage(int damage)
+bool Character::Damage(int damage)
 {
+	if (invincible || m_HurtIndex > 0)
+		return false;
+	EG_TRACE(health);
 	health -= damage;
 	m_HurtIndex = .4f;
+	return true;
 }

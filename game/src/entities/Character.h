@@ -5,12 +5,14 @@
 class Character : public Engine::Entity
 {
 public:
-	Character(std::string name, Engine::Scene& scene);
+	Character(std::string name, Engine::Scene& scene, int health);
 	void OnUpdate(Engine::Timestep ts) override;
 
-	void Damage(int damage);
+	bool Damage(int damage);
 
 	int health;
+
+	bool invincible;
 protected:
 	float m_HurtIndex = 0;
 };

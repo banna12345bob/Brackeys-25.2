@@ -15,7 +15,6 @@ public:
 	void Attack();
 
 public:
-	int health;
 	float dashIndex = 0;
 private:
 	float m_acceleration;

@@ -1,11 +1,10 @@
 #include "Player.h"
 
 Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations) 
-	: Character("Player", scene),
+	: Character("Player", scene, 10),
 	m_deceleration(20.f),
 	m_maxSpeed(250.f),
-	m_acceleration(3000.f),
-	health(10)
+	m_acceleration(3000.f)
 {
 	GetTransform()->scale = { 32.f, 32.f };
 	m_BoundingBox = Engine::BoundingBox(-GetTransform()->scale.x / 2, -GetTransform()->scale.y / 2, 31, 30);
@@ -137,6 +136,7 @@ void Player::OnUpdate(Engine::Timestep ts) {
 			m_acceleration = 125.f;
 		}
 
+		invincible = true;
 		dir = m_DirCopy;
 		if (dir.x > 0) {
 			GetSpriteRenderer()->texture = m_Animations["player_dash"]->Get();
@@ -161,11 +161,13 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		m_DirCopy = glm::vec2(0);
 		m_acceleration = 3000.f;
 		m_maxSpeed = 250.f;
+		invincible = false;
 	}
 
 	if (health < 1)
 	{
 		GetSpriteRenderer()->texture = m_Animations["player_dead"]->Get();
+		invincible = true;
 		dir = glm::vec2(0.f);
 	}
 

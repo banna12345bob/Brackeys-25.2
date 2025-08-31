@@ -13,7 +13,6 @@ public:
 	void OnUpdate(Engine::Timestep ts) override;
 
 private:
-	int m_health;
 	int m_acceleration;
 	int m_maxSpeed;
 	int m_attackRange;

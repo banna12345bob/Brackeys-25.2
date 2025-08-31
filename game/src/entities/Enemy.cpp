@@ -2,8 +2,7 @@
 #include "Player.h"
 
 Enemy::Enemy(std::string name, Engine::Scene& scene, Player& player)
-	: Character(name, scene),
-	m_health(10),
+	: Character(name, scene, 10),
 	m_acceleration(400),
 	m_maxSpeed(60),
 	m_attackRange(128),
