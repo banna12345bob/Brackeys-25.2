@@ -139,11 +139,11 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		invincible = true;
 		dir = m_DirCopy;
 		if (dir.x > 0) {
-			GetSpriteRenderer()->texture = m_Animations["player_dash"]->Get();
+			GetSpriteRenderer()->texture = m_Animations["player_dash_left"]->Get();
 			GetSpriteRenderer()->texture->flipAcrossYAxis(true);
 			dashIndex -= ts;
 		} else if (dir.x < 0) {
-			GetSpriteRenderer()->texture = m_Animations["player_dash"]->Get();
+			GetSpriteRenderer()->texture = m_Animations["player_dash_left"]->Get();
 			GetSpriteRenderer()->texture->flipAcrossYAxis(false);
 			dashIndex -= ts;
 		} else if (dir.y > 0) {

@@ -11,6 +11,7 @@
 #include "entities/Bullet.h"
 #include "entities/enemies/PistolGuy.h"
 #include "entities/enemies/UziGuy.h"
+#include "entities/enemies/Reaper.h"
 #include "environment/Room.h"
 
 
@@ -61,6 +62,10 @@ void GameLayer::OnAttach()
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
 	enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
 	m_Scene->AddEntity(enemy);
+
+	Reaper* reaper = new Reaper("Enemy", * m_Scene, * m_Player, &m_Animations);
+	reaper->GetTransform()->position = { 40.0f, 0.f, 0.2f };
+	m_Scene->AddEntity(reaper);
 
 	
 	for (int i = 0; i < 3; i++) {
