@@ -146,7 +146,6 @@ void WaveFunctionCollapse::SetTile(int index, std::string tile)
 	if (map[index].generated)
 	{
 		EG_WARN("Tried to set tile {0}: Tile already set", index);
-		return;
 	}
 
 	map[index] = MapTile(tiles[tile]);

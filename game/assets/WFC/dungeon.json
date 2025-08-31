@@ -16,13 +16,16 @@
             "texCoords":{"x":1,"y":0},
             "validNeighbours": {
                 "north":[
-                "psychicFloor"
+                "psychicFloor",
+                "psychicWallSouth"
                 ],
                 "east":[
-                "psychicFloor"
+                "psychicFloor",
+                "psychicWallWest"
                 ],
                 "south":[
-                "psychicFloor"
+                "psychicFloor",
+                "psychicWallNorth"
                 ],
                 "west":[
                 "psychicFloor",
@@ -35,7 +38,8 @@
             "collision":true,
             "validNeighbours": {
                 "north":[
-                "psychicWallEast"
+                "psychicWallEast",
+                "psychicWallNorthEast"
                 ],
                 "west":[
                 "outside"
@@ -53,13 +57,13 @@
             "collision":true,
             "validNeighbours": {
                 "north":[
-                "psychicWallWest"
+                "psychicWallNorthWest"
                 ],
                 "east":[
                 "outside"
                 ],
                 "south":[
-                "psychicWallWest"
+                "psychicWallNorthWest"
                 ],
                 "west":[
                 "psychicFloor"
@@ -74,13 +78,51 @@
                 "psychicFloor"
                 ],
                 "east":[
-                "psychicWallSouth"
+                "psychicWallSouth",
+                "psychicWallNorthEast"
                 ],
                 "north":[
                 "outside"
                 ],
                 "west":[
-                "psychicWallSouth"
+                "psychicWallSouth",
+                "psychicWallNorthWest"
+                ]
+            }
+        },
+        "psychicWallNorthEast": {
+            "texCoords":{"x":0,"y":2},
+            "collision":true,
+            "validNeighbours": {
+                "north":[
+                "outside"
+                ],
+                "west":[
+                "psychicWallNorth"
+                ],
+                "south":[
+                "psychicWallEast"
+                ],
+                "east":[
+                "outside"
+                ]
+            }
+        },
+        "psychicWallNorthWest": {
+            "texCoords":{"x":2,"y":2},
+            "collision":true,
+            "validNeighbours": {
+                "north":[
+                "outside"
+                ],
+                "west":[
+                "outside"
+                ],
+                "south":[
+                "psychicWallEast"
+                ],
+                "east":[
+                "psychicWallNorth"
                 ]
             }
         },

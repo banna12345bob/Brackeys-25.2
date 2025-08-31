@@ -4,7 +4,7 @@
 
 #include <algorithm>
 
-Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, int speed, float initalAngle, float lifetime)
+Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID* playerUUID, int speed, float initalAngle, float lifetime)
 	: Engine::Entity(name, scene), m_PlayerUUID(playerUUID), theta(initalAngle), speed(speed), lifetime(lifetime)
 {
 	GetTransform()->scale = { 16.f, 16.f };
@@ -23,7 +23,7 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 		return;
 	}
 
-	Character* player = (Character*)m_Scene.GetEntity(m_PlayerUUID);
+	Character* player = (Character*)m_Scene.GetEntity(*m_PlayerUUID);
 	//m_Theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
 
 	//float theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
