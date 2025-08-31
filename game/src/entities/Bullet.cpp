@@ -4,8 +4,8 @@
 
 #include <algorithm>
 
-Bullet::Bullet(Engine::Scene& scene, std::string name) 
-	: Engine::Entity(name, scene)
+Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID) 
+	: Engine::Entity(name, scene), m_PlayerUUID(playerUUID)
 {
 	GetTransform()->scale = { 16.f, 16.f };
 	GetSpriteRenderer()->colour = { 1, 0, 0, 1 };
@@ -13,7 +13,7 @@ Bullet::Bullet(Engine::Scene& scene, std::string name)
 
 void Bullet::OnUpdate(Engine::Timestep ts)
 {
-	Player* player = (Player*)m_Scene.GetEntity("Player");
+	Player* player = (Player*)m_Scene.GetEntity(m_PlayerUUID);
 
 	float theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
 
@@ -33,6 +33,7 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 
 	if (OverLappingWithEntity(player)) {
 		player->health--;
+		EG_TRACE(player->health);
 		this->active = false;
 		this->hide = true;
 	}

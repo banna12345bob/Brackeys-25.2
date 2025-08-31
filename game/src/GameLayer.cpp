@@ -13,7 +13,8 @@
 
 
 GameLayer::GameLayer()
-	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight())
+	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
+	m_CheckerboardUUID(0)
 {
 }
 
@@ -44,15 +45,18 @@ void GameLayer::OnAttach()
 	Checkboard->GetTransform()->position = { 0.f, 0.f, 0.1f };
 	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
-	m_Scene->AddEntity(Checkboard);
+	m_Scene->AddEntity(Checkboard, &m_CheckerboardUUID);
 
 	m_Player = new Player(*m_Scene, &m_Animations);
 	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
 	m_Scene->AddEntity(m_Player);
 
-	Bullet* bullet = new Bullet(*m_Scene, "test1");
-	bullet->GetTransform()->position = { 100.f, 100.f, 0.f };
-	//m_Scene->AddEntity(bullet);
+	Bullet* bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID);
+	bullet->GetTransform()->position = { 100.f, 100.f, 0.2f };
+	m_Scene->AddEntity(bullet);
+	bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID);
+	bullet->GetTransform()->position = { -100.f, 100.f, 0.2f };
+	m_Scene->AddEntity(bullet);
 
 
 	Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
@@ -81,9 +85,9 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 
 	m_Scene->UpdateScene(ts);
 
-	m_Scene->GetEntity("Checkboard")->hide = !m_WFC->generating;
+	m_Scene->GetEntity(m_CheckerboardUUID)->hide = !m_WFC->generating;
 
-	m_CameraController.setPosition(-m_Scene->GetEntity("Player")->GetTransform()->position);
+	m_CameraController.setPosition(-m_Player->GetTransform()->position);
 	m_CameraController.OnUpdate(ts);
 }
 
@@ -112,10 +116,10 @@ void GameLayer::OnEvent(Engine::Event& event)
 bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 {
 	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0) {
-		m_Scene->GetEntity("Player")->GetVelocity()->velocity *= 15.f;
+		m_Player->GetVelocity()->velocity *= 15.f;
 		return true;
 	}
-#if 0
+#if !defined(EG_DIST)
 	if (e.GetKeyCode() == EG_KEY_PAGE_UP && e.GetRepeatCount() == 0) {
 		m_CameraController.SetZoomLevel(m_CameraController.GetZoomLevel() + 128);
 		return true;

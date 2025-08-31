@@ -56,7 +56,7 @@ void SandboxLayer::OnUpdate(Engine::Timestep ts)
 	m_CurrentFrame += 0.0005 * ts.GetMilliseconds();
 	m_CameraController.OnUpdate(ts);
 
-	m_Scene->GetEntity("Arrow")->GetSpriteRenderer()->texture = m_Animation[(int)m_CurrentFrame % 3];
+	//m_Scene->GetEntity("Arrow")->GetSpriteRenderer()->texture = m_Animation[(int)m_CurrentFrame % 3];
 }
 
 void SandboxLayer::OnRender()
