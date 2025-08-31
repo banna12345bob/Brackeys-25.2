@@ -5,8 +5,7 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_deceleration(20.f),
 	m_maxSpeed(250.f),
 	m_acceleration(3000.f),
-	health(10),
-	m_dashing(false)
+	health(10)
 {
 	GetTransform()->scale = { 32.f, 32.f };
 	m_BoundingBox = Engine::BoundingBox(-GetTransform()->scale.x / 2, -GetTransform()->scale.y / 2, 31, 30);
@@ -18,6 +17,9 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_Animations["player_dead"] = new Animator(animations->at("player_dead"));
 	m_Animations["player_sleep"] = new Animator(animations->at("player_sleep"));
 	m_Animations["player_hurt"] = new Animator(animations->at("player_hurt"));
+	m_Animations["player_dash"] = new Animator(animations->at("player_dash"));
+	m_Animations["player_dash_up"] = new Animator(animations->at("player_dash"));
+	m_Animations["player_dash_down"] = new Animator(animations->at("player_dash"));
 
 	Engine::Ref<Engine::Texture2D> zzz = Engine::Texture2D::Create("assets/textures/zzz.png");
 
@@ -119,11 +121,6 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		}
 	}
 
-	if (health < 1)
-	{
-		GetSpriteRenderer()->texture = m_Animations["player_dead"]->Get();
-		dir = glm::vec2(0.f);
-	}
 	if (m_HurtIndex > 0)
 	{
 		GetSpriteRenderer()->texture = m_Animations["player_hurt"]->Get();
@@ -131,7 +128,60 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		GetSpriteRenderer()->colour = { 1, 1, 1, 1 };
 	}
 
+	if (dashIndex > 0)
+	{
+		if (dashIndex > .5f) {
+			m_DirCopy = dir;
+			m_acceleration = 4500.f;
+			m_maxSpeed = 500;
+		} else {
+			m_acceleration = 125.f;
+		}
+
+		dir = m_DirCopy;
+		if (dir.x > 0) {
+			GetSpriteRenderer()->texture = m_Animations["player_dash"]->Get();
+			GetSpriteRenderer()->texture->flipAcrossYAxis(true);
+			dashIndex -= ts;
+		} else if (dir.x < 0) {
+			GetSpriteRenderer()->texture = m_Animations["player_dash"]->Get();
+			GetSpriteRenderer()->texture->flipAcrossYAxis(false);
+			dashIndex -= ts;
+		} else if (dir.y > 0) {
+			GetSpriteRenderer()->texture = m_Animations["player_dash_up"]->Get();
+			dashIndex -= ts;
+		} else if (dir.y < 0) {
+			GetSpriteRenderer()->texture = m_Animations["player_dash_down"]->Get();
+			dashIndex -= ts;
+		} else {
+			dashIndex = 0;
+		}
+
+	} else {
+		dashIndex = 0;
+		m_DirCopy = glm::vec2(0);
+		m_acceleration = 3000.f;
+		m_maxSpeed = 250.f;
+	}
+
+	if (health < 1)
+	{
+		GetSpriteRenderer()->texture = m_Animations["player_dead"]->Get();
+		dir = glm::vec2(0.f);
+	}
+
 	Engine::Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
 
 	Character::OnUpdate(ts);
+}
+
+void Player::Attack()
+{
+	if (health < 1) {
+		return;
+	}
+	if (m_SleepTimer > 10) {
+		return;
+	}
+	EG_TRACE("Attack");
 }

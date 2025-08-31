@@ -57,13 +57,11 @@ void GameLayer::OnAttach()
 	m_Scene->AddEntity(bullet);
 
 	
-
-	
 	for (int i = 0; i < 3; i++) {
 		Engine::BoundingBox box = Engine::BoundingBox(i * 32, 32, 32, 32);
 		//m_Scene->AddCollisionBox(box);
 
-		Enemy* enemy = new Enemy("Enemy" + i, *m_Scene, *m_Player);
+		Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
 		enemy->GetSpriteRenderer()->texture = arrowTexture;
 		enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
 		m_Scene->AddEntity(enemy);
@@ -104,6 +102,16 @@ void GameLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
 	m_WFC->OnImGuiRender();
+	return;
+	// Begin with window. Requires window name
+	ImGui::Begin("Window info");
+
+	ImGui::SeparatorText("Window Size");
+	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
+	ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
+
+	ImGui::Text(glm::to_string(m_Player->GetVelocity()->velocity).c_str());
+	ImGui::End();
 }
 
 void GameLayer::OnEvent(Engine::Event& event)
@@ -115,8 +123,12 @@ void GameLayer::OnEvent(Engine::Event& event)
 
 bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 {
-	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0) {
-		m_Player->GetVelocity()->velocity *= 15.f;
+	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
+		m_Player->dashIndex = .6f;
+		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_SPACE && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
+		m_Player->Attack();
 		return true;
 	}
 #if !defined(EG_DIST)

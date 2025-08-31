@@ -34,15 +34,15 @@
             "hurt": [ { "name": "hurt", "dur": 100 } ],
             "dead": [ { "name": "dead", "dur": 100 } ],
             "dash": [
-                { "name": "dash_0", "dur": 100 },
-                { "name": "dash_1", "dur": 100 },
-                { "name": "dash_2", "dur": 100 },
-                { "name": "dash_3", "dur": 100 },
-                { "name": "dash_4", "dur": 100 },
-                { "name": "dash_5", "dur": 100 },
-                { "name": "dash_6", "dur": 100 },
-                { "name": "dash_7", "dur": 100 },
-                { "name": "dash_8", "dur": 100 }
+                { "name": "dash_0", "dur": 75 },
+                { "name": "dash_1", "dur": 75 },
+                { "name": "dash_2", "dur": 75 },
+                { "name": "dash_3", "dur": 75 },
+                { "name": "dash_4", "dur": 75 },
+                { "name": "dash_5", "dur": 75 },
+                { "name": "dash_6", "dur": 75 },
+                { "name": "dash_7", "dur": 75 },
+                { "name": "dash_8", "dur": 75 }
             ]
         }
     },
