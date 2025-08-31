@@ -16,7 +16,8 @@
             "texCoords":{"x":1,"y":0},
             "validNeighbours": {
                 "north":[
-                "psychicFloor"
+                "psychicFloor",
+                "psychicWallSouth"
                 ],
                 "east":[
                 "psychicFloor"

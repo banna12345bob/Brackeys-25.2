@@ -200,6 +200,8 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 		if (newDomain.size() != 0)
 			map[offset.x * m_MapWidth + offset.y].domain = newDomain;
 		m_NumDomain[offset.x * m_MapWidth + offset.y] = map[offset.x * m_MapWidth + offset.y].domain.size();
+		if (map[offset.x * m_MapWidth + offset.y].domain.size() == 0)
+			Colapse(offset.x * m_MapWidth + offset.y);
 	}
 }
 

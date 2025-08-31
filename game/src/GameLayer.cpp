@@ -23,7 +23,7 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon.json", m_Scene, { 100, 100 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon_reaper.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
@@ -39,9 +39,9 @@ void GameLayer::OnAttach()
 
 	//m_WFC->SetTile(26, "psychicWallNorthEast");
 
-	//m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
-	//if (m_WorldGenThread.joinable())
-	//	m_WorldGenThread.detach();
+	m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
+	if (m_WorldGenThread.joinable())
+		m_WorldGenThread.detach();
 
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
@@ -57,18 +57,18 @@ void GameLayer::OnAttach()
 	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
 	m_Scene->AddEntity(m_Player);
 
-	//UziGuy* enemy = new UziGuy("Enemy", *m_Scene, m_Player);
-	//enemy->GetSpriteRenderer()->texture = arrowTexture;
-	//enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
-	//m_Scene->AddEntity(enemy);
+	UziGuy* enemy = new UziGuy("Enemy", *m_Scene, m_Player);
+	enemy->GetSpriteRenderer()->texture = arrowTexture;
+	enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
+	m_Scene->AddEntity(enemy);
 
 	
-	//for (int i = 0; i < 3; i++) {
-	//	PistolGuy* enemy = new PistolGuy("Enemy", *m_Scene, m_Player);
-	//	enemy->GetSpriteRenderer()->texture = arrowTexture;
-	//	enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
-	//	m_Scene->AddEntity(enemy);
-	//}
+	for (int i = 0; i < 3; i++) {
+		PistolGuy* enemy = new PistolGuy("Enemy", *m_Scene, m_Player);
+		enemy->GetSpriteRenderer()->texture = arrowTexture;
+		enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
+		m_Scene->AddEntity(enemy);
+	}
 
 	m_CameraController.SetZoomLevel(128);
 }
