@@ -91,10 +91,20 @@ void WaveFunctionCollapse::Render(Engine::OrthographicCameraController* camera)
 	Engine::Renderer2D::BeginScene(&camera->GetCamera());
 	for (int i = 0; i < map.size(); i++)
 	{
+		glm::vec3 pos = glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset;
+		if (pos.y + m_WFCData["tileSize"]["y"] * m_ScaleMult.y <= camera->getBounds().Bottom - camera->getPosition().y)
+			continue;
+		if (pos.y - m_WFCData["tileSize"]["y"] * m_ScaleMult.y >= camera->getBounds().Top - camera->getPosition().y)
+			continue;
+		if (pos.x + m_WFCData["tileSize"]["x"] * m_ScaleMult.x <= camera->getBounds().Left - camera->getPosition().x)
+			continue;
+		if (pos.x - m_WFCData["tileSize"]["x"] * m_ScaleMult.x >= camera->getBounds().Right - camera->getPosition().x)
+			continue;
+
 		if (map[i].domain.size() == 1)
-			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, tiles[map[i].domain[0]].texture);
+			Engine::Renderer2D::DrawQuad(pos, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, tiles[map[i].domain[0]].texture);
 		else
-			Engine::Renderer2D::DrawQuad(glm::vec3(i / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x), i % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y), 0.f) + m_PosOffset, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, { 1, 0, 1, 1 });
+			Engine::Renderer2D::DrawQuad(pos, glm::vec2(m_WFCData["tileSize"]["x"], m_WFCData["tileSize"]["y"]) * m_ScaleMult, { 1, 0, 1, 1 });
 	}
 	Engine::Renderer2D::EndScene();
 }

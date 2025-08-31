@@ -1,6 +1,6 @@
 #include "Bullet.h"
 
-#include "Player.h"
+#include "Character.h"
 
 #include <algorithm>
 
@@ -13,7 +13,7 @@ Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, 
 
 void Bullet::OnUpdate(Engine::Timestep ts)
 {
-	Player* player = (Player*)m_Scene.GetEntity(m_PlayerUUID);
+	Character* player = (Character*)m_Scene.GetEntity(m_PlayerUUID);
 	//m_Theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
 
 	//float theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
