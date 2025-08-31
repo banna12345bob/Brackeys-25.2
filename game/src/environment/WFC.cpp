@@ -19,6 +19,15 @@ WaveFunctionCollapse::WaveFunctionCollapse(std::string filename, Engine::Scene* 
 
 WaveFunctionCollapse::~WaveFunctionCollapse()
 {
+	for (int i = 0; i < map.size(); i++)
+	{
+		if (glm::length(map[i].boundingBox.size()) == 0)
+			continue;
+
+		m_Scene->RemoveCollisionBox(map[i].boundingBox.BoxUUID);
+	}
+	map = std::vector<MapTile>();
+	tiles = std::unordered_map<std::string, Tile>();
 }
 
 void WaveFunctionCollapse::OnImGuiRender()
@@ -145,7 +154,7 @@ void WaveFunctionCollapse::SetTile(int index, std::string tile)
 	if (glm::length(map[index].boundingBox.size()) != 0) {
 		map[index].boundingBox.x = (glm::vec3(index / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).x;
 		map[index].boundingBox.y = (glm::vec3(index / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).y;
-		m_Scene->AddCollisionBox(map[index].boundingBox);
+		m_Scene->AddCollisionBox(&map[index].boundingBox);
 	}
 
 	for (int x = -5; x <= 5; x++)

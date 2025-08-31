@@ -21,16 +21,16 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 250, 250 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 10, 10 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	//for (int i = 0; i < 100; i++)
+	//for (int i = 0; i < 10; i++)
 	//{
-	//	m_WFC->SetTile(i * 100, "stoneWall");
-	//	m_WFC->SetTile(i * 100 + 99, "stoneWall");
+	//	m_WFC->SetTile(i * 10, "stoneWall");
+	//	m_WFC->SetTile(i * 10 + 9, "stoneWall");
 	//	m_WFC->SetTile(i, "stoneWall");
-	//	m_WFC->SetTile(100*99 + i, "stoneWall");
+	//	m_WFC->SetTile(10*9 + i, "stoneWall");
 	//}
 
 
@@ -129,6 +129,17 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 	}
 	if (e.GetKeyCode() == EG_KEY_HOME && e.GetRepeatCount() == 0) {
 		m_CameraController.SetZoomLevel(128);
+		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_F6 && e.GetRepeatCount() == 0 && !m_WFC->generating) {
+		if (m_WorldGenThread.joinable())
+			m_WorldGenThread.join();
+		m_WFC->~WaveFunctionCollapse();
+
+		m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth() / 4, -Engine::Application::getApplication()->getWindow()->GetHeight() / 4, 0 }, { 2, 2 });
+		m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
+		if (m_WorldGenThread.joinable())
+			m_WorldGenThread.detach();
 		return true;
 	}
 #endif
