@@ -60,6 +60,7 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		GetSpriteRenderer()->texture = m_Animations["player_left"]->Get();
 		GetSpriteRenderer()->texture->flipAcrossYAxis(true);
 	}
+	if (dir != glm::vec2(0)) dir = glm::normalize(dir);
 
 	if (glm::length(dir) == 0) {
 		GetSpriteRenderer()->texture = m_Animations["player_idle"]->Get();

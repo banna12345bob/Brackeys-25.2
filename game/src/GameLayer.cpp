@@ -56,16 +56,17 @@ void GameLayer::OnAttach()
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.2f };
 	m_Scene->AddEntity(bullet);
 
-
-	Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
-	enemy->GetSpriteRenderer()->texture = arrowTexture;
-	enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
-	m_Scene->AddEntity(enemy);
+	
 
 	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 3; i++) {
 		Engine::BoundingBox box = Engine::BoundingBox(i * 32, 32, 32, 32);
 		//m_Scene->AddCollisionBox(box);
+
+		Enemy* enemy = new Enemy("Enemy" + i, *m_Scene, *m_Player);
+		enemy->GetSpriteRenderer()->texture = arrowTexture;
+		enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
+		m_Scene->AddEntity(enemy);
 	}
 
 	m_CameraController.SetZoomLevel(128);

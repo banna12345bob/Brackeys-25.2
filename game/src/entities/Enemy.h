@@ -19,6 +19,9 @@ private:
 	int m_attackRange;
 	int m_attackRangeSqrd;
 
+	int m_idleTimer;
+	glm::vec2 m_randDir;
+
 	Player& m_player;
 };
 
