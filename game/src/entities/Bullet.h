@@ -5,7 +5,7 @@
 class Bullet : public Engine::Entity
 {
 public:
-	Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, float initalAngle = 0.f);
+	Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, int speed, float initalAngle = 0.f);
 
 	void OnUpdate(Engine::Timestep ts) override;
 

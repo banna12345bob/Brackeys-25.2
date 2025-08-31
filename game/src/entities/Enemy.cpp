@@ -6,6 +6,8 @@ Enemy::Enemy(std::string name, Engine::Scene& scene, Player& player)
 	m_acceleration(400),
 	m_maxSpeed(60),
 	m_attackRange(128),
+	m_attackSpeed(600),
+	m_attackTimer(2000),
 	m_player(player),
 	m_idleTimer(0),
 	m_randDir(glm::vec2(0))
@@ -19,6 +21,14 @@ void Enemy::OnUpdate(Engine::Timestep ts) {
 	float lenSqrd = glm::dot(offset, offset);	// Length squared
 
 	//Attack
+	m_attackTimer -= ts.GetMilliseconds();
+	if (m_attackTimer <= 0) {
+		if (lenSqrd < m_attackRangeSqrd && offset != glm::vec2(0)) {
+			Attack(glm::normalize(offset));
+		}
+
+		m_attackTimer = m_attackSpeed;
+	}
 
 	// Movement
 	// If idle, wait until timer runs out before moving. Enemy is idle when it stops moving and timer starts then
@@ -70,4 +80,8 @@ void Enemy::OnUpdate(Engine::Timestep ts) {
 	Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
 
 	Character::OnUpdate(ts);
+}
+
+void Enemy::Attack(glm::vec2 dir) {
+
 }

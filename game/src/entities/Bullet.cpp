@@ -4,11 +4,14 @@
 
 #include <algorithm>
 
-Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, float initalAngle) 
-	: Engine::Entity(name, scene), m_PlayerUUID(playerUUID), theta(initalAngle), speed(500)
+Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, int speed, float initalAngle)
+	: Engine::Entity(name, scene), m_PlayerUUID(playerUUID), theta(initalAngle), speed(speed)
 {
 	GetTransform()->scale = { 16.f, 16.f };
 	GetSpriteRenderer()->colour = { 1, 0, 0, 1 };
+
+	GetVelocity()->velocity.x = speed * glm::sin(theta);
+	GetVelocity()->velocity.y = speed * glm::cos(theta);
 }
 
 void Bullet::OnUpdate(Engine::Timestep ts)
@@ -31,9 +34,6 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 	// (pos.x - posP.x) * tan(theta) = pos.y - posP.y
 	// pos.y = (pos.x - posP.x) * tan(theta) + posP.y
 	//GetVelocity()->velocity.y = (GetTransform()->position.x - player->GetTransform()->position.x) * glm::tan(-theta) + player->GetTransform()->position.y * ts;
-
-	GetVelocity()->velocity.x = speed * glm::sin(theta) * ts;
-	GetVelocity()->velocity.y = speed * glm::cos(theta) * ts;
 
 	if (OverLappingWithEntity(player)) {
 		if (player->Damage(1)) {

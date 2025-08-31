@@ -9,6 +9,7 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "entities/Bullet.h"
+#include "entities/enemies/PistolGuy.h"
 #include "environment/Room.h"
 
 
@@ -52,7 +53,6 @@ void GameLayer::OnAttach()
 	m_Scene->AddEntity(m_Player);
 
 	Bullet* bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID, 3.1415926);
-	bullet->speed = 0;
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.2f };
 	m_Scene->AddEntity(bullet);
 
@@ -61,7 +61,7 @@ void GameLayer::OnAttach()
 		Engine::BoundingBox box = Engine::BoundingBox(i * 32, 32, 32, 32);
 		//m_Scene->AddCollisionBox(box);
 
-		Enemy* enemy = new Enemy("Enemy", *m_Scene, *m_Player);
+		PistolGuy* enemy = new PistolGuy("Enemy", *m_Scene, *m_Player);
 		enemy->GetSpriteRenderer()->texture = arrowTexture;
 		enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
 		m_Scene->AddEntity(enemy);
