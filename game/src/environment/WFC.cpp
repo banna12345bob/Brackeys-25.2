@@ -43,7 +43,7 @@ void WaveFunctionCollapse::OnImGuiRender()
 			for (auto domain : map[index].domain)
 			{
 				domains += domain + ", ";
-#if 0
+#if 1
 				if (ImGui::Button(domain.c_str()))
 				{
 					map[index] = MapTile(tiles[domain]);

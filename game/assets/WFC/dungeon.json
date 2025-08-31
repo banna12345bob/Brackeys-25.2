@@ -16,20 +16,17 @@
             "texCoords":{"x":1,"y":0},
             "validNeighbours": {
                 "north":[
-                "psychicFloor",
-                "psychicWallSouth"
+                "psychicFloor"
                 ],
                 "east":[
-                "psychicFloor",
-                "psychicWallWest"
+                "psychicFloor"
                 ],
                 "south":[
                 "psychicFloor",
                 "psychicWallNorth"
                 ],
                 "west":[
-                "psychicFloor",
-                "psychicWallEast"
+                "psychicFloor"
                 ]
             }
         },
@@ -78,15 +75,15 @@
                 "psychicFloor"
                 ],
                 "east":[
-                "psychicWallSouth",
-                "psychicWallNorthEast"
+                "psychicWallNorth",
+                "psychicWallNorthWest"
                 ],
                 "north":[
                 "outside"
                 ],
                 "west":[
-                "psychicWallSouth",
-                "psychicWallNorthWest"
+                "psychicWallNorth",
+                "psychicWallNorthEast"
                 ]
             }
         },

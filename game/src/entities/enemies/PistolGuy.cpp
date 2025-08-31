@@ -14,7 +14,7 @@ PistolGuy::PistolGuy(std::string name, Engine::Scene& scene, Player* player)
 
 void PistolGuy::Attack(glm::vec2 dir)
 {
-	Bullet* bullet = new Bullet(m_Scene, "test", &m_player->EntityUUID, 150, glm::atan(dir.x, dir.y));
+	Bullet* bullet = new Bullet(m_Scene, "test", m_player, 150, glm::atan(dir.x, dir.y));
 	bullet->GetTransform()->position = GetTransform()->position;
 	m_Scene.AddEntity(bullet);
 }

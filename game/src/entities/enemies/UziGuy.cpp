@@ -16,7 +16,7 @@ UziGuy::UziGuy(std::string name, Engine::Scene& scene, Player* player)
 void UziGuy::Attack(glm::vec2 dir)
 {
 	float randomAngleOffset = ((rand() % 1000) - 500) / 1000.f;
-	Bullet* bullet = new Bullet(m_Scene, "test", &m_player->EntityUUID, 150, glm::atan(dir.x, dir.y) + randomAngleOffset);
+	Bullet* bullet = new Bullet(m_Scene, "test", m_player, 150, glm::atan(dir.x, dir.y) + randomAngleOffset);
 	bullet->GetTransform()->position = GetTransform()->position;
 	m_Scene.AddEntity(bullet);
 }
