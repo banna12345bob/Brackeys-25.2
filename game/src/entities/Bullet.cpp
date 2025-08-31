@@ -4,8 +4,8 @@
 
 #include <algorithm>
 
-Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, int speed, float initalAngle)
-	: Engine::Entity(name, scene), m_PlayerUUID(playerUUID), theta(initalAngle), speed(speed)
+Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, int speed, float initalAngle, float lifetime)
+	: Engine::Entity(name, scene), m_PlayerUUID(playerUUID), theta(initalAngle), speed(speed), lifetime(lifetime)
 {
 	GetTransform()->scale = { 16.f, 16.f };
 	GetSpriteRenderer()->colour = { 1, 0, 0, 1 };
@@ -16,6 +16,13 @@ Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, 
 
 void Bullet::OnUpdate(Engine::Timestep ts)
 {
+	if (lifetime < 0)
+	{
+		this->active = false;
+		this->hide = true;
+		return;
+	}
+
 	Character* player = (Character*)m_Scene.GetEntity(m_PlayerUUID);
 	//m_Theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
 
@@ -41,7 +48,8 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 			this->hide = true;
 		}
 	}
-
+	
+	lifetime -= ts;
 	Engine::Entity::OnUpdate(ts);
 }
 

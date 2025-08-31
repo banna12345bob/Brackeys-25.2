@@ -128,7 +128,7 @@ void Player::OnUpdate(Engine::Timestep ts) {
 
 	if (dashIndex > 0)
 	{
-		if (dashIndex > .5f) {
+		if (dashIndex > .05f) {
 			m_DirCopy = dir;
 			m_acceleration = 4500.f;
 			m_maxSpeed = 1000;

@@ -43,17 +43,19 @@ void WaveFunctionCollapse::OnImGuiRender()
 			for (auto domain : map[index].domain)
 			{
 				domains += domain + ", ";
-				//if (ImGui::Button(domain.c_str()))
-				//{
-				//	map[index] = MapTile(tiles[domain]);
-				//	map[index].domain.push_back(domain);
-				//	m_NumDomain[index] = 1;
-				//	for (int i = 0; i < map.size(); i++)
-				//	{
-				//		CalcuateDomain(i);
-				//	}
-				//	break;
-				//}
+#if 0
+				if (ImGui::Button(domain.c_str()))
+				{
+					map[index] = MapTile(tiles[domain]);
+					map[index].domain.push_back(domain);
+					m_NumDomain[index] = 1;
+					for (int i = 0; i < map.size(); i++)
+					{
+						CalcuateDomain(i);
+					}
+					break;
+				}
+#endif
 			}
 			ImGui::Text(domains.c_str());
 			ImGui::TreePop();
@@ -141,7 +143,7 @@ void WaveFunctionCollapse::SetTile(int index, std::string tile)
 {
 	if (index > map.size() - 1)
 		return;
-	if (map[index].domain.size() == 1)
+	if (map[index].generated)
 	{
 		EG_WARN("Tried to set tile {0}: Tile already set", index);
 		return;
@@ -149,11 +151,12 @@ void WaveFunctionCollapse::SetTile(int index, std::string tile)
 
 	map[index] = MapTile(tiles[tile]);
 	map[index].domain.push_back(tile);
+	map[index].generated = true;
 	m_NumDomain[index] = 1;
-
+	
 	if (glm::length(map[index].boundingBox.size()) != 0) {
-		map[index].boundingBox.x = (glm::vec3(index / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).x;
-		map[index].boundingBox.y = (glm::vec3(index / m_MapWidth * (m_WFCData["tileSize"]["x"] * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_WFCData["tileSize"]["y"] * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).y;
+		map[index].boundingBox.x = (glm::vec3(index / m_MapWidth * (m_TileSize.x * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_TileSize.y * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).x;
+		map[index].boundingBox.y = (glm::vec3(index / m_MapWidth * (m_TileSize.x * m_ScaleMult.x) - map[index].boundingBox.width / 2, index % m_MapHeight * (m_TileSize.y * m_ScaleMult.y) - map[index].boundingBox.height / 2, 0.f) + m_PosOffset).y;
 		m_Scene->AddCollisionBox(&map[index].boundingBox);
 	}
 
@@ -212,10 +215,10 @@ int WaveFunctionCollapse::FindSmallestDomain()
 		});
 
 	minIndex = std::find(m_NumDomain.begin(), m_NumDomain.end(), min) - m_NumDomain.begin();
-	while (map[minIndex].domain.size() == 1)
+	while (map[minIndex].generated)
 	{
 		minIndex++;
-		if (minIndex == m_NumDomain.size()-2)
+		if (minIndex == map.size())
 		{
 			minIndex = -1;
 			break;

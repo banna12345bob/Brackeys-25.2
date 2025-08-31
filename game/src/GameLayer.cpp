@@ -23,18 +23,17 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	//for (int i = 0; i < 25; i++)
-	//{
-	//	m_WFC->SetTile(i * 25, "stoneWall");
-	//	m_WFC->SetTile(i * 25 + 24, "stoneWall");
-	//	m_WFC->SetTile(i, "stoneWall");
-	//	m_WFC->SetTile(25*24 + i, "stoneWall");
-	//}
-
+	for (int i = 0; i < 25; i++)
+	{
+		m_WFC->SetTile(i * 25, "psychicWallSouth");
+		m_WFC->SetTile(i * 25 + 24, "psychicWallNorth");
+		m_WFC->SetTile(i, "psychicWallEast");
+		m_WFC->SetTile(25 * 24 + i, "psychicWallWest");
+	}
 
 	m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
 	if (m_WorldGenThread.joinable())
@@ -47,6 +46,7 @@ void GameLayer::OnAttach()
 	Checkboard->GetTransform()->position = { 0.f, 0.f, 0.1f };
 	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
+	Checkboard->hide = true;
 	m_Scene->AddEntity(Checkboard, &m_CheckerboardUUID);
 
 	m_Player = new Player(*m_Scene, &m_Animations);
@@ -64,9 +64,6 @@ void GameLayer::OnAttach()
 
 	
 	for (int i = 0; i < 3; i++) {
-		Engine::BoundingBox box = Engine::BoundingBox(i * 32, 32, 32, 32);
-		//m_Scene->AddCollisionBox(box);
-
 		PistolGuy* enemy = new PistolGuy("Enemy", *m_Scene, *m_Player);
 		enemy->GetSpriteRenderer()->texture = arrowTexture;
 		enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
@@ -89,7 +86,7 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 
 	m_Scene->UpdateScene(ts);
 
-	m_Scene->GetEntity(m_CheckerboardUUID)->hide = !m_WFC->generating;
+	//m_Scene->GetEntity(m_CheckerboardUUID)->hide = !m_WFC->generating;
 
 	m_CameraController.setPosition(-m_Player->GetTransform()->position);
 	m_CameraController.OnUpdate(ts);
@@ -130,7 +127,7 @@ void GameLayer::OnEvent(Engine::Event& event)
 bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 {
 	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
-		m_Player->dashIndex = .6f;
+		m_Player->dashIndex = .2f;
 		return true;
 	}
 	if (e.GetKeyCode() == EG_KEY_SPACE && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
