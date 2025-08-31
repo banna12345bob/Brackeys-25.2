@@ -10,6 +10,7 @@
 
 #include "entities/Bullet.h"
 #include "entities/enemies/PistolGuy.h"
+#include "entities/enemies/UziGuy.h"
 #include "environment/Room.h"
 
 
@@ -55,6 +56,11 @@ void GameLayer::OnAttach()
 	Bullet* bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID, 3.1415926);
 	bullet->GetTransform()->position = { 100.f, 100.f, 0.2f };
 	m_Scene->AddEntity(bullet);
+
+	UziGuy* enemy = new UziGuy("Enemy", *m_Scene, *m_Player);
+	enemy->GetSpriteRenderer()->texture = arrowTexture;
+	enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
+	m_Scene->AddEntity(enemy);
 
 	
 	for (int i = 0; i < 3; i++) {
