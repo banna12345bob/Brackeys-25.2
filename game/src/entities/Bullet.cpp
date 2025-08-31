@@ -4,8 +4,8 @@
 
 #include <algorithm>
 
-Bullet::Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, int speed, float initalAngle, float lifetime)
-	: Engine::Entity(name, scene), m_PlayerUUID(playerUUID), theta(initalAngle), speed(speed), lifetime(lifetime)
+Bullet::Bullet(Engine::Scene& scene, std::string name, Player* player, int speed, float initalAngle, float lifetime)
+	: Engine::Entity(name, scene), m_Player(player), theta(initalAngle), speed(speed), lifetime(lifetime)
 {
 	GetTransform()->scale = { 16.f, 16.f };
 	GetSpriteRenderer()->colour = { 1, 0, 0, 1 };
@@ -22,8 +22,6 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 		this->hide = true;
 		return;
 	}
-
-	Character* player = (Character*)m_Scene.GetEntity(m_PlayerUUID);
 	//m_Theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
 
 	//float theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
@@ -42,8 +40,8 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 	// pos.y = (pos.x - posP.x) * tan(theta) + posP.y
 	//GetVelocity()->velocity.y = (GetTransform()->position.x - player->GetTransform()->position.x) * glm::tan(-theta) + player->GetTransform()->position.y * ts;
 
-	if (OverLappingWithEntity(player)) {
-		if (player->Damage(1)) {
+	if (OverLappingWithEntity(m_Player)) {
+		if (m_Player->Damage(1)) {
 			this->active = false;
 			this->hide = true;
 		}

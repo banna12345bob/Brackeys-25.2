@@ -1,11 +1,12 @@
 #pragma once
 
 #include <engine.h>
+#include "Player.h"
 
 class Bullet : public Engine::Entity
 {
 public:
-	Bullet(Engine::Scene& scene, std::string name, Engine::UUID playerUUID, int speed, float initalAngle = 0.f, float lifetime = 2.f);
+	Bullet(Engine::Scene& scene, std::string name, Player* player, int speed, float initalAngle = 0.f, float lifetime = 2.f);
 
 	void OnUpdate(Engine::Timestep ts) override;
 
@@ -16,7 +17,7 @@ private:
 	bool OverLappingWithEntity(Engine::Entity* entity);
 
 private:
-	Engine::UUID m_PlayerUUID;
+	Player* m_Player;
 
 };
 

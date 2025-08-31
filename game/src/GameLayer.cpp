@@ -24,17 +24,21 @@ GameLayer::GameLayer()
 void GameLayer::OnAttach()
 {
 	m_Scene = new Engine::Scene();
-	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon_reaper.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
-	for (int i = 0; i < 25; i++)
-	{
-		m_WFC->SetTile(i * 25, "psychicWallSouth");
-		m_WFC->SetTile(i * 25 + 24, "psychicWallNorth");
-		m_WFC->SetTile(i, "psychicWallEast");
-		m_WFC->SetTile(25 * 24 + i, "psychicWallWest");
-	}
+	//for (int i = 0; i < 100; i++)
+	//{
+	//	m_WFC->SetTile(i * 100, "psychicWallSouth");
+	//	m_WFC->SetTile(i * 100 + 99, "psychicWallNorth");
+	//	m_WFC->SetTile(i, "psychicWallEast");
+	//	m_WFC->SetTile(100 * 99 + i, "psychicWallWest");
+	//}
+	//m_WFC->SetTile(24, "psychicWallNorthEast");
+	//m_WFC->SetTile(624, "psychicWallNorthWest");
+
+	//m_WFC->SetTile(26, "psychicWallNorthEast");
 
 	m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
 	if (m_WorldGenThread.joinable())
@@ -54,11 +58,7 @@ void GameLayer::OnAttach()
 	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
 	m_Scene->AddEntity(m_Player);
 
-	Bullet* bullet = new Bullet(*m_Scene, "test", m_Player->EntityUUID, 3.1415926);
-	bullet->GetTransform()->position = { 100.f, 100.f, 0.2f };
-	m_Scene->AddEntity(bullet);
-
-	UziGuy* enemy = new UziGuy("Enemy", *m_Scene, *m_Player);
+	UziGuy* enemy = new UziGuy("Enemy", *m_Scene, m_Player);
 	enemy->GetSpriteRenderer()->texture = arrowTexture;
 	enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
 	m_Scene->AddEntity(enemy);
@@ -69,7 +69,7 @@ void GameLayer::OnAttach()
 
 	
 	for (int i = 0; i < 3; i++) {
-		PistolGuy* enemy = new PistolGuy("Enemy", *m_Scene, *m_Player);
+		PistolGuy* enemy = new PistolGuy("Enemy", *m_Scene, m_Player);
 		enemy->GetSpriteRenderer()->texture = arrowTexture;
 		enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
 		m_Scene->AddEntity(enemy);
@@ -138,6 +138,11 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 	if (e.GetKeyCode() == EG_KEY_SPACE && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
 		m_Player->Attack();
 		return true;
+	}
+	if (e.GetKeyCode() == EG_KEY_F8 && e.GetRepeatCount() == 0) {
+		m_Scene->RemoveEntity(m_Player->EntityUUID);
+		m_Player = new Player(*m_Scene, &m_Animations);
+		m_Scene->AddEntity(m_Player);
 	}
 #if !defined(EG_DIST)
 	if (e.GetKeyCode() == EG_KEY_PAGE_UP && e.GetRepeatCount() == 0) {

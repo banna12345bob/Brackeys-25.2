@@ -1,5 +1,5 @@
 {
-    "tileSheet": "assets/textures/dungeon_psychic.png",
+    "tileSheet": "assets/textures/dungeon_tiles_psychic.png",
     "tileSize": { "x": 16, "y": 16 },
     "numTiles": { "x": 3 , "y": 3 },
     "tiles": {

@@ -43,7 +43,7 @@ void WaveFunctionCollapse::OnImGuiRender()
 			for (auto domain : map[index].domain)
 			{
 				domains += domain + ", ";
-#if 0
+#if 1
 				if (ImGui::Button(domain.c_str()))
 				{
 					map[index] = MapTile(tiles[domain]);
@@ -146,7 +146,6 @@ void WaveFunctionCollapse::SetTile(int index, std::string tile)
 	if (map[index].generated)
 	{
 		EG_WARN("Tried to set tile {0}: Tile already set", index);
-		return;
 	}
 
 	map[index] = MapTile(tiles[tile]);
@@ -201,6 +200,8 @@ void WaveFunctionCollapse::CalcuateDomain(int mapIndex)
 		if (newDomain.size() != 0)
 			map[offset.x * m_MapWidth + offset.y].domain = newDomain;
 		m_NumDomain[offset.x * m_MapWidth + offset.y] = map[offset.x * m_MapWidth + offset.y].domain.size();
+		if (map[offset.x * m_MapWidth + offset.y].domain.size() == 0)
+			Colapse(offset.x * m_MapWidth + offset.y);
 	}
 }
 

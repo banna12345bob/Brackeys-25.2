@@ -16,7 +16,7 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_Animations["player_dead"] = new Animator(animations->at("player_dead"));
 	m_Animations["player_sleep"] = new Animator(animations->at("player_sleep"));
 	m_Animations["player_hurt"] = new Animator(animations->at("player_hurt"));
-	m_Animations["player_dash_left"] = new Animator(animations->at("player_dash_left"));
+	m_Animations["player_dash"] = new Animator(animations->at("player_dash_left"));
 	m_Animations["player_dash_up"] = new Animator(animations->at("player_dash_backwd"));
 	m_Animations["player_dash_down"] = new Animator(animations->at("player_dash_fwd"));
 
@@ -35,13 +35,11 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 
 void Player::OnUpdate(Engine::Timestep ts) {
 
-	// Movement
 	for (auto& animation : m_Animations)
 	{
 		animation.second->progress += ts.GetSeconds();
 	}
 
-	// Currently confined to what the camera sees
 	glm::vec2 dir = glm::vec2(0.f);
 	if (Engine::Input::IsKeyPressed(EG_KEY_W)) {
 		dir.y += 1;
@@ -69,7 +67,7 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	} else
 		m_SleepTimer = 0;
 
-	if (m_SleepTimer > 10)
+	if (m_SleepTimer > 10 && health > 0)
 	{
 		GetSpriteRenderer()->texture = m_Animations["player_sleep"]->Get();
 		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity*) - 1; i++)
