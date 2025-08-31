@@ -16,9 +16,9 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 	m_Animations["player_dead"] = new Animator(animations->at("player_dead"));
 	m_Animations["player_sleep"] = new Animator(animations->at("player_sleep"));
 	m_Animations["player_hurt"] = new Animator(animations->at("player_hurt"));
-	m_Animations["player_dash"] = new Animator(animations->at("player_dash"));
-	m_Animations["player_dash_up"] = new Animator(animations->at("player_dash"));
-	m_Animations["player_dash_down"] = new Animator(animations->at("player_dash"));
+	m_Animations["player_dash_left"] = new Animator(animations->at("player_dash_left"));
+	m_Animations["player_dash_up"] = new Animator(animations->at("player_dash_backwd"));
+	m_Animations["player_dash_down"] = new Animator(animations->at("player_dash_fwd"));
 
 	Engine::Ref<Engine::Texture2D> zzz = Engine::Texture2D::Create("assets/textures/zzz.png");
 
