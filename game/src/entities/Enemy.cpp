@@ -8,7 +8,8 @@ Enemy::Enemy(std::string name, Engine::Scene& scene, Player& player)
 	m_maxSpeed(60),
 	m_attackRange(128),
 	m_player(player),
-	m_idleTimer(0)
+	m_idleTimer(0),
+	m_randDir(glm::vec2(0))
 {
 	GetTransform()->scale = { 16.f, 16.f };
 	m_attackRangeSqrd = m_attackRange * m_attackRange;
@@ -48,12 +49,15 @@ void Enemy::OnUpdate(Engine::Timestep ts) {
 		}
 		else {
 			dir = glm::vec2(0);
-			m_idleTimer = 500;
+			m_idleTimer = 700;
 
 			// Chance to set a random direction for this idle period
-			if (rand() % 2 == 0) {
+			if (rand() % 5 == 0) {
 				m_randDir = glm::vec2((rand() % 3) - 1, (rand() % 3) - 1);
-				m_randDir = glm::normalize(m_randDir);
+
+				if (m_randDir != glm::vec2(0)) {
+					m_randDir = glm::normalize(m_randDir);
+				}
 			}
 			else {
 				m_randDir = glm::vec2(0);
@@ -64,7 +68,6 @@ void Enemy::OnUpdate(Engine::Timestep ts) {
 		dir = m_randDir;
 	}
 
-	
 	Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
 
 	Character::OnUpdate(ts);
