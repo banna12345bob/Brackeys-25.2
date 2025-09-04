@@ -20,6 +20,7 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 	{
 		this->active = false;
 		this->hide = true;
+		m_Scene.RemoveEntity(this->EntityUUID);
 		return;
 	}
 	//m_Theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
@@ -44,6 +45,7 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 		if (m_Player->Damage(1)) {
 			this->active = false;
 			this->hide = true;
+			this->needsDelete = true;
 		}
 	}
 	

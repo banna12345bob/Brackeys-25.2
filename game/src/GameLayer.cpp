@@ -17,14 +17,16 @@
 
 GameLayer::GameLayer()
 	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight()),
-	m_CheckerboardUUID(0)
+	m_CheckerboardUUID(0), m_Scene()
 {
 }
 
 void GameLayer::OnAttach()
 {
-	m_Scene = new Engine::Scene();
-	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon_reaper.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+	Engine::SceneDebugger* sceneDebugger = new Engine::SceneDebugger(m_Scene);
+	Engine::Application::getApplication()->PushOverlay(sceneDebugger);
+
+	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon_reaper.json", &m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 
@@ -47,33 +49,33 @@ void GameLayer::OnAttach()
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
-	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", *m_Scene);
+	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", m_Scene);
 	Checkboard->GetTransform()->position = { 0.f, 0.f, 0.1f };
 	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
 	Checkboard->hide = true;
-	m_Scene->AddEntity(Checkboard, &m_CheckerboardUUID);
+	m_Scene.AddEntity(Checkboard, &m_CheckerboardUUID);
 
-	m_Player = new Player(*m_Scene, &m_Animations);
+	m_Player = new Player(m_Scene, &m_Animations);
 	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
-	m_Scene->AddEntity(m_Player);
+	m_Scene.AddEntity(m_Player);
 
-	UziGuy* enemy = new UziGuy("Enemy", *m_Scene, m_Player);
-	enemy->GetSpriteRenderer()->texture = arrowTexture;
-	enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
-	m_Scene->AddEntity(enemy);
+	//UziGuy* enemy = new UziGuy("Enemy", m_Scene, m_Player);
+	//enemy->GetSpriteRenderer()->texture = arrowTexture;
+	//enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
+	//m_Scene.AddEntity(enemy);
 
-	Reaper* reaper = new Reaper("Enemy", * m_Scene, m_Player, &m_Animations);
-	reaper->GetTransform()->position = { 40.0f, 0.f, 0.2f };
-	m_Scene->AddEntity(reaper);
+	//Reaper* reaper = new Reaper("Enemy", m_Scene, m_Player, &m_Animations);
+	//reaper->GetTransform()->position = { 40.0f, 0.f, 0.2f };
+	//m_Scene.AddEntity(reaper);
 
-	
-	for (int i = 0; i < 3; i++) {
-		PistolGuy* enemy = new PistolGuy("Enemy", *m_Scene, m_Player);
-		enemy->GetSpriteRenderer()->texture = arrowTexture;
-		enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
-		m_Scene->AddEntity(enemy);
-	}
+	//
+	//for (int i = 0; i < 3; i++) {
+	//	PistolGuy* enemy = new PistolGuy("Enemy", m_Scene, m_Player);
+	//	enemy->GetSpriteRenderer()->texture = arrowTexture;
+	//	enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
+	//	m_Scene.AddEntity(enemy);
+	//}
 
 	m_CameraController.SetZoomLevel(128);
 }
@@ -89,7 +91,7 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 	/*glm::vec2 pos = GetMouseGamePosition();
 	EG_TRACE("Mouse pos: {0}, {1}", pos.x, pos.y);*/
 
-	m_Scene->UpdateScene(ts);
+	m_Scene.UpdateScene(ts);
 
 	//m_Scene->GetEntity(m_CheckerboardUUID)->hide = !m_WFC->generating;
 
@@ -102,7 +104,7 @@ void GameLayer::OnRender()
 	Engine::RenderCommand::SetClearColor({ 0, 0, 0, 0 });
 	Engine::RenderCommand::Clear();
 
-	m_Scene->RenderScene(&m_CameraController.GetCamera());
+	m_Scene.RenderScene(&m_CameraController.GetCamera());
 	m_WFC->Render(&m_CameraController);
 }
 
@@ -140,9 +142,9 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 		return true;
 	}
 	if (e.GetKeyCode() == EG_KEY_F8 && e.GetRepeatCount() == 0) {
-		m_Scene->RemoveEntity(m_Player->EntityUUID);
-		m_Player = new Player(*m_Scene, &m_Animations);
-		m_Scene->AddEntity(m_Player);
+		m_Scene.RemoveEntity(m_Player->EntityUUID);
+		m_Player = new Player(m_Scene, &m_Animations);
+		m_Scene.AddEntity(m_Player);
 	}
 #if !defined(EG_DIST)
 	if (e.GetKeyCode() == EG_KEY_PAGE_UP && e.GetRepeatCount() == 0) {
@@ -162,7 +164,7 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 			m_WorldGenThread.join();
 		m_WFC->~WaveFunctionCollapse();
 
-		m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth() / 4, -Engine::Application::getApplication()->getWindow()->GetHeight() / 4, 0 }, { 2, 2 });
+		m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", &m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth() / 4, -Engine::Application::getApplication()->getWindow()->GetHeight() / 4, 0 }, { 2, 2 });
 		m_WorldGenThread = std::thread(&WaveFunctionCollapse::ColapseLoop, m_WFC);
 		if (m_WorldGenThread.joinable())
 			m_WorldGenThread.detach();

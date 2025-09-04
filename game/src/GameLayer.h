@@ -23,7 +23,7 @@ private:
 private:
 	Engine::OrthographicCameraController m_CameraController;
 
-	Engine::Scene* m_Scene;
+	Engine::Scene m_Scene;
 
 	Player* m_Player;
 
