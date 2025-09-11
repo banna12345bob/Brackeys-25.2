@@ -7,14 +7,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 SandboxLayer::SandboxLayer()
-	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight(), glm::vec3(0.f), true, true)
+	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight(), glm::vec3(0.f), true, true),
+	m_Scene()
 {
 }
 
 void SandboxLayer::OnAttach()
 {
-	m_Scene = new Engine::Scene();
-
+	Engine::Application::getApplication()->PushOverlay(new Engine::SceneDebugger(&m_Scene));
 
 	//m_sandBoxTexture = Engine::Texture2D::Create("assets/textures/Oak_Log.png");
 	m_Tilesheet = Engine::Texture2D::Create("assets/textures/kenny/kenny_tiny_town.png");
@@ -26,21 +26,21 @@ void SandboxLayer::OnAttach()
 	m_Animation[1] = Engine::Texture2D::Create("assets/textures/tile2.png");
 	m_Animation[2] = Engine::Texture2D::Create("assets/textures/tile3.png");
 
-	Engine::Entity* ArrowAnimation = new Engine::Entity("Arrow", *m_Scene);
+	Engine::Entity* ArrowAnimation = new Engine::Entity("Arrow", &m_Scene);
 	ArrowAnimation->GetTransform()->position = { 0.f, 0.f, 0.5f };
-	m_Scene->AddEntity(ArrowAnimation);
+	m_Scene.AddEntity(ArrowAnimation);
 
 	// Little test grid
 	for (float x = -2.0f; x < 2.f; x += 0.15f)
 	{
 		for (float y = 2; y > -2.f; y -= 0.15f)
 		{
-			Engine::Entity* box = new Engine::Entity("Box"+std::to_string(x)+ std::to_string(y), *m_Scene);
+			Engine::Entity* box = new Engine::Entity("Box"+std::to_string(x)+ std::to_string(y), &m_Scene);
 			box->GetTransform()->position = { x, y, 0 };
 			box->GetTransform()->scale = { .1f, .1f };
 			box->GetSpriteRenderer()->colour = { 0, 1, 1, 1 };
 
-			m_Scene->AddEntity(box);
+			m_Scene.AddEntity(box);
 		}
 	}
 
@@ -56,7 +56,7 @@ void SandboxLayer::OnUpdate(Engine::Timestep ts)
 	m_CurrentFrame += 0.0005 * ts.GetMilliseconds();
 	m_CameraController.OnUpdate(ts);
 
-	//m_Scene->GetEntity("Arrow")->GetSpriteRenderer()->texture = m_Animation[(int)m_CurrentFrame % 3];
+	m_Scene.GetEntity(1)->GetSpriteRenderer()->texture = m_Animation[(int)m_CurrentFrame % 3];
 }
 
 void SandboxLayer::OnRender()
@@ -64,7 +64,7 @@ void SandboxLayer::OnRender()
 	Engine::RenderCommand::SetClearColor({ 0, 0, 0, 0 });
 	Engine::RenderCommand::Clear();
 
-	m_Scene->RenderScene(&m_CameraController.GetCamera());
+	m_Scene.RenderScene(&m_CameraController.GetCamera());
 }
 
 void SandboxLayer::OnImGuiRender()

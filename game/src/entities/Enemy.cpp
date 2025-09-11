@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "Player.h"
 
-Enemy::Enemy(std::string name, Engine::Scene& scene, Player* player)
+Enemy::Enemy(std::string name, Engine::Scene* scene, Player* player)
 	: Character(name, scene, 10),
 	m_acceleration(400),
 	m_maxSpeed(60),

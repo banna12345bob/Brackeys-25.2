@@ -9,7 +9,7 @@ class Player;
 class Enemy : public Character
 {
 public:
-	Enemy(std::string name, Engine::Scene& scene, Player* player);
+	Enemy(std::string name, Engine::Scene* scene, Player* player);
 	void OnUpdate(Engine::Timestep ts) override;
 	virtual void Attack(glm::vec2 dir);
 

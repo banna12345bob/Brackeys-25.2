@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations) 
+Player::Player(Engine::Scene* scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations) 
 	: Character("Player", scene, 10),
 	m_deceleration(20.f),
 	m_maxSpeed(250.f),
@@ -29,7 +29,7 @@ Player::Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref
 		m_ZZZ[i]->GetTransform()->position = {0, 0, 0.1*i};
 		m_ZZZ[i]->GetTransform()->scale = {16, 16};
 		m_ZZZ[i]->hide = true;
-		scene.AddEntity(m_ZZZ[i]);
+		scene->AddEntity(m_ZZZ[i]);
 	}
 }
 

@@ -2,7 +2,7 @@
 #include "../Bullet.h"
 #include "../Player.h"
 
-PistolGuy::PistolGuy(std::string name, Engine::Scene& scene, Player* player)
+PistolGuy::PistolGuy(std::string name, Engine::Scene* scene, Player* player)
 	: Enemy(name, scene, player)
 {
 	health = 10;
@@ -16,5 +16,5 @@ void PistolGuy::Attack(glm::vec2 dir)
 {
 	Bullet* bullet = new Bullet(m_Scene, "test", m_player, 150, glm::atan(dir.x, dir.y));
 	bullet->GetTransform()->position = GetTransform()->position;
-	m_Scene.AddEntity(bullet);
+	m_Scene->AddEntity(bullet);
 }

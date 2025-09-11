@@ -23,8 +23,7 @@ GameLayer::GameLayer()
 
 void GameLayer::OnAttach()
 {
-	Engine::SceneDebugger* sceneDebugger = new Engine::SceneDebugger(m_Scene);
-	Engine::Application::getApplication()->PushOverlay(sceneDebugger);
+	Engine::Application::getApplication()->PushOverlay(new Engine::SceneDebugger(&m_Scene));
 
 	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon_reaper.json", &m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
@@ -49,14 +48,14 @@ void GameLayer::OnAttach()
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
-	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", m_Scene);
+	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", &m_Scene);
 	Checkboard->GetTransform()->position = { 0.f, 0.f, 0.1f };
 	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
 	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
 	Checkboard->hide = true;
 	m_Scene.AddEntity(Checkboard, &m_CheckerboardUUID);
 
-	m_Player = new Player(m_Scene, &m_Animations);
+	m_Player = new Player(&m_Scene, &m_Animations);
 	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
 	m_Scene.AddEntity(m_Player);
 
@@ -143,7 +142,7 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 	}
 	if (e.GetKeyCode() == EG_KEY_F8 && e.GetRepeatCount() == 0) {
 		m_Scene.RemoveEntity(m_Player->EntityUUID);
-		m_Player = new Player(m_Scene, &m_Animations);
+		m_Player = new Player(&m_Scene, &m_Animations);
 		m_Scene.AddEntity(m_Player);
 	}
 #if !defined(EG_DIST)

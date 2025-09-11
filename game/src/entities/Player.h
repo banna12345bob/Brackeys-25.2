@@ -9,7 +9,7 @@
 class Player : public Character
 {
 public:
-	Player(Engine::Scene& scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations);
+	Player(Engine::Scene* scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations);
 	void OnUpdate(Engine::Timestep ts) override;
 
 	void Attack();

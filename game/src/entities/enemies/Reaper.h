@@ -6,7 +6,7 @@
 
 class Reaper : public Enemy {
 public:
-	Reaper(std::string name, Engine::Scene& scene, Player* player, std::unordered_map<std::string, Engine::Ref<Anim>>* animations);
+	Reaper(std::string name, Engine::Scene* scene, Player* player, std::unordered_map<std::string, Engine::Ref<Anim>>* animations);
 	void Attack(glm::vec2 dir) override;
 	void OnUpdate(Engine::Timestep ts) override;
 private:

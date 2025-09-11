@@ -26,7 +26,7 @@ private:
 
 	Engine::Ref<Engine::Texture2D> m_Animation[3];
 
-	Engine::Scene* m_Scene;
+	Engine::Scene m_Scene;
 
 	float m_CurrentFrame = 0;
 

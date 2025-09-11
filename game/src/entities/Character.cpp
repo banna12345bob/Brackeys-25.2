@@ -1,6 +1,6 @@
 #include "Character.h"
 
-Character::Character(std::string name, Engine::Scene& scene, int health)
+Character::Character(std::string name, Engine::Scene* scene, int health)
 	: Engine::Entity(name, scene), health(health)
 {
 }
