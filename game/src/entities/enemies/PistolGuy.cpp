@@ -1,9 +1,8 @@
 #include "PistolGuy.h"
 #include "../Bullet.h"
-#include "../Player.h"
 
-PistolGuy::PistolGuy(std::string name, Engine::Scene* scene, Player* player)
-	: Enemy(name, scene, player)
+PistolGuyComponent::PistolGuyComponent(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player)
+	: EnemyComponenet(scene, entity, player)
 {
 	health = 10;
 	m_acceleration = 400;
@@ -12,9 +11,9 @@ PistolGuy::PistolGuy(std::string name, Engine::Scene* scene, Player* player)
 	m_attackSpeed = 1200;
 }
 
-void PistolGuy::Attack(glm::vec2 dir)
+void PistolGuyComponent::Attack(glm::vec2 dir)
 {
-	Bullet* bullet = new Bullet(m_Scene, "test", m_player, 150, glm::atan(dir.x, dir.y));
-	bullet->GetTransform()->position = GetTransform()->position;
-	m_Scene->AddEntity(bullet);
+	Engine::Entity bullet = m_Scene->AddEntity("bullet");
+	bullet.AddComponent<BulletComponenet>(m_Scene, &bullet, m_player, 150, glm::atan(dir.x, dir.y), 2);
+	bullet.GetComponent<Engine::TransformComponent>().position = m_Entity->GetComponent<Engine::TransformComponent>().position;
 }

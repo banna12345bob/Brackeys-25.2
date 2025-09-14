@@ -8,11 +8,12 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
-#include "entities/Bullet.h"
 #include "entities/enemies/PistolGuy.h"
 #include "entities/enemies/UziGuy.h"
 #include "entities/enemies/Reaper.h"
 #include "environment/Room.h"
+#include "entities/Player.h"
+#include "entities/Bullet.h"
 
 
 GameLayer::GameLayer()
@@ -23,8 +24,6 @@ GameLayer::GameLayer()
 
 void GameLayer::OnAttach()
 {
-	Engine::Application::getApplication()->PushOverlay(new Engine::SceneDebugger(&m_Scene));
-
 	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", &m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
@@ -48,16 +47,20 @@ void GameLayer::OnAttach()
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
-	Engine::Entity* Checkboard = new Engine::Entity("Checkboard", &m_Scene);
-	Checkboard->GetTransform()->position = { 0.f, 0.f, 0.1f };
-	Checkboard->GetTransform()->scale = { 32.f*8, 32.f*8 };
-	Checkboard->GetSpriteRenderer()->texture = checkboardTexture;
-	Checkboard->hide = true;
-	m_Scene.AddEntity(Checkboard, &m_CheckerboardUUID);
+	Engine::Entity Checkboard = m_Scene.AddEntity("Checkboard");
+	Checkboard.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.1f };
+	Checkboard.GetComponent<Engine::TransformComponent>().scale = { 32.f * 8, 32.f * 8 };
+	Checkboard.AddComponent<Engine::SpriteRendererComponent>();
+	Checkboard.GetComponent<Engine::SpriteRendererComponent>().texture = checkboardTexture;
+	Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
 
-	m_Player = new Player(&m_Scene, &m_Animations);
-	m_Player->GetTransform()->position = { 0.f, 0.f, 0.9f };
-	m_Scene.AddEntity(m_Player);
+	m_Player = m_Scene.AddEntity("Player");
+	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
+	m_Player.AddComponent<PlayerComponent>(&m_Scene, &m_Player, &m_Animations);
+
+	m_Bullet = m_Scene.AddEntity("Bullet");
+	m_Bullet.GetComponent<Engine::TransformComponent>().position = { 0.f, 25.f, 0.f };
+	m_Bullet.AddComponent<PistolGuyComponent>(&m_Scene, &m_Bullet, &m_Player);
 
 	//UziGuy* enemy = new UziGuy("Enemy", m_Scene, m_Player);
 	//enemy->GetSpriteRenderer()->texture = arrowTexture;
@@ -91,10 +94,15 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 	EG_TRACE("Mouse pos: {0}, {1}", pos.x, pos.y);*/
 
 	m_Scene.UpdateScene(ts);
+	m_Player.GetComponent<PlayerComponent>().OnUpdate(ts);
+	if (m_Bullet.HasComponent<PistolGuyComponent>())
+	{
+		m_Bullet.GetComponent<PistolGuyComponent>().OnUpdate(ts);
+	}
 
-	//m_Scene->GetEntity(m_CheckerboardUUID)->hide = !m_WFC->generating;
+	//m_Scene.GetEntity("Checkboard").GetComponent<Engine::MetaDataComponent>().hide = !m_WFC->generating;
 
-	m_CameraController.setPosition(-m_Player->GetTransform()->position);
+	m_CameraController.setPosition(-m_Player.GetComponent<Engine::TransformComponent>().position);
 	m_CameraController.OnUpdate(ts);
 }
 
@@ -119,7 +127,7 @@ void GameLayer::OnImGuiRender()
 	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
 	ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
 
-	ImGui::Text(glm::to_string(m_Player->GetVelocity()->velocity).c_str());
+	ImGui::Text(glm::to_string(m_Player.GetComponent<Engine::VelocityComponent>().velocity).c_str());
 	ImGui::End();
 }
 
@@ -132,18 +140,19 @@ void GameLayer::OnEvent(Engine::Event& event)
 
 bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 {
-	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
-		m_Player->dashIndex = .2f;
+	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0 && m_Player.GetComponent<PlayerComponent>().dashIndex == 0) {
+		m_Player.GetComponent<PlayerComponent>().dashIndex = .2f;
 		return true;
 	}
-	if (e.GetKeyCode() == EG_KEY_SPACE && e.GetRepeatCount() == 0 && m_Player->dashIndex == 0) {
-		m_Player->Attack();
+	if (e.GetKeyCode() == EG_KEY_SPACE && e.GetRepeatCount() == 0 && m_Player.GetComponent<PlayerComponent>().dashIndex == 0) {
+		m_Player.GetComponent<PlayerComponent>().Attack();
 		return true;
 	}
 	if (e.GetKeyCode() == EG_KEY_F8 && e.GetRepeatCount() == 0) {
-		m_Scene.RemoveEntity(m_Player->EntityUUID);
-		m_Player = new Player(&m_Scene, &m_Animations);
-		m_Scene.AddEntity(m_Player);
+		m_Scene.RemoveEntity(m_Player);
+		m_Player = m_Scene.AddEntity("Player");
+		m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
+		m_Player.AddComponent<PlayerComponent>(&m_Scene, &m_Player, &m_Animations);
 	}
 #if !defined(EG_DIST)
 	if (e.GetKeyCode() == EG_KEY_PAGE_UP && e.GetRepeatCount() == 0) {

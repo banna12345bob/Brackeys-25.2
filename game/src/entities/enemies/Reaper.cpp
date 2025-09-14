@@ -1,10 +1,9 @@
 #pragma once
 #include "Reaper.h"
 #include "../Bullet.h"
-#include "../Player.h"
 
-Reaper::Reaper(std::string name, Engine::Scene* scene, Player* player, std::unordered_map<std::string, Engine::Ref<Anim>>* animations)
-	: Enemy(name, scene, player)
+ReaperComponent::ReaperComponent(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player, std::unordered_map<std::string, Engine::Ref<Anim>>* animations)
+	: EnemyComponenet(scene, entity, player)
 {
 	health = 10;
 	m_acceleration = 400;
@@ -16,17 +15,17 @@ Reaper::Reaper(std::string name, Engine::Scene* scene, Player* player, std::unor
 	m_Animations["reaper_spawn"] = new Animator(animations->at("reaper_spawn"));
 	m_Animations["reaper_despawn"] = new Animator(animations->at("reaper_despawn"));
 
-	GetTransform()->scale = { 96 * 2, 80 * 2 };
+	m_Entity->GetComponent<Engine::TransformComponent>().scale = { 96 * 2, 80 * 2 };
 }
 
-void Reaper::OnUpdate(Engine::Timestep ts) {
+void ReaperComponent::OnUpdate(Engine::Timestep ts) {
 	switch (m_State) {
 	case State::SPAWN: 
 		for (auto& animation : m_Animations)
 		{
 			animation.second->progress += ts.GetSeconds();
 		}
-		GetSpriteRenderer()->texture = m_Animations["reaper_spawn"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["reaper_spawn"]->Get();
 
 		m_timer += ts.GetSeconds();
 		if (m_timer >= 0.7f) {
@@ -35,14 +34,14 @@ void Reaper::OnUpdate(Engine::Timestep ts) {
 		}
 		break;
 	case State::IDLE:
-		GetSpriteRenderer()->texture = m_Animations["reaper_spawn"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["reaper_spawn"]->Get();
 		break;
 	case State::ATK:
 		for (auto& animation : m_Animations)
 		{
 			animation.second->progress += ts.GetSeconds();
 		}
-		GetSpriteRenderer()->texture = m_Animations["reaper_atk"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["reaper_atk"]->Get();
 
 		m_timer += ts.GetSeconds();
 		if (m_timer >= 0.5f) {
@@ -54,14 +53,14 @@ void Reaper::OnUpdate(Engine::Timestep ts) {
 		break;
 	}
 
-	Enemy::OnUpdate(ts);
+	EnemyComponenet::OnUpdate(ts);
 }
 
-void Reaper::Attack(glm::vec2 dir)
+void ReaperComponent::Attack(glm::vec2 dir)
 {
-	Bullet* bullet = new Bullet(m_Scene, "test", m_player, 150, glm::atan(dir.x, dir.y));
-	bullet->GetTransform()->position = GetTransform()->position;
-	m_Scene->AddEntity(bullet);
+	Engine::Entity bullet = m_Scene->AddEntity("bullet");
+	bullet.AddComponent<BulletComponenet>(m_Scene, &bullet, m_player, 150, glm::atan(dir.x, dir.y), 2);
+	bullet.GetComponent<Engine::TransformComponent>().position = m_Entity->GetComponent<Engine::TransformComponent>().position;
 	
 	m_State = State::ATK;
 }

@@ -1,8 +1,8 @@
 #include "Enemy.h"
-#include "Player.h"
 
-Enemy::Enemy(std::string name, Engine::Scene* scene, Player* player)
-	: Character(name, scene, 10),
+
+EnemyComponenet::EnemyComponenet(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player)
+	: CharacterComponent(scene, entity),
 	m_acceleration(400),
 	m_maxSpeed(60),
 	m_attackRange(128),
@@ -12,12 +12,13 @@ Enemy::Enemy(std::string name, Engine::Scene* scene, Player* player)
 	m_idleTimer(0),
 	m_randDir(glm::vec2(0))
 {
-	GetTransform()->scale = { 16.f, 16.f };
+	m_Entity->GetComponent<Engine::TransformComponent>().scale = { 16.f, 16.f };
 	m_attackRangeSqrd = m_attackRange * m_attackRange;
 }
 
-void Enemy::OnUpdate(Engine::Timestep ts) {
-	glm::vec2 offset = { m_player->GetTransform()->position.x - GetTransform()->position.x, m_player->GetTransform()->position.y - GetTransform()->position.y  };
+void EnemyComponenet::OnUpdate(Engine::Timestep ts) {
+	
+	glm::vec2 offset = { m_player->GetComponent<Engine::TransformComponent>().position.x - m_Entity->GetComponent<Engine::TransformComponent>().position.x, m_player->GetComponent<Engine::TransformComponent>().position.y - m_Entity->GetComponent<Engine::TransformComponent>().position.y  };
 	float lenSqrd = glm::dot(offset, offset);	// Length squared
 
 	//Attack
@@ -77,11 +78,11 @@ void Enemy::OnUpdate(Engine::Timestep ts) {
 		dir = m_randDir;
 	}
 
-	Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
+	CharacterComponent::Move(dir, m_acceleration, m_maxSpeed, ts);
 
-	Character::OnUpdate(ts);
+	CharacterComponent::OnUpdate(ts);
 }
 
-void Enemy::Attack(glm::vec2 dir) {
+void EnemyComponenet::Attack(glm::vec2 dir) {
 
 }
