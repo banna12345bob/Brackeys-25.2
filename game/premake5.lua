@@ -24,6 +24,7 @@ project "game"
 		"%{IncludeDir.SDL3}",
 		"%{IncludeDir.json}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}",
 	}
 
 	links

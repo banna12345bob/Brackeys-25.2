@@ -25,7 +25,7 @@ void GameLayer::OnAttach()
 {
 	Engine::Application::getApplication()->PushOverlay(new Engine::SceneDebugger(&m_Scene));
 
-	m_WFC = new WaveFunctionCollapse("assets/WFC/dungeon_reaper.json", &m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
+	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", &m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
 	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
 

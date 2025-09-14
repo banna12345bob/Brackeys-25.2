@@ -23,6 +23,7 @@ project "sandbox"
 		"%{wks.location}/engine/vendor",
 		"%{IncludeDir.SDL3}",
 		"%{IncludeDir.glm}",
+		"%{IncludeDir.entt}",
 	}
 
 	links

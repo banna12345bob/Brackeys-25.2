@@ -14,8 +14,6 @@ SandboxLayer::SandboxLayer()
 
 void SandboxLayer::OnAttach()
 {
-	Engine::Application::getApplication()->PushOverlay(new Engine::SceneDebugger(&m_Scene));
-
 	//m_sandBoxTexture = Engine::Texture2D::Create("assets/textures/Oak_Log.png");
 	m_Tilesheet = Engine::Texture2D::Create("assets/textures/kenny/kenny_tiny_town.png");
 
@@ -26,23 +24,23 @@ void SandboxLayer::OnAttach()
 	m_Animation[1] = Engine::Texture2D::Create("assets/textures/tile2.png");
 	m_Animation[2] = Engine::Texture2D::Create("assets/textures/tile3.png");
 
-	Engine::Entity* ArrowAnimation = new Engine::Entity("Arrow", &m_Scene);
-	ArrowAnimation->GetTransform()->position = { 0.f, 0.f, 0.5f };
-	m_Scene.AddEntity(ArrowAnimation);
+	Engine::Entity ArrowAnimation = m_Scene.AddEntity("Arrow");
+	ArrowAnimation.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.5f };
+	ArrowAnimation.AddComponent<Engine::SpriteRendererComponent>();
+	ArrowAnimation.GetComponent<Engine::SpriteRendererComponent>().texture = m_Animation[0];
 
 	// Little test grid
-	for (float x = -2.0f; x < 2.f; x += 0.15f)
-	{
-		for (float y = 2; y > -2.f; y -= 0.15f)
-		{
-			Engine::Entity* box = new Engine::Entity("Box"+std::to_string(x)+ std::to_string(y), &m_Scene);
-			box->GetTransform()->position = { x, y, 0 };
-			box->GetTransform()->scale = { .1f, .1f };
-			box->GetSpriteRenderer()->colour = { 0, 1, 1, 1 };
-
-			m_Scene.AddEntity(box);
-		}
-	}
+	//for (float x = -2.0f; x < 2.f; x += 0.15f)
+	//{
+	//	for (float y = 2; y > -2.f; y -= 0.15f)
+	//	{
+	//		Engine::Entity box = m_Scene.AddEntity("Box"+std::to_string(x)+ std::to_string(y));
+	//		box.GetComponent<Engine::TransformComponent>().position = { x, y, 0 };
+	//		box.GetComponent<Engine::TransformComponent>().scale = { .1f, .1f };
+	//		box.AddComponent<Engine::SpriteRendererComponent>();
+	//		box.GetComponent<Engine::SpriteRendererComponent>().colour = {0, 1, 1, 1};
+	//	}
+	//}
 
 	m_CameraController.SetZoomLevel(2.f);
 }
@@ -56,7 +54,7 @@ void SandboxLayer::OnUpdate(Engine::Timestep ts)
 	m_CurrentFrame += 0.0005 * ts.GetMilliseconds();
 	m_CameraController.OnUpdate(ts);
 
-	m_Scene.GetEntity(1)->GetSpriteRenderer()->texture = m_Animation[(int)m_CurrentFrame % 3];
+	m_Scene.GetEntity("Arrow").GetComponent<Engine::SpriteRendererComponent>().texture = m_Animation[(int)m_CurrentFrame % 3];
 }
 
 void SandboxLayer::OnRender()
