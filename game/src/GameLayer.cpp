@@ -94,11 +94,6 @@ void GameLayer::OnUpdate(Engine::Timestep ts)
 	EG_TRACE("Mouse pos: {0}, {1}", pos.x, pos.y);*/
 
 	m_Scene.UpdateScene(ts);
-	m_Player.GetComponent<PlayerComponent>().OnUpdate(ts);
-	if (m_Bullet.HasComponent<PistolGuyComponent>())
-	{
-		m_Bullet.GetComponent<PistolGuyComponent>().OnUpdate(ts);
-	}
 
 	//m_Scene.GetEntity("Checkboard").GetComponent<Engine::MetaDataComponent>().hide = !m_WFC->generating;
 

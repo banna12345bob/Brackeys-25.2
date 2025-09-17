@@ -14,7 +14,7 @@ struct BulletComponenet
 	void OnUpdate(Engine::Timestep ts);
 private:
 	bool OverLappingWithEntity(Engine::Entity* entity);
-	Engine::Entity* m_Entity;
+	Engine::UUID m_Entity;
 	Engine::Scene* m_Scene;
 
 	Engine::Entity* m_Player;

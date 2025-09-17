@@ -3,25 +3,25 @@
 #include "Player.h"
 
 BulletComponenet::BulletComponenet(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player, int speed, float initalAngle, float lifetime)
-	: m_Scene(scene), m_Entity(entity), m_Player(player), theta(initalAngle), speed(speed), lifetime(lifetime)
+	: m_Scene(scene), m_Entity(entity->getUUID()), m_Player(player), theta(initalAngle), speed(speed), lifetime(lifetime)
 {
-	m_Entity->AddComponent<Engine::SpriteRendererComponent>();
-	m_Entity->AddComponent<Engine::VelocityComponent>();
+	m_Scene->GetEntity(m_Entity).AddComponent<Engine::SpriteRendererComponent>();
+	m_Scene->GetEntity(m_Entity).AddComponent<Engine::VelocityComponent>();
 
-	m_Entity->GetComponent<Engine::TransformComponent>().scale = { 16.f, 16.f };
-	m_Entity->GetComponent<Engine::SpriteRendererComponent>().colour = { 1, 0, 0, 1 };
+	m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().scale = { 16.f, 16.f };
+	m_Scene->GetEntity(m_Entity).GetComponent<Engine::SpriteRendererComponent>().colour = { 1, 0, 0, 1 };
 
-	m_Entity->GetComponent<Engine::VelocityComponent>().velocity.x = speed * glm::sin(theta);
-	m_Entity->GetComponent<Engine::VelocityComponent>().velocity.y = speed * glm::cos(theta);
+	m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity.x = speed * glm::sin(theta);
+	m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity.y = speed * glm::cos(theta);
 }
 
 void BulletComponenet::OnUpdate(Engine::Timestep ts)
 {
 	if (lifetime < 0 && lifetime != -1.f)
 	{
-		m_Entity->GetComponent<Engine::VelocityComponent>().velocity = { 0.f, 0.f, 0.f };
-		m_Entity->GetComponent<Engine::MetaDataComponent>().hide = true;
-		m_Scene->RemoveEntity(*m_Entity);
+		m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity = { 0.f, 0.f, 0.f };
+		m_Scene->GetEntity(m_Entity).GetComponent<Engine::MetaDataComponent>().hide = true;
+		m_Scene->RemoveEntity(m_Scene->GetEntity(m_Entity));
 		return;
 	}
 	//m_Theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
@@ -44,9 +44,9 @@ void BulletComponenet::OnUpdate(Engine::Timestep ts)
 
 	if (OverLappingWithEntity(m_Player)) {
 		if (m_Player->GetComponent<PlayerComponent>().Damage(1)) {
-			m_Entity->GetComponent<Engine::VelocityComponent>().velocity = { 0.f, 0.f, 0.f };
-			m_Entity->GetComponent<Engine::MetaDataComponent>().hide = true;
-			m_Scene->RemoveEntity(*m_Entity);
+			m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity = { 0.f, 0.f, 0.f };
+			m_Scene->GetEntity(m_Entity).GetComponent<Engine::MetaDataComponent>().hide = true;
+			m_Scene->RemoveEntity(m_Scene->GetEntity(m_Entity));
 		}
 	}
 	
@@ -57,6 +57,9 @@ void BulletComponenet::OnUpdate(Engine::Timestep ts)
 }
 
 bool BulletComponenet::OverLappingWithEntity(Engine::Entity* entity) {
-	return (glm::abs(m_Entity->GetComponent<Engine::TransformComponent>().position.x - entity->GetComponent<Engine::TransformComponent>().position.x) * 2 < (m_Entity->GetComponent<Engine::TransformComponent>().scale.x + entity->GetComponent<Engine::TransformComponent>().scale.x)) &&
-		(glm::abs(m_Entity->GetComponent<Engine::TransformComponent>().position.y - entity->GetComponent<Engine::TransformComponent>().position.y) * 2 < (m_Entity->GetComponent<Engine::TransformComponent>().scale.y + entity->GetComponent<Engine::TransformComponent>().scale.y));
+	bool check1 = glm::abs(m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().position.x - entity->GetComponent<Engine::TransformComponent>().position.x) * 2
+		< (m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().scale.x + entity->GetComponent<Engine::TransformComponent>().scale.x);
+	bool check2 = glm::abs(m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().position.y - entity->GetComponent<Engine::TransformComponent>().position.y) * 2
+		< (m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().scale.y + entity->GetComponent<Engine::TransformComponent>().scale.y);
+	return check1 && check2;
 }
