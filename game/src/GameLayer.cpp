@@ -52,15 +52,16 @@ void GameLayer::OnAttach()
 	Checkboard.GetComponent<Engine::TransformComponent>().scale = { 32.f * 8, 32.f * 8 };
 	Checkboard.AddComponent<Engine::SpriteRendererComponent>();
 	Checkboard.GetComponent<Engine::SpriteRendererComponent>().texture = checkboardTexture;
-	Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
+	//Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
+	Checkboard.AddComponent<Engine::RigidBody2DComponent>();
 
 	m_Player = m_Scene.AddEntity("Player");
 	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
 	m_Player.AddComponent<PlayerComponent>(&m_Scene, &m_Player, &m_Animations);
 
-	m_Bullet = m_Scene.AddEntity("Bullet");
-	m_Bullet.GetComponent<Engine::TransformComponent>().position = { 0.f, 25.f, 0.f };
-	m_Bullet.AddComponent<PistolGuyComponent>(&m_Scene, &m_Bullet, &m_Player);
+	//m_Bullet = m_Scene.AddEntity("Bullet");
+	//m_Bullet.GetComponent<Engine::TransformComponent>().position = { 0.f, 25.f, 0.5f };
+	//m_Bullet.AddComponent<PistolGuyComponent>(&m_Scene, &m_Bullet, &m_Player);
 
 	//UziGuy* enemy = new UziGuy("Enemy", m_Scene, m_Player);
 	//enemy->GetSpriteRenderer()->texture = arrowTexture;
