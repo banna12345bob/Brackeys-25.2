@@ -1,26 +1,27 @@
 #include "Bullet.h"
 
-#include "Character.h"
+#include "Player.h"
 
-#include <algorithm>
-
-Bullet::Bullet(Engine::Scene* scene, std::string name, Player* player, int speed, float initalAngle, float lifetime)
-	: Engine::Entity(name, scene), m_Player(player), theta(initalAngle), speed(speed), lifetime(lifetime)
+BulletComponenet::BulletComponenet(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player, int speed, float initalAngle, float lifetime)
+	: m_Scene(scene), m_Entity(entity->getUUID()), m_Player(player), theta(initalAngle), speed(speed), lifetime(lifetime)
 {
-	GetTransform()->scale = { 16.f, 16.f };
-	GetSpriteRenderer()->colour = { 1, 0, 0, 1 };
+	m_Scene->GetEntity(m_Entity).AddComponent<Engine::SpriteRendererComponent>();
+	m_Scene->GetEntity(m_Entity).AddComponent<Engine::VelocityComponent>();
 
-	GetVelocity()->velocity.x = speed * glm::sin(theta);
-	GetVelocity()->velocity.y = speed * glm::cos(theta);
+	m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().scale = { 16.f, 16.f };
+	m_Scene->GetEntity(m_Entity).GetComponent<Engine::SpriteRendererComponent>().colour = { 1, 0, 0, 1 };
+
+	m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity.x = speed * glm::sin(theta);
+	m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity.y = speed * glm::cos(theta);
 }
 
-void Bullet::OnUpdate(Engine::Timestep ts)
+void BulletComponenet::OnUpdate(Engine::Timestep ts)
 {
-	if (lifetime < 0)
+	if (lifetime < 0 && lifetime != -1.f)
 	{
-		this->active = false;
-		this->hide = true;
-		m_Scene->RemoveEntity(this->EntityUUID);
+		m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity = { 0.f, 0.f, 0.f };
+		m_Scene->GetEntity(m_Entity).GetComponent<Engine::MetaDataComponent>().hide = true;
+		m_Scene->RemoveEntity(m_Scene->GetEntity(m_Entity));
 		return;
 	}
 	//m_Theta = glm::atan((GetTransform()->position.y - player->GetTransform()->position.y) / (GetTransform()->position.x - player->GetTransform()->position.x));
@@ -42,18 +43,23 @@ void Bullet::OnUpdate(Engine::Timestep ts)
 	//GetVelocity()->velocity.y = (GetTransform()->position.x - player->GetTransform()->position.x) * glm::tan(-theta) + player->GetTransform()->position.y * ts;
 
 	if (OverLappingWithEntity(m_Player)) {
-		if (m_Player->Damage(1)) {
-			this->active = false;
-			this->hide = true;
-			this->needsDelete = true;
+		if (m_Player->GetComponent<PlayerComponent>().Damage(1)) {
+			m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity = { 0.f, 0.f, 0.f };
+			m_Scene->GetEntity(m_Entity).GetComponent<Engine::MetaDataComponent>().hide = true;
+			m_Scene->RemoveEntity(m_Scene->GetEntity(m_Entity));
 		}
 	}
 	
-	lifetime -= ts;
-	Engine::Entity::OnUpdate(ts);
+	if (lifetime != -1.f)
+	{
+		lifetime -= ts;
+	}
 }
 
-bool Bullet::OverLappingWithEntity(Engine::Entity* entity) {
-	return (glm::abs(GetTransform()->position.x - entity->GetTransform()->position.x) * 2 < (GetTransform()->scale.x + entity->GetTransform()->scale.x)) &&
-		(glm::abs(GetTransform()->position.y - entity->GetTransform()->position.y) * 2 < (GetTransform()->scale.y + entity->GetTransform()->scale.y));
+bool BulletComponenet::OverLappingWithEntity(Engine::Entity* entity) {
+	bool check1 = glm::abs(m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().position.x - entity->GetComponent<Engine::TransformComponent>().position.x) * 2
+		< (m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().scale.x + entity->GetComponent<Engine::TransformComponent>().scale.x);
+	bool check2 = glm::abs(m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().position.y - entity->GetComponent<Engine::TransformComponent>().position.y) * 2
+		< (m_Scene->GetEntity(m_Entity).GetComponent<Engine::TransformComponent>().scale.y + entity->GetComponent<Engine::TransformComponent>().scale.y);
+	return check1 && check2;
 }

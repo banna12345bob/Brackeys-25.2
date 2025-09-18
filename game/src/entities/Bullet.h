@@ -1,23 +1,22 @@
 #pragma once
 
 #include <engine.h>
-#include "Player.h"
 
-class Bullet : public Engine::Entity
+struct BulletComponenet
 {
-public:
-	Bullet(Engine::Scene* scene, std::string name, Player* player, int speed, float initalAngle = 0.f, float lifetime = 2.f);
-
-	void OnUpdate(Engine::Timestep ts) override;
-
 	float theta;
 	float speed;
 	float lifetime;
+
+	BulletComponenet() = default;
+	BulletComponenet(const BulletComponenet&) = default;
+	BulletComponenet(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player, int speed, float initalAngle = 0.f, float lifetime = -1.f);
+	void OnUpdate(Engine::Timestep ts);
 private:
 	bool OverLappingWithEntity(Engine::Entity* entity);
+	Engine::UUID m_Entity;
+	Engine::Scene* m_Scene;
 
-private:
-	Player* m_Player;
-
+	Engine::Entity* m_Player;
 };
 

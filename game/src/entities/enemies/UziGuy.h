@@ -1,9 +1,11 @@
 #pragma once
 #include "../Enemy.h"
 
-class UziGuy : public Enemy
+struct UziGuyComponenet : public EnemyComponenet
 {
-public:
-	UziGuy(std::string name, Engine::Scene* scene, Player* player);
+	UziGuyComponenet() = default;
+	UziGuyComponenet(const UziGuyComponenet&) = default;
+	UziGuyComponenet(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player);
+
 	void Attack(glm::vec2 dir) override;
 };

@@ -1,13 +1,15 @@
 #include "Player.h"
 
-Player::Player(Engine::Scene* scene, std::unordered_map<std::string, Engine::Ref<Anim>>* animations) 
-	: Character("Player", scene, 10),
+PlayerComponent::PlayerComponent(Engine::Scene* scene, Engine::Entity* entity, const std::unordered_map<std::string, Engine::Ref<Anim>>* animations)
+	: CharacterComponent(scene, entity),
 	m_deceleration(20.f),
 	m_maxSpeed(250.f),
 	m_acceleration(3000.f)
 {
-	GetTransform()->scale = { 32.f, 32.f };
-	m_BoundingBox = Engine::BoundingBox(-GetTransform()->scale.x / 2, -GetTransform()->scale.y / 2, 31, 30);
+	health = 10;
+
+	m_Entity->GetComponent<Engine::TransformComponent>().scale = { 32.f, 32.f };
+	//m_BoundingBox = Engine::BoundingBox(-GetTransform()->scale.x / 2, -GetTransform()->scale.y / 2, 31, 30);
 
 	m_Animations["player_idle"] = new Animator(animations->at("player_idle"));
 	m_Animations["player_back"] = new Animator(animations->at("player_back"));
@@ -22,18 +24,19 @@ Player::Player(Engine::Scene* scene, std::unordered_map<std::string, Engine::Ref
 
 	Engine::Ref<Engine::Texture2D> zzz = Engine::Texture2D::Create("assets/textures/zzz.png");
 
-	for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity*); i++)
+	for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity); i++)
 	{
-		m_ZZZ[i] = new Engine::Entity("zzz"+std::to_string(i), scene);
-		m_ZZZ[i]->GetSpriteRenderer()->texture = zzz;
-		m_ZZZ[i]->GetTransform()->position = {0, 0, 0.1*i};
-		m_ZZZ[i]->GetTransform()->scale = {16, 16};
-		m_ZZZ[i]->hide = true;
-		scene->AddEntity(m_ZZZ[i]);
+		m_ZZZ[i] = m_Scene->AddEntity("zzz"+std::to_string(i));
+		m_ZZZ[i].AddComponent<Engine::SpriteRendererComponent>();
+		m_ZZZ[i].AddComponent<Engine::VelocityComponent>();
+		m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().texture = zzz;
+		m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = {0, 0, 0.1*i};
+		m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale = {16, 16};
+		m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = true;
 	}
 }
 
-void Player::OnUpdate(Engine::Timestep ts) {
+void PlayerComponent::OnUpdate(Engine::Timestep ts) {
 
 	for (auto& animation : m_Animations)
 	{
@@ -43,84 +46,84 @@ void Player::OnUpdate(Engine::Timestep ts) {
 	glm::vec2 dir = glm::vec2(0.f);
 	if (Engine::Input::IsKeyPressed(EG_KEY_W)) {
 		dir.y += 1;
-		GetSpriteRenderer()->texture = m_Animations["player_back"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_back"]->Get();
 	}
 	if (Engine::Input::IsKeyPressed(EG_KEY_A)) {
 		dir.x -= 1;
-		GetSpriteRenderer()->texture = m_Animations["player_left"]->Get();
-		GetSpriteRenderer()->texture->flipAcrossYAxis(false);
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_left"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture->flipAcrossYAxis(false);
 	}
 	if (Engine::Input::IsKeyPressed(EG_KEY_S)) {
 		dir.y -= 1;
-		GetSpriteRenderer()->texture = m_Animations["player_fwd"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_fwd"]->Get();
 	}
 	if (Engine::Input::IsKeyPressed(EG_KEY_D)) {
 		dir.x += 1;
-		GetSpriteRenderer()->texture = m_Animations["player_left"]->Get();
-		GetSpriteRenderer()->texture->flipAcrossYAxis(true);
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_left"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture->flipAcrossYAxis(true);
 	}
 	if (dir != glm::vec2(0)) dir = glm::normalize(dir);
 
 	if (glm::length(dir) == 0) {
-		GetSpriteRenderer()->texture = m_Animations["player_idle"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_idle"]->Get();
 		m_SleepTimer += ts.GetSeconds();
 	} else
 		m_SleepTimer = 0;
 
 	if (m_SleepTimer > 10 && health > 0)
 	{
-		GetSpriteRenderer()->texture = m_Animations["player_sleep"]->Get();
-		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity*) - 1; i++)
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_sleep"]->Get();
+		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity) - 1; i++)
 		{
-			m_ZZZ[i]->hide = false;
-			m_ZZZ[i]->GetVelocity()->velocity = { 0.5f, 1.f, 0 };
-			m_ZZZ[i]->GetVelocity()->scaleVelocity = { -1, -1 };
-			m_ZZZ[i]->GetVelocity()->rotationVelocity = -2.5f;
-			m_ZZZ[i]->GetSpriteRenderer()->colour.a -= 0.05 * ts;
-			if (m_ZZZ[i]->GetSpriteRenderer()->colour.a < 0.75)
+			m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = false;
+			m_ZZZ[i].GetComponent<Engine::VelocityComponent>().velocity = { 0.5f, 1.f, 0 };
+			m_ZZZ[i].GetComponent<Engine::VelocityComponent>().scaleVelocity = { -1, -1 };
+			m_ZZZ[i].GetComponent<Engine::VelocityComponent>().rotationVelocity = -2.5f;
+			m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a -= 0.05 * ts;
+			if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.75)
 			{
-				m_ZZZ[i+1]->hide = false;
-				m_ZZZ[i+1]->GetVelocity()->velocity = { 0.5f, 1.f, 0 };
-				m_ZZZ[i+1]->GetVelocity()->scaleVelocity = { -1, -1 };
-				m_ZZZ[i+1]->GetVelocity()->rotationVelocity = -2.5f;
-				m_ZZZ[i+1]->GetSpriteRenderer()->colour.a -= 0.05 * ts;
+				m_ZZZ[i+1].GetComponent<Engine::MetaDataComponent>().hide = false;
+				m_ZZZ[i+1].GetComponent<Engine::VelocityComponent>().velocity = { 0.5f, 1.f, 0 };
+				m_ZZZ[i+1].GetComponent<Engine::VelocityComponent>().scaleVelocity = { -1, -1 };
+				m_ZZZ[i+1].GetComponent<Engine::VelocityComponent>().rotationVelocity = -2.5f;
+				m_ZZZ[i+1].GetComponent<Engine::SpriteRendererComponent>().colour.a -= 0.05 * ts;
 			}
-			if (m_ZZZ[i]->GetSpriteRenderer()->colour.a < 0.5) {
-				m_ZZZ[i]->hide = true;
+			if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.5) {
+				m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = true;
 			}
-			if (m_ZZZ[i+1]->GetSpriteRenderer()->colour.a < 0.5) {
-				m_ZZZ[i+1]->hide = true;
+			if (m_ZZZ[i+1].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.5) {
+				m_ZZZ[i+1].GetComponent<Engine::MetaDataComponent>().hide = true;
 			}
 
-			if (m_ZZZ[i]->GetSpriteRenderer()->colour.a < 0.25) {
-				m_ZZZ[i]->hide = false;
-				m_ZZZ[i]->GetSpriteRenderer()->colour.a = 1;
-				m_ZZZ[i]->GetTransform()->scale = { 16, 16 };
-				m_ZZZ[i]->GetTransform()->rotation = 0;
-				m_ZZZ[i]->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.1*i);
+			if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.25) {
+				m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = false;
+				m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a = 1;
+				m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale = { 16, 16 };
+				m_ZZZ[i].GetComponent<Engine::TransformComponent>().rotation = 0;
+				m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = m_Entity->GetComponent<Engine::TransformComponent>().position + glm::vec3(0, 4, 0.1 * i);
 			}
-			if (m_ZZZ[i+1]->GetSpriteRenderer()->colour.a < 0.25) {
-				m_ZZZ[i+1]->hide = false;
-				m_ZZZ[i+1]->GetSpriteRenderer()->colour.a = 1;
-				m_ZZZ[i+1]->GetTransform()->scale = { 16, 16 };
-				m_ZZZ[i+1]->GetTransform()->rotation = 0;
-				m_ZZZ[i + 1]->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.1 * (i+1));
+			if (m_ZZZ[i+1].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.25) {
+				m_ZZZ[i+1].GetComponent<Engine::MetaDataComponent>().hide = false;
+				m_ZZZ[i+1].GetComponent<Engine::SpriteRendererComponent>().colour.a = 1;
+				m_ZZZ[i+1].GetComponent<Engine::TransformComponent>().scale = { 16, 16 };
+				m_ZZZ[i+1].GetComponent<Engine::TransformComponent>().rotation = 0;
+				m_ZZZ[i+1].GetComponent<Engine::TransformComponent>().position = m_Entity->GetComponent<Engine::TransformComponent>().position + glm::vec3(0, 4, 0.1 * (i+1));
 			}
 		}
 	} else {
-		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity*); i++)
+		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity); i++)
 		{
-			m_ZZZ[i]->GetTransform()->scale = { 16, 16 };
-			m_ZZZ[i]->GetTransform()->rotation = 0;
-			m_ZZZ[i]->GetSpriteRenderer()->colour.a = 1;
-			m_ZZZ[i]->GetTransform()->position = GetTransform()->position + glm::vec3(0, 4, 0.1*i);
-			m_ZZZ[i]->hide = true;
+			m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale = { 16, 16 };
+			m_ZZZ[i].GetComponent<Engine::TransformComponent>().rotation = 0;
+			m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a = 1;
+			m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = m_Entity->GetComponent<Engine::TransformComponent>().position + glm::vec3(0, 4, 0.1*i);
+			m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = true;
 		}
 	}
 
 	if (m_HurtIndex > 0 && m_SleepTimer > 0)
 	{
-		GetSpriteRenderer()->texture = m_Animations["player_hurt"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_hurt"]->Get();
 		m_SleepTimer = 0;
 	}
 
@@ -137,18 +140,18 @@ void Player::OnUpdate(Engine::Timestep ts) {
 		invincible = true;
 		dir = m_DirCopy;
 		if (dir.x > 0) {
-			GetSpriteRenderer()->texture = m_Animations["player_dash_left"]->Get();
-			GetSpriteRenderer()->texture->flipAcrossYAxis(true);
+			m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_dash_left"]->Get();
+			m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture->flipAcrossYAxis(true);
 			dashIndex -= ts;
 		} else if (dir.x < 0) {
-			GetSpriteRenderer()->texture = m_Animations["player_dash_left"]->Get();
-			GetSpriteRenderer()->texture->flipAcrossYAxis(false);
+			m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_dash_left"]->Get();
+			m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture->flipAcrossYAxis(false);
 			dashIndex -= ts;
 		} else if (dir.y > 0) {
-			GetSpriteRenderer()->texture = m_Animations["player_dash_up"]->Get();
+			m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_dash_up"]->Get();
 			dashIndex -= ts;
 		} else if (dir.y < 0) {
-			GetSpriteRenderer()->texture = m_Animations["player_dash_down"]->Get();
+			m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_dash_down"]->Get();
 			dashIndex -= ts;
 		} else {
 			dashIndex = 0;
@@ -164,17 +167,17 @@ void Player::OnUpdate(Engine::Timestep ts) {
 
 	if (health < 1)
 	{
-		GetSpriteRenderer()->texture = m_Animations["player_dead"]->Get();
+		m_Entity->GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_dead"]->Get();
 		invincible = true;
 		dir = glm::vec2(0.f);
 	}
 
-	Engine::Entity::Move(dir, m_acceleration, m_maxSpeed, ts);
+	CharacterComponent::Move(dir, m_acceleration, m_maxSpeed, ts);
 
-	Character::OnUpdate(ts);
+	CharacterComponent::OnUpdate(ts);
 }
 
-void Player::Attack()
+void PlayerComponent::Attack()
 {
 	if (health < 1) {
 		return;

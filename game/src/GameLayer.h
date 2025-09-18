@@ -1,9 +1,10 @@
 #pragma once
 
 #include <engine.h>
-#include "entities/Player.h"
-#include "entities/Enemy.h"
 #include "environment/WFC.h"
+#include "graphics/Anim.h"
+
+#include "SceneOverride.h"
 
 class GameLayer : public Engine::Layer
 {
@@ -23,9 +24,10 @@ private:
 private:
 	Engine::OrthographicCameraController m_CameraController;
 
-	Engine::Scene m_Scene;
+	SceneOverride m_Scene;
 
-	Player* m_Player;
+	Engine::Entity m_Player;
+	Engine::Entity m_Bullet;
 
 	WaveFunctionCollapse* m_WFC;
 	std::thread m_WorldGenThread;

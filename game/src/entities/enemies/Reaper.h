@@ -1,14 +1,17 @@
 #pragma once
-#include "../Enemy.h"
 #include <engine.h>
-#include "../../graphics/Anim.h"
-#include "../Character.h"
 
-class Reaper : public Enemy {
-public:
-	Reaper(std::string name, Engine::Scene* scene, Player* player, std::unordered_map<std::string, Engine::Ref<Anim>>* animations);
+#include "../Enemy.h"
+#include "../../graphics/Anim.h"
+
+struct ReaperComponent : public EnemyComponenet
+{
+	ReaperComponent() = default;
+	ReaperComponent(const ReaperComponent&) = default;
+	ReaperComponent(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player, std::unordered_map<std::string, Engine::Ref<Anim>>* animations);
+
 	void Attack(glm::vec2 dir) override;
-	void OnUpdate(Engine::Timestep ts) override;
+	virtual void OnUpdate(Engine::Timestep ts) override;
 private:
 	std::unordered_map<std::string, Animator*> m_Animations;
 	float m_timer = 0.0f;

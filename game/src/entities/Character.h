@@ -2,18 +2,22 @@
 
 #include <engine.h>
 
-class Character : public Engine::Entity
-{
-public:
-	Character(std::string name, Engine::Scene* scene, int health);
-	void OnUpdate(Engine::Timestep ts) override;
 
+struct CharacterComponent {
+	int health;
+	bool invincible = false;
+
+	CharacterComponent() = default;
+	CharacterComponent(const CharacterComponent&) = default;
+	CharacterComponent(Engine::Scene* scene, Engine::Entity* entity);
+
+	virtual void OnUpdate(Engine::Timestep ts);
 	bool Damage(int damage);
 
-	int health;
-
-	bool invincible;
+	void Move(glm::vec2 dir, int acceleration, int maxSpeed, Engine::Timestep ts);
 protected:
 	float m_HurtIndex = 0;
+	Engine::Entity* m_Entity;
+	Engine::Scene* m_Scene;
 };
 

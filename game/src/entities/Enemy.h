@@ -4,13 +4,13 @@
 
 #include "Character.h"
 
-class Player;
-
-class Enemy : public Character
+struct EnemyComponenet : public CharacterComponent
 {
-public:
-	Enemy(std::string name, Engine::Scene* scene, Player* player);
-	void OnUpdate(Engine::Timestep ts) override;
+	EnemyComponenet() = default;
+	EnemyComponenet(const EnemyComponenet&) = default;
+	EnemyComponenet(Engine::Scene* scene, Engine::Entity* entity, Engine::Entity* player);
+
+	virtual void OnUpdate(Engine::Timestep ts) override;
 	virtual void Attack(glm::vec2 dir);
 
 protected:
@@ -25,6 +25,6 @@ protected:
 	int m_idleTimer;
 	glm::vec2 m_randDir;
 
-	Player* m_player;
+	Engine::Entity* m_player;
 };
 
