@@ -24,6 +24,7 @@ project "sandbox"
 		"%{IncludeDir.SDL3}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.Box2D}",
 	}
 
 	links

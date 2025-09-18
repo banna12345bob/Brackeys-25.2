@@ -25,6 +25,7 @@ project "game"
 		"%{IncludeDir.json}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.entt}",
+		"%{IncludeDir.Box2D}",
 	}
 
 	links

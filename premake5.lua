@@ -23,11 +23,13 @@ IncludeDir["glm"] = "%{wks.location}/engine/vendor/glm"
 IncludeDir["json"] = "%{wks.location}/engine/vendor/json/include"
 IncludeDir["zipFile"] = "%{wks.location}/engine/vendor/zipFile"
 IncludeDir["entt"] = "%{wks.location}/engine/vendor/entt/src"
+IncludeDir["Box2D"] = "%{wks.location}/engine/vendor/box2d/include"
 
 group "Dependencies"
 	include "engine/vendor/imgui"
 	include "engine/vendor/glad"
 	include "engine/vendor/GLFW"
+	include "engine/vendor/box2d"
 
 group ""
 	include "engine"
