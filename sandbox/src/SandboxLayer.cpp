@@ -20,27 +20,43 @@ void SandboxLayer::OnAttach()
 	m_TreeTexture = Engine::SubTexture2D::CreateFromCoords(m_Tilesheet, { 4, 9 }, { 16, 16 }, { 1, 2 });
 	m_MushroomsTexture = Engine::SubTexture2D::CreateFromCoords(m_Tilesheet, { 5, 8 }, { 16, 16 });
 
-	m_Animation[0] = Engine::Texture2D::Create("assets/textures/tile.png");
-	m_Animation[1] = Engine::Texture2D::Create("assets/textures/tile2.png");
-	m_Animation[2] = Engine::Texture2D::Create("assets/textures/tile3.png");
+	m_Animation = Engine::Texture2D::Create("assets/textures/tile.png");
+
+	Engine::Entity Mouse = m_Scene.AddEntity("Mouse");
+	Mouse.GetComponent<Engine::TransformComponent>().position = { 100, 100, 0.f };
+	Mouse.AddComponent<Engine::SpriteRendererComponent>();
+	Mouse.AddComponent<Engine::RigidBody2DComponent>();
+	Mouse.AddComponent<Engine::BoxCollider2DComponent>();
 
 	Engine::Entity ArrowAnimation = m_Scene.AddEntity("Arrow");
 	ArrowAnimation.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.5f };
 	ArrowAnimation.AddComponent<Engine::SpriteRendererComponent>();
-	ArrowAnimation.GetComponent<Engine::SpriteRendererComponent>().texture = m_Animation[0];
+	ArrowAnimation.GetComponent<Engine::SpriteRendererComponent>().texture = m_Animation;
+	ArrowAnimation.AddComponent<Engine::RigidBody2DComponent>();
+	ArrowAnimation.AddComponent<Engine::BoxCollider2DComponent>();
+
+	Engine::Entity Ground = m_Scene.AddEntity("Ground");
+	Ground.GetComponent<Engine::TransformComponent>().position = { 0.f, -2.5f, 0.f };
+	Ground.GetComponent<Engine::TransformComponent>().scale = { 10, 1 };
+	Ground.AddComponent<Engine::SpriteRendererComponent>();
+	Ground.AddComponent<Engine::RigidBody2DComponent>();
+	Ground.AddComponent<Engine::BoxCollider2DComponent>();
 
 	// Little test grid
-	//for (float x = -2.0f; x < 2.f; x += 0.15f)
-	//{
-	//	for (float y = 2; y > -2.f; y -= 0.15f)
-	//	{
-	//		Engine::Entity box = m_Scene.AddEntity("Box"+std::to_string(x)+ std::to_string(y));
-	//		box.GetComponent<Engine::TransformComponent>().position = { x, y, 0 };
-	//		box.GetComponent<Engine::TransformComponent>().scale = { .1f, .1f };
-	//		box.AddComponent<Engine::SpriteRendererComponent>();
-	//		box.GetComponent<Engine::SpriteRendererComponent>().colour = {0, 1, 1, 1};
-	//	}
-	//}
+	for (float x = -2.0f; x < 2.f; x += 0.25f)
+	{
+		for (float y = 2; y > -2.f; y -= 0.25f)
+		{
+			Engine::Entity box = m_Scene.AddEntity("Box"+std::to_string(x)+ std::to_string(y));
+			box.GetComponent<Engine::TransformComponent>().position = { x, y, 0 };
+			box.GetComponent<Engine::TransformComponent>().scale = { .1f, .1f };
+			box.AddComponent<Engine::SpriteRendererComponent>();
+			box.GetComponent<Engine::SpriteRendererComponent>().colour = {0, 1, 1, 1};
+			box.AddComponent<Engine::RigidBody2DComponent>();
+			box.GetComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
+			box.AddComponent<Engine::BoxCollider2DComponent>();
+		}
+	}
 
 	m_CameraController.SetZoomLevel(2.f);
 }
@@ -51,10 +67,16 @@ void SandboxLayer::OnDetach()
 
 void SandboxLayer::OnUpdate(Engine::Timestep ts)
 {
-	m_CurrentFrame += 0.0005 * ts.GetMilliseconds();
 	m_CameraController.OnUpdate(ts);
 
-	m_Scene.GetEntity("Arrow").GetComponent<Engine::SpriteRendererComponent>().texture = m_Animation[(int)m_CurrentFrame % 3];
+	if (Engine::Input::IsMouseButtonPressed(EG_MOUSECODE_LEFT))
+	{
+		m_Scene.GetEntity("Mouse").GetComponent<Engine::TransformComponent>().position = { GetMouseGamePosition(), 0.f};
+	} else {
+		m_Scene.GetEntity("Mouse").GetComponent<Engine::TransformComponent>().position = { 100, 100, 0.f };
+	}
+
+	m_Scene.UpdateScene(ts);
 }
 
 void SandboxLayer::OnRender()
@@ -74,9 +96,6 @@ void SandboxLayer::OnImGuiRender()
 
 	// Begin with window. Requires window name
 	ImGui::Begin("Window info");
-
-	//ImGui::Text(("FPS: " + std::to_string(Engine::Application::getApplication()->m_frameRate)).c_str());
-	ImGui::Text(("AnimationIndex: " + std::to_string(m_CurrentFrame)).c_str());
 
 	ImGui::SeparatorText("Window Size");
 	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
@@ -120,6 +139,17 @@ void SandboxLayer::OnImGuiRender()
 
 	if (m_ShowImGuiDemoWindow)
 		ImGui::ShowDemoWindow(&m_ShowImGuiDemoWindow);
+}
+
+glm::vec2 SandboxLayer::GetMouseGamePosition() {
+	glm::vec2 posVec = glm::unProject(
+		glm::vec3(Engine::Input::GetMouseX(), float(Engine::Application::getApplication()->getWindow()->GetHeight()) - Engine::Input::GetMouseY(), 1.0f),
+		glm::mat4(1.0f),
+		m_CameraController.GetCamera().GetViewProjectionMatrix(),
+		glm::vec4(0.0f, 0.0f, float(Engine::Application::getApplication()->getWindow()->GetWidth()), float(Engine::Application::getApplication()->getWindow()->GetHeight()))
+	);
+
+	return posVec;
 }
 
 void SandboxLayer::OnEvent(Engine::Event& event)

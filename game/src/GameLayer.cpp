@@ -48,16 +48,33 @@ void GameLayer::OnAttach()
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
 	Engine::Entity Checkboard = m_Scene.AddEntity("Checkboard");
-	Checkboard.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.1f };
+	Checkboard.GetComponent<Engine::TransformComponent>().position = { 0.f, 200.f, 0.1f };
 	Checkboard.GetComponent<Engine::TransformComponent>().scale = { 32.f * 8, 32.f * 8 };
+	Checkboard.GetComponent<Engine::TransformComponent>().rotation = 35.f;
 	Checkboard.AddComponent<Engine::SpriteRendererComponent>();
 	Checkboard.GetComponent<Engine::SpriteRendererComponent>().texture = checkboardTexture;
 	//Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
 	Checkboard.AddComponent<Engine::RigidBody2DComponent>();
+	Checkboard.GetComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
+	Checkboard.AddComponent<Engine::BoxCollider2DComponent>();
+
+	Engine::Entity Ground = m_Scene.AddEntity("Ground");
+	Ground.GetComponent<Engine::TransformComponent>().position = { -32.f * 2, -100.f, 0.1f };
+	Ground.GetComponent<Engine::TransformComponent>().scale = { 32.f * 16, 32.f };
+	Ground.GetComponent<Engine::TransformComponent>().rotation = 15.f;
+	Ground.AddComponent<Engine::SpriteRendererComponent>();
+	Ground.GetComponent<Engine::SpriteRendererComponent>().colour = { 1, 1, 1, 1 };
+	Ground.AddComponent<Engine::RigidBody2DComponent>();
+	Ground.AddComponent<Engine::BoxCollider2DComponent>();
+	Ground.GetComponent<Engine::BoxCollider2DComponent>().Friction = .1f;
 
 	m_Player = m_Scene.AddEntity("Player");
 	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
 	m_Player.AddComponent<PlayerComponent>(&m_Scene, &m_Player, &m_Animations);
+	//m_Player.AddComponent<Engine::RigidBody2DComponent>();
+	//m_Player.GetComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
+	//m_Player.GetComponent<Engine::RigidBody2DComponent>().FixedRotation = true;
+	//m_Player.AddComponent<Engine::BoxColider2DComponent>();
 
 	//m_Bullet = m_Scene.AddEntity("Bullet");
 	//m_Bullet.GetComponent<Engine::TransformComponent>().position = { 0.f, 25.f, 0.5f };
@@ -91,12 +108,7 @@ void GameLayer::OnDetach()
 
 void GameLayer::OnUpdate(Engine::Timestep ts)
 {
-	/*glm::vec2 pos = GetMouseGamePosition();
-	EG_TRACE("Mouse pos: {0}, {1}", pos.x, pos.y);*/
-
 	m_Scene.UpdateScene(ts);
-
-	//m_Scene.GetEntity("Checkboard").GetComponent<Engine::MetaDataComponent>().hide = !m_WFC->generating;
 
 	m_CameraController.setPosition(-m_Player.GetComponent<Engine::TransformComponent>().position);
 	m_CameraController.OnUpdate(ts);

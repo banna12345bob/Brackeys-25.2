@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include <box2d/box2d.h>
+
 PlayerComponent::PlayerComponent(Engine::Scene* scene, Engine::Entity* entity, const std::unordered_map<std::string, Engine::Ref<Anim>>* animations)
 	: CharacterComponent(scene, entity),
 	m_deceleration(20.f),
@@ -171,6 +173,8 @@ void PlayerComponent::OnUpdate(Engine::Timestep ts) {
 		invincible = true;
 		dir = glm::vec2(0.f);
 	}
+
+	//b2Body_SetLinearVelocity(m_Entity->GetComponent<Engine::RigidBody2DComponent>().Box2DBodyID, { dir.x * m_acceleration, dir.y * m_acceleration });
 
 	CharacterComponent::Move(dir, m_acceleration, m_maxSpeed, ts);
 

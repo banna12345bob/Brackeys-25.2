@@ -17,6 +17,7 @@ public:
 	// TODO: Not this, this sucks
 	virtual void UpdateScene(Engine::Timestep ts) override
 	{
+		Engine::Scene::UpdateScene(ts);
 		auto PlayerComponentView = m_Registry.view<PlayerComponent>();
 		for (auto entity : PlayerComponentView)
 		{
@@ -51,7 +52,5 @@ public:
 			BulletComponenet& BC = BulletComponentView.get<BulletComponenet>(entity);
 			BC.OnUpdate(ts);
 		}
-
-		Engine::Scene::UpdateScene(ts);
 	}
 };

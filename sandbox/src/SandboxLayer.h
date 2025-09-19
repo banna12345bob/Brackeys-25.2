@@ -15,7 +15,7 @@ public:
 	virtual void OnImGuiRender() override;
 	virtual void OnEvent(Engine::Event& event) override;
 private:
-	bool WFCDebug(Engine::KeyPressedEvent& e);
+	glm::vec2 GetMouseGamePosition();
 private:
 	Engine::OrthographicCameraController m_CameraController;
 
@@ -24,11 +24,9 @@ private:
 
 	Engine::Ref<Engine::Texture2D> m_TreeTexture, m_MushroomsTexture;
 
-	Engine::Ref<Engine::Texture2D> m_Animation[3];
+	Engine::Ref<Engine::Texture2D> m_Animation;
 
 	Engine::Scene m_Scene;
-
-	float m_CurrentFrame = 0;
 
 	bool m_ShowImGuiWindow = true;
 	bool m_ShowImGuiDemoWindow = false;
