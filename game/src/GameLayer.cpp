@@ -54,8 +54,7 @@ void GameLayer::OnAttach()
 	Checkboard.AddComponent<Engine::SpriteRendererComponent>();
 	Checkboard.GetComponent<Engine::SpriteRendererComponent>().texture = checkboardTexture;
 	//Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
-	Checkboard.AddComponent<Engine::RigidBody2DComponent>();
-	Checkboard.GetComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
+	Checkboard.AddComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
 	Checkboard.AddComponent<Engine::BoxCollider2DComponent>();
 
 	Engine::Entity Ground = m_Scene.AddEntity("Ground");
@@ -65,16 +64,14 @@ void GameLayer::OnAttach()
 	Ground.AddComponent<Engine::SpriteRendererComponent>();
 	Ground.GetComponent<Engine::SpriteRendererComponent>().colour = { 1, 1, 1, 1 };
 	Ground.AddComponent<Engine::RigidBody2DComponent>();
-	Ground.AddComponent<Engine::BoxCollider2DComponent>();
-	Ground.GetComponent<Engine::BoxCollider2DComponent>().Friction = .1f;
+	Ground.AddComponent<Engine::BoxCollider2DComponent>().Friction = .1f;
 
 	m_Player = m_Scene.AddEntity("Player");
 	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
 	m_Player.AddComponent<PlayerComponent>(&m_Scene, &m_Player, &m_Animations);
-	//m_Player.AddComponent<Engine::RigidBody2DComponent>();
-	//m_Player.GetComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
+	//m_Player.AddComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
 	//m_Player.GetComponent<Engine::RigidBody2DComponent>().FixedRotation = true;
-	//m_Player.AddComponent<Engine::BoxColider2DComponent>();
+	//m_Player.AddComponent<Engine::BoxCollider2DComponent>();
 
 	//m_Bullet = m_Scene.AddEntity("Bullet");
 	//m_Bullet.GetComponent<Engine::TransformComponent>().position = { 0.f, 25.f, 0.5f };

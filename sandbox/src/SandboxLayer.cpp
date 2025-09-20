@@ -6,6 +6,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <box2d/box2d.h>
+
 SandboxLayer::SandboxLayer()
 	: Layer("SandboxLayer"), m_CameraController(Engine::Application::getApplication()->getWindow()->GetWidth() / Engine::Application::getApplication()->getWindow()->GetHeight(), glm::vec3(0.f), true, true),
 	m_Scene()
@@ -25,7 +27,7 @@ void SandboxLayer::OnAttach()
 	Engine::Entity Mouse = m_Scene.AddEntity("Mouse");
 	Mouse.GetComponent<Engine::TransformComponent>().position = { 100, 100, 0.f };
 	Mouse.AddComponent<Engine::SpriteRendererComponent>();
-	Mouse.AddComponent<Engine::RigidBody2DComponent>();
+	Mouse.AddComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Kinematic;
 	Mouse.AddComponent<Engine::BoxCollider2DComponent>();
 
 	Engine::Entity ArrowAnimation = m_Scene.AddEntity("Arrow");
@@ -52,8 +54,7 @@ void SandboxLayer::OnAttach()
 			box.GetComponent<Engine::TransformComponent>().scale = { .1f, .1f };
 			box.AddComponent<Engine::SpriteRendererComponent>();
 			box.GetComponent<Engine::SpriteRendererComponent>().colour = {0, 1, 1, 1};
-			box.AddComponent<Engine::RigidBody2DComponent>();
-			box.GetComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
+			box.AddComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
 			box.AddComponent<Engine::BoxCollider2DComponent>();
 		}
 	}
@@ -68,15 +69,14 @@ void SandboxLayer::OnDetach()
 void SandboxLayer::OnUpdate(Engine::Timestep ts)
 {
 	m_CameraController.OnUpdate(ts);
+	m_Scene.UpdateScene(ts);
 
 	if (Engine::Input::IsMouseButtonPressed(EG_MOUSECODE_LEFT))
 	{
-		m_Scene.GetEntity("Mouse").GetComponent<Engine::TransformComponent>().position = { GetMouseGamePosition(), 0.f};
+		b2Body_SetTransform(m_Scene.GetEntity("Mouse").GetComponent<Engine::RigidBody2DComponent>().Box2DBodyID, { GetMouseGamePosition().x, GetMouseGamePosition().y }, b2Rot_identity);
 	} else {
-		m_Scene.GetEntity("Mouse").GetComponent<Engine::TransformComponent>().position = { 100, 100, 0.f };
+		b2Body_SetTransform(m_Scene.GetEntity("Mouse").GetComponent<Engine::RigidBody2DComponent>().Box2DBodyID, { 100.f, 100.f }, b2Rot_identity);
 	}
-
-	m_Scene.UpdateScene(ts);
 }
 
 void SandboxLayer::OnRender()
