@@ -31,7 +31,6 @@ private:
 
 	WaveFunctionCollapse* m_WFC;
 	std::thread m_WorldGenThread;
-	std::unordered_map<std::string, Engine::Ref<Anim>> m_Animations;
 
 	Engine::UUID m_CheckerboardUUID;
 };

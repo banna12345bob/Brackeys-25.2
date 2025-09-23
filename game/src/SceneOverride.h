@@ -18,13 +18,6 @@ public:
 	virtual void UpdateScene(Engine::Timestep ts) override
 	{
 		Engine::Scene::UpdateScene(ts);
-		auto PlayerComponentView = m_Registry.view<PlayerComponent>();
-		for (auto entity : PlayerComponentView)
-		{
-			PlayerComponent& PC = PlayerComponentView.get<PlayerComponent>(entity);
-			PC.OnUpdate(ts);
-		}
-
 		auto PistolGuyComponentView = m_Registry.view<PistolGuyComponent>();
 		for (auto entity : PistolGuyComponentView)
 		{

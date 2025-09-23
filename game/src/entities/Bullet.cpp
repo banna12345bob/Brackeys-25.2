@@ -43,11 +43,11 @@ void BulletComponenet::OnUpdate(Engine::Timestep ts)
 	//GetVelocity()->velocity.y = (GetTransform()->position.x - player->GetTransform()->position.x) * glm::tan(-theta) + player->GetTransform()->position.y * ts;
 
 	if (OverLappingWithEntity(m_Player)) {
-		if (m_Player->GetComponent<PlayerComponent>().Damage(1)) {
-			m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity = { 0.f, 0.f, 0.f };
-			m_Scene->GetEntity(m_Entity).GetComponent<Engine::MetaDataComponent>().hide = true;
-			m_Scene->RemoveEntity(m_Scene->GetEntity(m_Entity));
-		}
+		//if (m_Player->GetComponent<PlayerComponent>().Damage(1)) {
+		//	m_Scene->GetEntity(m_Entity).GetComponent<Engine::VelocityComponent>().velocity = { 0.f, 0.f, 0.f };
+		//	m_Scene->GetEntity(m_Entity).GetComponent<Engine::MetaDataComponent>().hide = true;
+		//	m_Scene->RemoveEntity(m_Scene->GetEntity(m_Entity));
+		//}
 	}
 	
 	if (lifetime != -1.f)

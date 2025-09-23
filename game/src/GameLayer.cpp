@@ -26,8 +26,6 @@ void GameLayer::OnAttach()
 {
 	m_WFC = new WaveFunctionCollapse("assets/WFC/kenny.json", &m_Scene, { 25, 25 }, { -Engine::Application::getApplication()->getWindow()->GetWidth()/4, -Engine::Application::getApplication()->getWindow()->GetHeight()/4, 0 }, { 2, 2 });
 
-	m_Animations = Anim::LoadAnims("assets/animations/anim.json");
-
 	//for (int i = 0; i < 100; i++)
 	//{
 	//	m_WFC->SetTile(i * 100, "psychicWallSouth");
@@ -68,10 +66,7 @@ void GameLayer::OnAttach()
 
 	m_Player = m_Scene.AddEntity("Player");
 	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
-	m_Player.AddComponent<PlayerComponent>(&m_Scene, &m_Player, &m_Animations);
-	//m_Player.AddComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
-	//m_Player.GetComponent<Engine::RigidBody2DComponent>().FixedRotation = true;
-	//m_Player.AddComponent<Engine::BoxCollider2DComponent>();
+	m_Player.AddComponent<Engine::NativeScriptComponent>().Bind<PlayerController>();	
 
 	//m_Bullet = m_Scene.AddEntity("Bullet");
 	//m_Bullet.GetComponent<Engine::TransformComponent>().position = { 0.f, 25.f, 0.5f };
@@ -145,7 +140,7 @@ void GameLayer::OnEvent(Engine::Event& event)
 
 bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 {
-	if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0 && m_Player.GetComponent<PlayerComponent>().dashIndex == 0) {
+	/*if (e.GetKeyCode() == EG_KEY_LEFT_SHIFT && e.GetRepeatCount() == 0 && m_Player.GetComponent<PlayerComponent>().dashIndex == 0) {
 		m_Player.GetComponent<PlayerComponent>().dashIndex = .2f;
 		return true;
 	}
@@ -158,7 +153,7 @@ bool GameLayer::SprintKey(Engine::KeyPressedEvent& e)
 		m_Player = m_Scene.AddEntity("Player");
 		m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
 		m_Player.AddComponent<PlayerComponent>(&m_Scene, &m_Player, &m_Animations);
-	}
+	}*/
 #if !defined(EG_DIST)
 	if (e.GetKeyCode() == EG_KEY_PAGE_UP && e.GetRepeatCount() == 0) {
 		m_CameraController.SetZoomLevel(m_CameraController.GetZoomLevel() + 128);
