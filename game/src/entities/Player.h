@@ -7,7 +7,7 @@
 class PlayerController : public Engine::ScriptableEntity
 {
 public:
-	void OnCreate()
+	virtual void OnCreate() override
 	{
 		m_deceleration = 20.f;
 		m_maxSpeed = 250.f;
@@ -38,20 +38,14 @@ public:
 		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity); i++)
 		{
 			m_ZZZ[i] = GetScene()->AddEntity("zzz" + std::to_string(i));
-			m_ZZZ[i].AddComponent<Engine::SpriteRendererComponent>();
-			m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().texture = zzz;
+			m_ZZZ[i].AddComponent<Engine::SpriteRendererComponent>().texture = zzz;
 			m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = { 0, 0, 0.1 * i };
 			m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale = { 16, 16 };
 			m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = true;
 		}
 	}
 
-	void OnDestroy()
-	{
-
-	}
-
-	void OnUpdate(Engine::Timestep ts)
+	virtual void OnUpdate(Engine::Timestep ts) override
 	{
 		for (auto& animation : m_Animations)
 		{
