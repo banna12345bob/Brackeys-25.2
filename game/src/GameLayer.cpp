@@ -68,6 +68,10 @@ void GameLayer::OnAttach()
 	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
 	m_Player.AddComponent<Engine::NativeScriptComponent>().Bind<PlayerController>();	
 
+	m_Camera = m_Scene.AddEntity("Camera");
+	m_Camera.AddComponent<Engine::OrthographicCameraComponent>().camera = &m_CameraController.GetCamera();
+	m_Scene.SetPrimaryCamera(m_Camera);
+
 	//m_Bullet = m_Scene.AddEntity("Bullet");
 	//m_Bullet.GetComponent<Engine::TransformComponent>().position = { 0.f, 25.f, 0.5f };
 	//m_Bullet.AddComponent<PistolGuyComponent>(&m_Scene, &m_Bullet, &m_Player);
@@ -111,7 +115,7 @@ void GameLayer::OnRender()
 	Engine::RenderCommand::SetClearColor({ 0, 0, 0, 0 });
 	Engine::RenderCommand::Clear();
 
-	m_Scene.RenderScene(&m_CameraController.GetCamera());
+	m_Scene.RenderScene();
 	m_WFC->Render(&m_CameraController);
 }
 

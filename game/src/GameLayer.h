@@ -4,8 +4,6 @@
 #include "environment/WFC.h"
 #include "graphics/Anim.h"
 
-#include "SceneOverride.h"
-
 class GameLayer : public Engine::Layer
 {
 public:
@@ -24,10 +22,10 @@ private:
 private:
 	Engine::OrthographicCameraController m_CameraController;
 
-	SceneOverride m_Scene;
+	Engine::Scene m_Scene;
 
 	Engine::Entity m_Player;
-	Engine::Entity m_Bullet;
+	Engine::Entity m_Camera;
 
 	WaveFunctionCollapse* m_WFC;
 	std::thread m_WorldGenThread;

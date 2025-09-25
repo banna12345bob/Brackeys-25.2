@@ -27,6 +27,7 @@ private:
 	Engine::Ref<Engine::Texture2D> m_Animation;
 
 	Engine::Scene m_Scene;
+	Engine::Entity m_Camera;
 
 	bool m_ShowImGuiWindow = true;
 	bool m_ShowImGuiDemoWindow = false;

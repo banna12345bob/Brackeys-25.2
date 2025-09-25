@@ -24,6 +24,10 @@ void SandboxLayer::OnAttach()
 
 	m_Animation = Engine::Texture2D::Create("assets/textures/tile.png");
 
+	m_Camera = m_Scene.AddEntity("Camera");
+	m_Camera.AddComponent<Engine::OrthographicCameraComponent>().camera = &m_CameraController.GetCamera();
+	m_Scene.SetPrimaryCamera(m_Camera);
+
 	Engine::Entity Mouse = m_Scene.AddEntity("Mouse");
 	Mouse.GetComponent<Engine::TransformComponent>().position = { 100, 100, 0.f };
 	Mouse.AddComponent<Engine::SpriteRendererComponent>();
@@ -84,7 +88,7 @@ void SandboxLayer::OnRender()
 	Engine::RenderCommand::SetClearColor({ 0, 0, 0, 0 });
 	Engine::RenderCommand::Clear();
 
-	m_Scene.RenderScene(&m_CameraController.GetCamera());
+	m_Scene.RenderScene();
 }
 
 void SandboxLayer::OnImGuiRender()
