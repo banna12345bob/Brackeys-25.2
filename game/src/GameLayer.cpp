@@ -51,9 +51,7 @@ void GameLayer::OnAttach()
 	Checkboard.GetComponent<Engine::TransformComponent>().rotation = 35.f;
 	Checkboard.AddComponent<Engine::SpriteRendererComponent>();
 	Checkboard.GetComponent<Engine::SpriteRendererComponent>().texture = checkboardTexture;
-	//Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
-	Checkboard.AddComponent<Engine::RigidBody2DComponent>().Type = Engine::RigidBody2DComponent::BodyType::Dynamic;
-	Checkboard.AddComponent<Engine::BoxCollider2DComponent>();
+	Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
 
 	Engine::Entity Ground = m_Scene.AddEntity("Ground");
 	Ground.GetComponent<Engine::TransformComponent>().position = { -32.f * 2, -100.f, 0.1f };
@@ -62,7 +60,7 @@ void GameLayer::OnAttach()
 	Ground.AddComponent<Engine::SpriteRendererComponent>();
 	Ground.GetComponent<Engine::SpriteRendererComponent>().colour = { 1, 1, 1, 1 };
 	Ground.AddComponent<Engine::RigidBody2DComponent>();
-	Ground.AddComponent<Engine::BoxCollider2DComponent>().Friction = .1f;
+	Ground.AddComponent<Engine::BoxCollider2DComponent>();
 
 	m_Player = m_Scene.AddEntity("Player");
 	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };

@@ -18,7 +18,7 @@ public:
 		GetComponent<Engine::RigidBody2DComponent>().FixedRotation = true;
 		AddComponent<Engine::BoxCollider2DComponent>();
 
-		std::unordered_map<std::string, Engine::Ref<Anim>> animations = Anim::LoadAnims("assets/animations/anim.json");
+		std::unordered_map<std::string, Engine::Ref<Anim>> animations = Anim::LoadAnims("assets/animations/player.json");
 
 		GetComponent<Engine::TransformComponent>().scale = { 32.f, 32.f };
 
@@ -86,16 +86,16 @@ public:
 			for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity) - 1; i++)
 			{
 				m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = false;
-				//m_ZZZ[i].GetComponent<Engine::VelocityComponent>().velocity = { 0.5f, 1.f, 0 };
-				//m_ZZZ[i].GetComponent<Engine::VelocityComponent>().scaleVelocity = { -1, -1 };
-				//m_ZZZ[i].GetComponent<Engine::VelocityComponent>().rotationVelocity = -2.5f;
+				m_ZZZ[i].GetComponent<Engine::TransformComponent>().position += glm::vec3{ 0.5f, 1.f, 0.f } * ts.GetSeconds();
+				m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale += glm::vec2{ -1, -1 } * ts.GetSeconds();
+				m_ZZZ[i].GetComponent<Engine::TransformComponent>().rotation += -2.5f * ts.GetSeconds();
 				m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a -= 0.05 * ts;
 				if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.75)
 				{
 					m_ZZZ[i + 1].GetComponent<Engine::MetaDataComponent>().hide = false;
-					//m_ZZZ[i + 1].GetComponent<Engine::VelocityComponent>().velocity = { 0.5f, 1.f, 0 };
-					//m_ZZZ[i + 1].GetComponent<Engine::VelocityComponent>().scaleVelocity = { -1, -1 };
-					//m_ZZZ[i + 1].GetComponent<Engine::VelocityComponent>().rotationVelocity = -2.5f;
+					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().position += glm::vec3{ 0.5f, 1.f, 0.f } * ts.GetSeconds();
+					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().scale += glm::vec2{ -1, -1 } * ts.GetSeconds();
+					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().rotation += -2.5f * ts.GetSeconds();
 					m_ZZZ[i + 1].GetComponent<Engine::SpriteRendererComponent>().colour.a -= 0.05 * ts;
 				}
 				if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.5) {
