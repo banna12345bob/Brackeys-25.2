@@ -8,12 +8,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/string_cast.hpp>
 
-#include "entities/enemies/PistolGuy.h"
-#include "entities/enemies/UziGuy.h"
-#include "entities/enemies/Reaper.h"
-#include "environment/Room.h"
 #include "entities/Player.h"
-#include "entities/Bullet.h"
 
 
 GameLayer::GameLayer()
@@ -51,7 +46,7 @@ void GameLayer::OnAttach()
 	Checkboard.GetComponent<Engine::TransformComponent>().rotation = 35.f;
 	Checkboard.AddComponent<Engine::SpriteRendererComponent>();
 	Checkboard.GetComponent<Engine::SpriteRendererComponent>().texture = checkboardTexture;
-	Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
+	//Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
 
 	Engine::Entity Ground = m_Scene.AddEntity("Ground");
 	Ground.GetComponent<Engine::TransformComponent>().position = { -32.f * 2, -100.f, 0.1f };
@@ -70,26 +65,7 @@ void GameLayer::OnAttach()
 	m_Camera.AddComponent<Engine::OrthographicCameraComponent>().camera = &m_CameraController.GetCamera();
 	m_Scene.SetPrimaryCamera(m_Camera);
 
-	//m_Bullet = m_Scene.AddEntity("Bullet");
-	//m_Bullet.GetComponent<Engine::TransformComponent>().position = { 0.f, 25.f, 0.5f };
-	//m_Bullet.AddComponent<PistolGuyComponent>(&m_Scene, &m_Bullet, &m_Player);
-
-	//UziGuy* enemy = new UziGuy("Enemy", m_Scene, m_Player);
-	//enemy->GetSpriteRenderer()->texture = arrowTexture;
-	//enemy->GetTransform()->position = { 32.f, 0.f, 0.2f };
-	//m_Scene.AddEntity(enemy);
-
-	//Reaper* reaper = new Reaper("Enemy", m_Scene, m_Player, &m_Animations);
-	//reaper->GetTransform()->position = { 40.0f, 0.f, 0.2f };
-	//m_Scene.AddEntity(reaper);
-
-	//
-	//for (int i = 0; i < 3; i++) {
-	//	PistolGuy* enemy = new PistolGuy("Enemy", m_Scene, m_Player);
-	//	enemy->GetSpriteRenderer()->texture = arrowTexture;
-	//	enemy->GetTransform()->position = { 0.f, 0.f, 0.2f };
-	//	m_Scene.AddEntity(enemy);
-	//}
+	Checkboard.GetComponent<Engine::MetaDataComponent>().parent = m_Player.getUUID();
 
 	m_CameraController.SetZoomLevel(128);
 }

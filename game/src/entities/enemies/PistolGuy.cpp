@@ -14,6 +14,6 @@ PistolGuyComponent::PistolGuyComponent(Engine::Scene* scene, Engine::Entity* ent
 void PistolGuyComponent::Attack(glm::vec2 dir)
 {
 	Engine::Entity bullet = m_Scene->AddEntity("bullet");
-	bullet.AddComponent<BulletComponenet>(m_Scene, &bullet, m_player, 150, glm::atan(dir.x, dir.y), 2);
+	//bullet.AddComponent<BulletComponenet>(m_Scene, &bullet, m_player, 150, glm::atan(dir.x, dir.y), 2);
 	bullet.GetComponent<Engine::TransformComponent>().position = m_Entity->GetComponent<Engine::TransformComponent>().position;
 }

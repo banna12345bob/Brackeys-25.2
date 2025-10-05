@@ -59,7 +59,7 @@ void ReaperComponent::OnUpdate(Engine::Timestep ts) {
 void ReaperComponent::Attack(glm::vec2 dir)
 {
 	Engine::Entity bullet = m_Scene->AddEntity("bullet");
-	bullet.AddComponent<BulletComponenet>(m_Scene, &bullet, m_player, 150, glm::atan(dir.x, dir.y), 2);
+	//bullet.AddComponent<BulletComponenet>(m_Scene, &bullet, m_player, 150, glm::atan(dir.x, dir.y), 2);
 	bullet.GetComponent<Engine::TransformComponent>().position = m_Entity->GetComponent<Engine::TransformComponent>().position;
 	
 	m_State = State::ATK;
