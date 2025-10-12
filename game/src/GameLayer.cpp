@@ -40,12 +40,17 @@ void GameLayer::OnAttach()
 	Engine::Ref<Engine::Texture2D> arrowTexture = Engine::Texture2D::Create("assets/textures/arrow.png");
 	Engine::Ref<Engine::Texture2D> checkboardTexture = Engine::Texture2D::Create("assets/textures/Checkerboard.png");
 
+	m_Player = m_Scene.AddEntity("Player");
+	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
+	m_Player.AddComponent<Engine::NativeScriptComponent>().Bind<PlayerController>();
+
 	Engine::Entity Checkboard = m_Scene.AddEntity("Checkboard");
 	Checkboard.GetComponent<Engine::TransformComponent>().position = { 0.f, 200.f, 0.1f };
 	Checkboard.GetComponent<Engine::TransformComponent>().scale = { 32.f * 8, 32.f * 8 };
 	Checkboard.GetComponent<Engine::TransformComponent>().rotation = 35.f;
 	Checkboard.AddComponent<Engine::SpriteRendererComponent>();
 	Checkboard.GetComponent<Engine::SpriteRendererComponent>().texture = checkboardTexture;
+	Checkboard.setParent(m_Player);
 	//Checkboard.GetComponent<Engine::MetaDataComponent>().hide = true;
 
 	Engine::Entity Ground = m_Scene.AddEntity("Ground");
@@ -57,15 +62,11 @@ void GameLayer::OnAttach()
 	Ground.AddComponent<Engine::RigidBody2DComponent>();
 	Ground.AddComponent<Engine::BoxCollider2DComponent>();
 
-	m_Player = m_Scene.AddEntity("Player");
-	m_Player.GetComponent<Engine::TransformComponent>().position = { 0.f, 0.f, 0.9f };
-	m_Player.AddComponent<Engine::NativeScriptComponent>().Bind<PlayerController>();	
-
 	m_Camera = m_Scene.AddEntity("Camera");
 	m_Camera.AddComponent<Engine::OrthographicCameraComponent>().camera = &m_CameraController.GetCamera();
+	m_Camera.setParent(m_Player);
 	m_Scene.SetPrimaryCamera(m_Camera);
 
-	Checkboard.GetComponent<Engine::MetaDataComponent>().parent = m_Player.getUUID();
 
 	m_CameraController.SetZoomLevel(128);
 }
@@ -105,7 +106,6 @@ void GameLayer::OnImGuiRender()
 	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
 	ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
 
-	ImGui::Text(glm::to_string(m_Player.GetComponent<Engine::VelocityComponent>().velocity).c_str());
 	ImGui::End();
 }
 

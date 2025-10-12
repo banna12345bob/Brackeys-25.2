@@ -37,7 +37,7 @@ public:
 
 		for (int i = 0; i < sizeof(m_ZZZ) / sizeof(Engine::Entity); i++)
 		{
-			m_ZZZ[i] = GetScene()->AddEntity("zzz" + std::to_string(i));
+			m_ZZZ[i] = AddChild(GetScene()->AddEntity("zzz" + std::to_string(i)));
 			m_ZZZ[i].AddComponent<Engine::SpriteRendererComponent>().texture = zzz;
 			m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = { 0, 0, 0.1 * i };
 			m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale = { 16, 16 };
@@ -60,7 +60,7 @@ public:
 		if (Engine::Input::IsKeyPressed(EG_KEY_A)) {
 			dir.x -= 1;
 			GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_left"]->Get();
-			GetComponent<Engine::SpriteRendererComponent>().texture->flipAcrossYAxis(false);
+			GetComponent<Engine::TransformComponent>().scale.x = abs(GetComponent<Engine::TransformComponent>().scale.x);
 		}
 		if (Engine::Input::IsKeyPressed(EG_KEY_S)) {
 			dir.y -= 1;
@@ -69,7 +69,7 @@ public:
 		if (Engine::Input::IsKeyPressed(EG_KEY_D)) {
 			dir.x += 1;
 			GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_left"]->Get();
-			GetComponent<Engine::SpriteRendererComponent>().texture->flipAcrossYAxis(true);
+			GetComponent<Engine::TransformComponent>().scale.x = -abs(GetComponent<Engine::TransformComponent>().scale.x);
 		}
 		if (dir != glm::vec2(0)) dir = glm::normalize(dir);
 
@@ -89,35 +89,35 @@ public:
 				m_ZZZ[i].GetComponent<Engine::TransformComponent>().position += glm::vec3{ 0.5f, 1.f, 0.f } * ts.GetSeconds();
 				m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale += glm::vec2{ -1, -1 } * ts.GetSeconds();
 				m_ZZZ[i].GetComponent<Engine::TransformComponent>().rotation += -2.5f * ts.GetSeconds();
-				m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a -= 0.05 * ts;
-				if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.75)
+				m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a -= 0.05f * ts.GetSeconds();
+				if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.75f)
 				{
 					m_ZZZ[i + 1].GetComponent<Engine::MetaDataComponent>().hide = false;
 					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().position += glm::vec3{ 0.5f, 1.f, 0.f } * ts.GetSeconds();
 					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().scale += glm::vec2{ -1, -1 } * ts.GetSeconds();
 					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().rotation += -2.5f * ts.GetSeconds();
-					m_ZZZ[i + 1].GetComponent<Engine::SpriteRendererComponent>().colour.a -= 0.05 * ts;
+					m_ZZZ[i + 1].GetComponent<Engine::SpriteRendererComponent>().colour.a -= 0.05f * ts;
 				}
-				if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.5) {
+				if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.5f) {
 					m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = true;
 				}
-				if (m_ZZZ[i + 1].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.5) {
+				if (m_ZZZ[i + 1].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.5f) {
 					m_ZZZ[i + 1].GetComponent<Engine::MetaDataComponent>().hide = true;
 				}
 
-				if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.25) {
+				if (m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.25f) {
 					m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = false;
 					m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a = 1;
 					m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale = { 16, 16 };
 					m_ZZZ[i].GetComponent<Engine::TransformComponent>().rotation = 0;
-					m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = GetComponent<Engine::TransformComponent>().position + glm::vec3(0, 4, 0.1 * i);
+					m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = glm::vec3(0, 4, 0.1 * i);
 				}
-				if (m_ZZZ[i + 1].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.25) {
+				if (m_ZZZ[i + 1].GetComponent<Engine::SpriteRendererComponent>().colour.a < 0.25f) {
 					m_ZZZ[i + 1].GetComponent<Engine::MetaDataComponent>().hide = false;
 					m_ZZZ[i + 1].GetComponent<Engine::SpriteRendererComponent>().colour.a = 1;
 					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().scale = { 16, 16 };
 					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().rotation = 0;
-					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().position = GetComponent<Engine::TransformComponent>().position + glm::vec3(0, 4, 0.1 * (i + 1));
+					m_ZZZ[i + 1].GetComponent<Engine::TransformComponent>().position = glm::vec3(0, 4, 0.1 * (i + 1));
 				}
 			}
 		}
@@ -127,7 +127,7 @@ public:
 				m_ZZZ[i].GetComponent<Engine::TransformComponent>().scale = { 16, 16 };
 				m_ZZZ[i].GetComponent<Engine::TransformComponent>().rotation = 0;
 				m_ZZZ[i].GetComponent<Engine::SpriteRendererComponent>().colour.a = 1;
-				m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = GetComponent<Engine::TransformComponent>().position + glm::vec3(0, 4, 0.1 * i);
+				m_ZZZ[i].GetComponent<Engine::TransformComponent>().position = glm::vec3(0, 4, 0.1 * i);
 				m_ZZZ[i].GetComponent<Engine::MetaDataComponent>().hide = true;
 			}
 		}
@@ -153,12 +153,12 @@ public:
 			dir = m_DirCopy;
 			if (dir.x > 0) {
 				GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_dash_left"]->Get();
-				GetComponent<Engine::SpriteRendererComponent>().texture->flipAcrossYAxis(true);
+				GetComponent<Engine::TransformComponent>().scale.x = -abs(GetComponent<Engine::TransformComponent>().scale.x);
 				dashIndex -= ts;
 			}
 			else if (dir.x < 0) {
 				GetComponent<Engine::SpriteRendererComponent>().texture = m_Animations["player_dash_left"]->Get();
-				GetComponent<Engine::SpriteRendererComponent>().texture->flipAcrossYAxis(false);
+				GetComponent<Engine::TransformComponent>().scale.x = abs(GetComponent<Engine::TransformComponent>().scale.x);
 				dashIndex -= ts;
 			}
 			else if (dir.y > 0) {
