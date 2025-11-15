@@ -98,13 +98,23 @@ void GameLayer::OnImGuiRender()
 {
 	EG_PROFILE_FUNCTION();
 	m_WFC->OnImGuiRender();
-	return;
+
 	// Begin with window. Requires window name
 	ImGui::Begin("Window info");
 
-	ImGui::SeparatorText("Window Size");
-	ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
-	ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
+	//ImGui::SeparatorText("Window Size");
+	//ImGui::Text((std::string("Width: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetWidth())).c_str());
+	//ImGui::Text((std::string("Height: ") + std::to_string(Engine::Application::getApplication()->getWindow()->GetHeight())).c_str());
+
+	if (ImGui::Button("Set Parent")) {
+		if (m_Scene.GetEntity("Checkboard").getParent() == m_Player)
+		{
+			m_Scene.GetEntity("Checkboard").setParent(m_Scene.GetEntity(0));
+		}
+		else {
+			m_Scene.GetEntity("Checkboard").setParent(m_Player);
+		}
+	}
 
 	ImGui::End();
 }
